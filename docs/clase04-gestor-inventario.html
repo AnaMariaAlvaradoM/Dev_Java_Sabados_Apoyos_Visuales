@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 4 · Mini proyecto: Gestor de Inventario · Java AI Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --morado:#5418CC;
+  --morado-vibrante:#6018F0;
+  --morado-oscuro:#3C1884;
+  --bg:#0d0a17;
+  --bg-2:#140f24;
+  --panel:#171127;
+  --panel-2:#1d1633;
+  --linea:#2a2142;
+  --texto:#ece9f5;
+  --texto-soft:#a79fc4;
+  --texto-mute:#6f6790;
+  --code-bg:#0a0813;
+  --ok:#3ddc97;
+  --warn:#ffb454;
+  --err:#ff6b81;
+  --radius:16px;
+  --sidebar-w:288px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--texto);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(96,24,240,.18), transparent 60%),
+    radial-gradient(700px 600px at 105% 110%, rgba(84,24,204,.14), transparent 55%);
+}
+
+/* ---------- LAYOUT ---------- */
+.shell{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+  width:var(--sidebar-w);
+  flex-shrink:0;
+  background:linear-gradient(180deg,var(--bg-2),var(--bg));
+  border-right:1px solid var(--linea);
+  position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+  transition:margin-left .28s ease;
+}
+.brand{padding:22px 22px 16px;border-bottom:1px solid var(--linea)}
+.brand .kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--morado-vibrante);font-weight:700}
+.brand h1{font-size:17px;font-weight:800;margin-top:6px;line-height:1.25}
+.brand .sub{font-size:12px;color:var(--texto-mute);margin-top:4px}
+
+.progress-wrap{padding:14px 22px;border-bottom:1px solid var(--linea)}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--texto-soft);margin-bottom:7px;letter-spacing:.04em}
+.progress-track{height:6px;background:var(--panel-2);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--morado),var(--morado-vibrante));border-radius:99px;transition:width .3s ease}
+
+.nav{padding:12px 12px 30px;flex:1}
+.nav a{
+  display:flex;align-items:center;gap:11px;
+  padding:9px 12px;margin:2px 0;border-radius:10px;
+  color:var(--texto-soft);text-decoration:none;font-size:13.5px;font-weight:500;
+  border:1px solid transparent;line-height:1.3;
+}
+.nav a .num{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--texto-mute);min-width:20px;
+}
+.nav a:hover{background:var(--panel);color:var(--texto)}
+.nav a.active{
+  background:linear-gradient(90deg,rgba(96,24,240,.22),rgba(84,24,204,.06));
+  color:#fff;border-color:rgba(96,24,240,.4);
+}
+.nav a.active .num{color:var(--morado-vibrante)}
+.nav a.done .num::after{content:" ✓";color:var(--ok)}
+
+/* ---------- MAIN ---------- */
+.main{flex:1;min-width:0;padding:0 0 80px}
+.topbar{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;gap:14px;
+  padding:12px 26px;
+  background:rgba(13,10,23,.82);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--linea);
+}
+.icon-btn{
+  background:var(--panel);border:1px solid var(--linea);color:var(--texto-soft);
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.icon-btn:hover{color:#fff;border-color:var(--morado-vibrante)}
+.topbar .crumb{font-size:13px;color:var(--texto-mute)}
+.topbar .crumb b{color:var(--texto-soft);font-weight:600}
+.topbar .spacer{flex:1}
+.present-btn{
+  display:flex;align-items:center;gap:8px;
+  background:linear-gradient(90deg,var(--morado),var(--morado-vibrante));
+  color:#fff;border:none;border-radius:10px;padding:9px 16px;
+  font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;
+}
+.present-btn:hover{filter:brightness(1.1)}
+.present-btn .k{font-size:11px;opacity:.8;font-family:'JetBrains Mono',monospace;border:1px solid rgba(255,255,255,.3);padding:1px 6px;border-radius:5px}
+
+.wrap{max-width:860px;margin:0 auto;padding:0 26px}
+
+/* ---------- SECTIONS ---------- */
+.section{padding:48px 0 8px;border-bottom:1px solid transparent}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--morado-vibrante);font-weight:700;margin-bottom:14px;
+}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--morado-vibrante);box-shadow:0 0 0 4px rgba(96,24,240,.18)}
+h2.section-title{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:10px}
+h3{font-size:19px;font-weight:700;margin:30px 0 10px;letter-spacing:-.01em}
+h4{font-size:15px;font-weight:700;margin:22px 0 8px;color:var(--texto)}
+p{color:var(--texto-soft);margin:10px 0;font-size:15.5px}
+p strong,li strong{color:var(--texto);font-weight:600}
+ul,ol{margin:12px 0 12px 4px;padding-left:22px;color:var(--texto-soft)}
+li{margin:6px 0;font-size:15.5px}
+code.inline{
+  font-family:'JetBrains Mono',monospace;font-size:.86em;
+  background:var(--panel-2);color:#c7b6ff;padding:2px 7px;border-radius:6px;border:1px solid var(--linea);
+}
+
+.lead{
+  font-size:18px;color:var(--texto);
+  background:linear-gradient(120deg,rgba(96,24,240,.10),transparent);
+  border-left:3px solid var(--morado-vibrante);
+  padding:16px 20px;border-radius:0 12px 12px 0;margin:18px 0;
+}
+
+/* ---------- CALLOUTS ---------- */
+.callout{
+  display:flex;gap:13px;padding:15px 18px;border-radius:12px;margin:18px 0;
+  background:var(--panel);border:1px solid var(--linea);
+}
+.callout .ic{font-size:20px;flex-shrink:0;line-height:1.4}
+.callout p{margin:0;font-size:14.5px;color:var(--texto-soft)}
+.callout.analogia{background:linear-gradient(120deg,rgba(61,220,151,.07),transparent);border-color:rgba(61,220,151,.25)}
+.callout.warn{background:linear-gradient(120deg,rgba(255,180,84,.07),transparent);border-color:rgba(255,180,84,.28)}
+.callout.tip{background:linear-gradient(120deg,rgba(96,24,240,.08),transparent);border-color:rgba(96,24,240,.3)}
+
+/* ---------- MENU CHIPS ---------- */
+.menu-chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.menu-chips .chip{
+  display:flex;align-items:center;gap:8px;
+  background:var(--panel);border:1px solid var(--linea);
+  padding:8px 14px;border-radius:10px;font-size:13.5px;color:var(--texto-soft);
+}
+.menu-chips .chip b{font-family:'JetBrains Mono',monospace;color:var(--morado-vibrante)}
+
+/* ---------- CODE ---------- */
+.codeblock{margin:16px 0;border-radius:12px;overflow:hidden;border:1px solid var(--linea);background:var(--code-bg)}
+.code-head{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 14px;background:#120e1f;border-bottom:1px solid var(--linea);
+}
+.code-head .file{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--texto-soft)}
+.code-head .file .dotfile{color:var(--warn)}
+.code-head .lang{margin-left:auto;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--texto-mute)}
+.copy-btn{
+  background:var(--panel-2);border:1px solid var(--linea);color:var(--texto-soft);
+  font-size:11px;padding:4px 10px;border-radius:7px;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;gap:5px;
+}
+.copy-btn:hover{color:#fff;border-color:var(--morado-vibrante)}
+.copy-btn.copied{color:var(--ok);border-color:var(--ok)}
+pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65}
+pre code{font-family:inherit;color:#d6d0ee;white-space:pre}
+.tok-key{color:#c792ea}
+.tok-type{color:#82aaff}
+.tok-str{color:#c3e88d}
+.tok-num{color:#f78c6c}
+.tok-com{color:#5d5a72;font-style:italic}
+.tok-fn{color:#82d8ff}
+
+/* ---------- PIENSALO ---------- */
+.piensalo{
+  margin:22px 0;border-radius:14px;overflow:hidden;
+  background:linear-gradient(135deg,rgba(96,24,240,.12),rgba(84,24,204,.04));
+  border:1px solid rgba(96,24,240,.32);
+}
+.piensalo .pq{display:flex;gap:12px;padding:16px 18px;align-items:flex-start}
+.piensalo .pq .ic{font-size:21px;flex-shrink:0}
+.piensalo .pq .qt{font-size:15.5px;color:var(--texto);font-weight:500;font-style:italic}
+.reveal-btn{
+  margin:0 18px 16px;background:var(--panel);border:1px solid var(--morado-vibrante);
+  color:#c7b6ff;font-size:12.5px;font-weight:600;padding:7px 15px;border-radius:9px;
+  cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px;
+}
+.reveal-btn:hover{background:var(--morado-oscuro);color:#fff}
+.answer{
+  margin:0 18px 18px;padding:0 16px;max-height:0;overflow:hidden;
+  background:var(--code-bg);border-radius:10px;border:1px solid var(--linea);
+  transition:max-height .35s ease,padding .35s ease;
+}
+.answer.open{max-height:400px;padding:14px 16px}
+.answer p{margin:0;font-size:14.5px;color:var(--texto-soft)}
+.answer .tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ok);font-weight:700;display:block;margin-bottom:5px}
+
+/* ---------- ESTADO APP ---------- */
+.appstate{
+  display:flex;gap:13px;align-items:center;
+  margin:20px 0;padding:14px 18px;border-radius:12px;
+  background:linear-gradient(120deg,rgba(61,220,151,.08),transparent);
+  border:1px solid rgba(61,220,151,.28);
+}
+.appstate .ic{font-size:20px}
+.appstate p{margin:0;font-size:14.5px;color:var(--texto)}
+
+/* ---------- EXERCISES ---------- */
+.ex-grid{display:grid;gap:14px;margin:18px 0}
+.ex-card{
+  background:var(--panel);border:1px solid var(--linea);border-radius:13px;padding:16px 18px;
+}
+.ex-card .ex-h{display:flex;align-items:center;gap:11px;margin-bottom:7px}
+.ex-card .ex-badge{
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;
+  width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  background:var(--morado-oscuro);color:#fff;flex-shrink:0;
+}
+.ex-card .ex-t{font-weight:700;font-size:15px}
+.ex-card p{margin:0;font-size:14px}
+
+/* ---------- BRIDGE ---------- */
+.bridge{
+  margin:26px 0;padding:22px;border-radius:16px;
+  background:linear-gradient(135deg,var(--morado-oscuro),rgba(84,24,204,.25));
+  border:1px solid rgba(96,24,240,.4);
+}
+.bridge .blabel{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#c7b6ff;font-weight:700}
+.bridge h3{margin:8px 0 6px;color:#fff}
+.bridge p{color:#d9d2f2}
+
+/* ---------- FOOTER ---------- */
+.footer{
+  max-width:860px;margin:50px auto 0;padding:24px 26px;
+  border-top:1px solid var(--linea);
+  font-size:12px;color:var(--texto-mute);text-align:center;line-height:1.7;
+}
+.footer a{color:var(--texto-soft);text-decoration:none}
+.footer a:hover{color:var(--morado-vibrante)}
+
+/* ---------- PRESENT MODE ---------- */
+body.present .sidebar,body.present .topbar{display:none}
+body.present .main{padding:0}
+body.present .section{
+  display:none;min-height:100vh;padding:40px 0 90px;
+}
+body.present .section.present-active{display:block}
+body.present .wrap{max-width:920px;width:100%;margin:0 auto;padding:50px 70px}
+body.present h2.section-title{font-size:38px}
+body.present h3{font-size:24px}
+body.present p,body.present li{font-size:17px}
+body.present .lead{font-size:19px}
+body.present pre{font-size:14px}
+body.present .codeblock{max-width:100%}
+.present-hud{
+  display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  z-index:100;gap:8px;align-items:center;
+  background:rgba(13,10,23,.9);border:1px solid var(--linea);border-radius:99px;
+  padding:8px 16px;font-size:12px;color:var(--texto-soft);backdrop-filter:blur(10px);
+}
+body.present .present-hud{display:flex}
+.present-hud .k{font-family:'JetBrains Mono',monospace;background:var(--panel-2);border:1px solid var(--linea);padding:2px 8px;border-radius:6px;color:var(--texto)}
+.present-hud .count{color:var(--morado-vibrante);font-weight:700;font-family:'JetBrains Mono',monospace}
+
+/* ---------- RESPONSIVE ---------- */
+.backdrop{display:none}
+@media(max-width:920px){
+  .sidebar{position:fixed;z-index:60;height:100vh;left:0;top:0;box-shadow:0 0 40px rgba(0,0,0,.5)}
+  body.nav-closed .sidebar{margin-left:calc(-1 * var(--sidebar-w) - 4px)}
+  body:not(.nav-closed) .backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50}
+}
+@media(min-width:921px){
+  body.nav-closed .sidebar{margin-left:calc(-1 * var(--sidebar-w) - 4px)}
+}
+@media(max-width:560px){
+  .wrap{padding:0 16px}
+  h2.section-title{font-size:24px}
+  .topbar .crumb{display:none}
+  .present-btn .label-txt{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--panel-2);border-radius:8px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:var(--linea)}
+</style>
+</head>
+<body class="nav-closed-off">
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="kicker">Java AI Engineer · Módulo 1</div>
+      <h1>Mini proyecto: Gestor de Inventario</h1>
+      <div class="sub">Clase 4 · CLI App · GitHub · Buenas prácticas</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Tu avance</span><span id="progPct">0%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+  </aside>
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="menuToggle" title="Menú">☰</button>
+      <div class="crumb"><b id="crumbText">Inicio</b></div>
+      <div class="spacer"></div>
+      <button class="present-btn" id="presentBtn"><span class="label-txt">Modo presentación</span> <span class="k">P</span></button>
+    </div>
+
+    <div class="wrap" id="content"><!-- sections injected --></div>
+
+    <div class="footer">
+      © 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados<br>
+      <a href="https://linkedin.com/in/ana-alvarado-instructora-full-stack" target="_blank" rel="noopener">linkedin.com/in/ana-alvarado-instructora-full-stack</a>
+    </div>
+  </div>
+</div>
+
+<div class="present-hud">
+  <span class="k">←</span> <span class="k">→</span> navegar
+  <span class="count" id="hudCount">1 / 1</span>
+  <span class="k">Esc</span> salir
+</div>
+
+<script>
+/* ============================================================
+   CONTENIDO — se inyecta como secciones navegables
+   ============================================================ */
+const SECTIONS = [
+  {
+    id:"inicio", num:"00", title:"A dónde llegamos hoy", short:"Inicio",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Cierre del Módulo 1</div>
+      <h2 class="section-title">A dónde llegamos hoy</h2>
+      <p class="lead">Hoy juntamos todo lo aprendido —variables, operadores, condicionales, ciclos y métodos— en <strong>una aplicación real</strong>, organizada como lo haría un desarrollador profesional. Y la publicamos en <strong>GitHub</strong>, lista para tu portafolio.</p>
+
+      <h3>Lo que construiremos: "Gestor de Inventario"</h3>
+      <p>Una aplicación de consola (CLI) para manejar el inventario de una tienda 🏪. Empezamos con <strong>un solo producto</strong> y al final la hacemos crecer para manejar <strong>varios</strong>: la app evoluciona delante de ti.</p>
+
+      <h4>El menú que tendrá</h4>
+      <div class="menu-chips">
+        <span class="chip"><b>1</b> Registrar producto</span>
+        <span class="chip"><b>2</b> Ver producto</span>
+        <span class="chip"><b>3</b> Actualizar cantidad</span>
+        <span class="chip"><b>4</b> Ver valor total</span>
+        <span class="chip"><b>5</b> Salir</span>
+      </div>
+    `
+  },
+  {
+    id:"planeacion", num:"01", title:"Planeación del proyecto", short:"Planeación",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Bloque 1</div>
+      <h2 class="section-title">Planeación del proyecto</h2>
+      <p>Antes de tocar código pensamos como ingenieros: <strong>primero el qué, después el cómo.</strong></p>
+
+      <h3>El problema, en un párrafo</h3>
+      <p>Una tienda necesita una herramienta sencilla para <strong>registrar un producto</strong>, <strong>consultarlo</strong>, <strong>actualizar su cantidad</strong> cuando llega o se vende mercancía, y saber <strong>cuánto vale</strong> su inventario en total. Hoy lo anotan en papel y se pierde. Vamos a construirles esa herramienta por consola.</p>
+
+      <h3>Qué hace la app</h3>
+      <ol>
+        <li>Muestra un menú.</li>
+        <li>El usuario elige una opción.</li>
+        <li>La app responde según la opción.</li>
+        <li>Vuelve al menú hasta que el usuario salga.</li>
+      </ol>
+
+      <h3>Cómo lo vamos a organizar</h3>
+      <p>No metemos todo en un archivo gigante. Lo <strong>repartimos</strong> en piezas, cada una con una sola responsabilidad:</p>
+      <ul>
+        <li><code class="inline">App</code> → el director. Arranca y coordina.</li>
+        <li><code class="inline">Menu</code> → muestra el menú y lee la opción.</li>
+        <li><code class="inline">Validador</code> → revisa que lo que escribe el usuario sea válido.</li>
+        <li><code class="inline">Operaciones</code> → hace el trabajo real con el producto.</li>
+      </ul>
+
+      ${piensalo(
+        "¿Por qué no escribir todo en un solo archivo y ya?",
+        "Más rápido al inicio, pero imposible de mantener después. Si todo está mezclado, un cambio pequeño puede romperlo todo. Separar por responsabilidad es como una cocina: el chef cocina, el cajero cobra. Si una sola persona hiciera todo, el caos sería total."
+      )}
+    `
+  },
+  {
+    id:"proyecto", num:"02", title:"Crear el proyecto en VS Code", short:"Crear proyecto",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Bloque 2</div>
+      <h2 class="section-title">Crear el proyecto en VS Code</h2>
+      <p>Creamos una <strong>carpeta</strong> para el proyecto y dentro los archivos <code class="inline">.java</code>. Cada clase pública de Java va en <strong>su propio archivo</strong> con <strong>exactamente el mismo nombre</strong>.</p>
+
+      <div class="callout warn">
+        <span class="ic">⚠️</span>
+        <p><strong>Regla de Java:</strong> si la clase se llama <code class="inline">App</code>, el archivo <strong>debe</strong> llamarse <code class="inline">App.java</code>. Ni <code class="inline">app.java</code> ni <code class="inline">App.JAVA</code>. Igualito.</p>
+      </div>
+
+      <h3>Paso a paso</h3>
+      <ol>
+        <li>Crea una carpeta llamada <code class="inline">GestorInventario</code>.</li>
+        <li>Ábrela en VS Code (<code class="inline">Archivo → Abrir carpeta</code>).</li>
+        <li>Dentro, crea 4 archivos vacíos: <code class="inline">App.java</code>, <code class="inline">Menu.java</code>, <code class="inline">Validador.java</code>, <code class="inline">Operaciones.java</code>.</li>
+      </ol>
+
+      <div class="callout tip">
+        <span class="ic">💡</span>
+        <p>Dejamos los archivos en la <strong>raíz</strong> de la carpeta, sin subcarpetas. Así evitamos por ahora el concepto de <code class="inline">package</code>, que veremos más adelante.</p>
+      </div>
+
+      ${piensalo(
+        "Tenemos 4 archivos vacíos. ¿Por dónde arranca el programa cuando le damos \"ejecutar\"?",
+        "Por el método main. Java busca siempre el método main para empezar. Por eso App será el único archivo con main: es la puerta de entrada."
+      )}
+    `
+  },
+  {
+    id:"validador", num:"03", title:"El Validador", short:"Validador",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Bloque 3</div>
+      <h2 class="section-title">El Validador: que el usuario no rompa la app</h2>
+      <p>Antes de pedir datos necesitamos una forma <strong>segura</strong> de pedirlos. Si pedimos un número y el usuario escribe "hola", el programa se cae. El <code class="inline">Validador</code> evita eso.</p>
+
+      <div class="callout analogia">
+        <span class="ic">🌎</span>
+        <p><strong>Analogía:</strong> es el portero de una discoteca. Revisa en la puerta que todo esté en orden <strong>antes</strong> de dejar pasar. Si algo no cumple, lo devuelve amablemente.</p>
+      </div>
+
+      <h3>Métodos <code class="inline">static</code></h3>
+      <p>Esta clase tendrá métodos <code class="inline">static</code>: se usan <strong>sin crear un objeto</strong>, los llamamos directo con el nombre de la clase, igual que ya usas <code class="inline">Math.random()</code>.</p>
+      <div class="callout analogia">
+        <span class="ic">🌎</span>
+        <p><strong>Analogía:</strong> <code class="inline">Math</code> es una caja de herramientas. Nadie "crea un Math"; solo abre la caja y usa la herramienta. <code class="inline">Validador</code> será tu propia caja de herramientas.</p>
+      </div>
+
+      <h3>Leer un entero de forma segura</h3>
+      <p><code class="inline">leerEntero</code> pide un número entero. Si el usuario escribe algo que <strong>no</strong> lo es, le avisa y vuelve a preguntar en un ciclo hasta que escriba bien. Usamos <code class="inline">sc.hasNextInt()</code> para <strong>preguntar antes de leer</strong>: "¿lo que viene es un entero?".</p>
+
+      ${code("Validador.java", `import java.util.Scanner;
+
+public class Validador {
+
+    public static int leerEntero(Scanner sc, String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            if (sc.hasNextInt()) {
+                int valor = sc.nextInt();
+                sc.nextLine();
+                return valor;
+            } else {
+                System.out.println("Eso no es un numero entero. Intenta de nuevo.");
+                sc.nextLine();
+            }
+        }
+    }
+}`)}
+
+      <div class="callout warn">
+        <span class="ic">⚠️</span>
+        <p><strong>El detalle del <code class="inline">sc.nextLine()</code>:</strong> después de leer un número con <code class="inline">nextInt()</code> queda un salto de línea pendiente en el buffer. Si no lo limpias con <code class="inline">sc.nextLine()</code>, el siguiente texto que pidas saldría vacío sin dejarte escribir. Siempre que mezcles <code class="inline">nextInt()</code>/<code class="inline">nextDouble()</code> con <code class="inline">nextLine()</code>, limpia con un <code class="inline">nextLine()</code> extra.</p>
+      </div>
+
+      <h3>Los otros dos métodos</h3>
+      <p><code class="inline">leerDecimal</code> es igual pero para precios (números con decimales). <code class="inline">leerTexto</code> pide texto simple, como el nombre del producto: el texto no se "valida" porque cualquier letra sirve.</p>
+
+      ${code("Validador.java", `    public static double leerDecimal(Scanner sc, String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            if (sc.hasNextDouble()) {
+                double valor = sc.nextDouble();
+                sc.nextLine();
+                return valor;
+            } else {
+                System.out.println("Eso no es un numero valido. Intenta de nuevo.");
+                sc.nextLine();
+            }
+        }
+    }
+
+    public static String leerTexto(Scanner sc, String mensaje) {
+        System.out.print(mensaje);
+        return sc.nextLine();
+    }
+}`)}
+
+      ${piensalo(
+        "¿Por qué leerTexto no tiene un ciclo while como los otros dos?",
+        "Porque cualquier texto es válido para un nombre. No hay nada que rechazar. Los números sí pueden venir mal escritos (letras donde va un número); un nombre, no."
+      )}
+
+      <div class="appstate"><span class="ic">✅</span><p><strong>Así va la app:</strong> el portero está listo. Todavía no pide datos del producto, pero ya sabe pedir enteros, decimales y texto de forma segura.</p></div>
+    `
+  },
+  {
+    id:"operaciones", num:"04", title:"Operaciones: la lógica", short:"Operaciones",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Bloque 4</div>
+      <h2 class="section-title">Operaciones: la lógica del producto</h2>
+      <p><code class="inline">Operaciones</code> es donde <strong>vive el producto</strong> y donde pasan las cosas: registrarlo, verlo, actualizarlo, calcular su valor.</p>
+      <p>Para guardar el producto usamos <strong>variables <code class="inline">static</code></strong> dentro de la clase: son la <strong>memoria</strong> de la app mientras el programa corre. Agregamos una bandera <code class="inline">hayProducto</code> (un <code class="inline">boolean</code>) para saber si ya se registró algo.</p>
+
+      ${code("Operaciones.java", `import java.util.Scanner;
+
+public class Operaciones {
+
+    static String nombre = "";
+    static int cantidad = 0;
+    static double precio = 0.0;
+    static boolean hayProducto = false;
+}`)}
+
+      <div class="callout analogia">
+        <span class="ic">🌎</span>
+        <p><strong>Analogía:</strong> estas variables son la <strong>libreta</strong> del tendero. Mientras la tienda está abierta (el programa corriendo), la libreta recuerda qué producto hay. Al cerrar (terminar el programa), la libreta se borra.</p>
+      </div>
+
+      <h3>Registrar el producto</h3>
+      <p>Pedimos los tres datos usando el <code class="inline">Validador</code>, los guardamos en las variables y marcamos <code class="inline">hayProducto = true</code>. Fíjate cómo <code class="inline">Operaciones</code> <strong>le pide ayuda</strong> al <code class="inline">Validador</code>: cada clase hace lo suyo y colabora con las otras.</p>
+
+      ${code("Operaciones.java", `    public static void registrar(Scanner sc) {
+        nombre = Validador.leerTexto(sc, "Nombre del producto: ");
+        cantidad = Validador.leerEntero(sc, "Cantidad: ");
+        precio = Validador.leerDecimal(sc, "Precio unitario: ");
+        hayProducto = true;
+        System.out.println("Producto registrado correctamente.");
+    }`)}
+
+      <h3>Ver el producto</h3>
+      <p>Primero revisamos con un <code class="inline">if</code> si <strong>ya hay</strong> un producto. Si no, avisamos y salimos del método con <code class="inline">return</code>. Esto evita mostrar datos vacíos.</p>
+
+      ${code("Operaciones.java", `    public static void ver() {
+        if (!hayProducto) {
+            System.out.println("Aun no hay ningun producto registrado.");
+            return;
+        }
+        System.out.println("Producto: " + nombre);
+        System.out.println("Cantidad: " + cantidad);
+        System.out.println("Precio:   " + precio);
+    }`)}
+
+      ${piensalo(
+        "¿Qué pasaría si quitamos ese if (!hayProducto) y el usuario elige \"Ver\" sin haber registrado nada?",
+        "No se cae, pero muestra basura: nombre vacío, cantidad 0, precio 0.0. Peor que un error, porque parece que funciona y engaña. El if protege la experiencia del usuario."
+      )}
+
+      <h3>Actualizar cantidad y ver valor total</h3>
+      <p><code class="inline">actualizarCantidad</code> cambia solo la cantidad (cuando llega o se vende mercancía). <code class="inline">verValorTotal</code> multiplica cantidad por precio: la pregunta de negocio, <em>¿cuánto vale lo que tengo?</em></p>
+
+      ${code("Operaciones.java", `    public static void actualizarCantidad(Scanner sc) {
+        if (!hayProducto) {
+            System.out.println("Aun no hay ningun producto registrado.");
+            return;
+        }
+        cantidad = Validador.leerEntero(sc, "Nueva cantidad: ");
+        System.out.println("Cantidad actualizada.");
+    }
+
+    public static void verValorTotal() {
+        if (!hayProducto) {
+            System.out.println("Aun no hay ningun producto registrado.");
+            return;
+        }
+        double total = cantidad * precio;
+        System.out.println("Valor total en inventario: " + total);
+    }
+}`)}
+
+      <div class="appstate"><span class="ic">✅</span><p><strong>Así va la app:</strong> ya tenemos toda la lógica del producto. Falta el <strong>menú</strong> que conecta al usuario con estas operaciones, y el <strong>director</strong> que lo arranca todo.</p></div>
+    `
+  },
+  {
+    id:"menu-app", num:"05", title:"El Menú y el Director", short:"Menú y App",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Bloque 5</div>
+      <h2 class="section-title">El Menú y el Director (App)</h2>
+      <h3>El Menú: solo muestra y lee</h3>
+      <p><code class="inline">Menu</code> tiene una sola responsabilidad: <strong>dibujar</strong> las opciones y <strong>leer</strong> cuál eligió el usuario. Nada más. No hace operaciones; para eso está <code class="inline">Operaciones</code>.</p>
+
+      ${code("Menu.java", `import java.util.Scanner;
+
+public class Menu {
+
+    public static void mostrar() {
+        System.out.println();
+        System.out.println("=== GESTOR DE INVENTARIO ===");
+        System.out.println("1. Registrar producto");
+        System.out.println("2. Ver producto");
+        System.out.println("3. Actualizar cantidad");
+        System.out.println("4. Ver valor total");
+        System.out.println("5. Salir");
+    }
+
+    public static int leerOpcion(Scanner sc) {
+        return Validador.leerEntero(sc, "Elige una opcion: ");
+    }
+}`)}
+
+      <div class="callout analogia">
+        <span class="ic">🌎</span>
+        <p><strong>Analogía:</strong> el menú es la <strong>carta de un restaurante</strong>. Muestra las opciones y toma tu pedido. No cocina: solo comunica.</p>
+      </div>
+
+      <h3>El Director: <code class="inline">App</code> con el <code class="inline">main</code></h3>
+      <p><code class="inline">App</code> es el <strong>director de orquesta</strong>. Tiene el <code class="inline">main</code>, arranca el <code class="inline">Scanner</code> y dentro de un ciclo <code class="inline">while</code> muestra el menú una y otra vez hasta que el usuario elija salir (opción 5). El <code class="inline">switch</code> decide <strong>a quién llamar</strong>. Fíjate que <code class="inline">App</code> <strong>no hace</strong> el trabajo: solo <strong>delega</strong>.</p>
+
+      ${code("App.java", `import java.util.Scanner;
+
+public class App {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int opcion = 0;
+
+        while (opcion != 5) {
+            Menu.mostrar();
+            opcion = Menu.leerOpcion(sc);
+
+            switch (opcion) {
+                case 1:
+                    Operaciones.registrar(sc);
+                    break;
+                case 2:
+                    Operaciones.ver();
+                    break;
+                case 3:
+                    Operaciones.actualizarCantidad(sc);
+                    break;
+                case 4:
+                    Operaciones.verValorTotal();
+                    break;
+                case 5:
+                    System.out.println("Gracias por usar el gestor. Hasta pronto.");
+                    break;
+                default:
+                    System.out.println("Opcion no valida. Elige entre 1 y 5.");
+            }
+        }
+        sc.close();
+    }
+}`)}
+
+      ${piensalo(
+        "¿Por qué el ciclo es while (opcion != 5) y no un for?",
+        "Un for se usa cuando sabemos cuántas vueltas (del 1 al 10). Aquí no sabemos cuántas opciones elegirá el usuario antes de salir: pueden ser 2 o 200. El while repite \"mientras\" se cumpla una condición, sin contar de antemano."
+      )}
+
+      <div class="appstate"><span class="ic">🎉</span><p><strong>¡La app ya funciona completa!</strong> Registra, ve, actualiza y calcula el total de un producto. Es hora de probarla.</p></div>
+    `
+  },
+  {
+    id:"probar", num:"06", title:"Probar la app", short:"Probar",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Bloque 6</div>
+      <h2 class="section-title">Probar la app</h2>
+      <h3>Cómo ejecutar en VS Code</h3>
+      <ol>
+        <li>Abre <code class="inline">App.java</code>.</li>
+        <li>Presiona el botón ▶ arriba a la derecha, o <code class="inline">F5</code>.</li>
+      </ol>
+
+      <div class="callout warn">
+        <span class="ic">⚠️</span>
+        <p>Si el botón ▶ da problemas con varias clases, usa la <strong>terminal</strong>: <code class="inline">javac *.java</code> para compilar, luego <code class="inline">java App</code> para ejecutar.</p>
+      </div>
+
+      <h3>Prueba estas situaciones</h3>
+      <ul>
+        <li>Registra un producto y míralo.</li>
+        <li>Pide "Ver valor total" <strong>antes</strong> de registrar → debe avisar, no caerse.</li>
+        <li>En "Elige una opción" escribe <code class="inline">hola</code> → debe rechazarlo.</li>
+        <li>Elige <code class="inline">9</code> → debe decir "Opción no válida".</li>
+      </ul>
+    `
+  },
+  {
+    id:"git", num:"07", title:"Git y GitHub", short:"Git y GitHub",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Bloque 7</div>
+      <h2 class="section-title">Git profesional y publicación en GitHub</h2>
+      <p>Has trabajado dos horas en esta app. Si el computador se daña ahora mismo, se pierde todo. <strong>Git</strong> guarda la historia de tu proyecto y <strong>GitHub</strong> la guarda en la nube. Es tu respaldo y tu carta de presentación profesional.</p>
+
+      <h3>Antes de subir: el <code class="inline">.gitignore</code></h3>
+      <p>No subimos los archivos <code class="inline">.class</code> (los que genera Java al compilar). Solo el código fuente. Creamos un archivo <code class="inline">.gitignore</code> en la raíz con este contenido:</p>
+
+      ${code(".gitignore", `*.class`, "text")}
+
+      <div class="callout analogia">
+        <span class="ic">🌎</span>
+        <p><strong>Analogía:</strong> subes la <strong>receta</strong> (el <code class="inline">.java</code>), no el <strong>plato ya cocinado</strong> (el <code class="inline">.class</code>). Cualquiera puede volver a cocinar desde la receta.</p>
+      </div>
+
+      <h3>Los comandos, en orden</h3>
+      ${code("terminal", `git init
+git add .
+git commit -m "Gestor de inventario CLI funcional"`, "bash")}
+      <ul>
+        <li><code class="inline">git init</code> → crea el repositorio local (empieza a llevar la historia).</li>
+        <li><code class="inline">git add .</code> → marca todos los archivos para guardar.</li>
+        <li><code class="inline">git commit</code> → guarda una "foto" del proyecto con un mensaje claro.</li>
+      </ul>
+
+      <h3>Conectar con GitHub y subir</h3>
+      <ol>
+        <li>En GitHub, crea un repositorio nuevo <strong>vacío</strong> llamado <code class="inline">gestor-inventario</code>.</li>
+        <li>Copia los comandos que GitHub te muestra. Serán parecidos a estos:</li>
+      </ol>
+      ${code("terminal", `git remote add origin https://github.com/TU_USUARIO/gestor-inventario.git
+git branch -M main
+git push -u origin main`, "bash")}
+      <ul>
+        <li><code class="inline">git remote add origin</code> → conecta tu carpeta local con el repo en la nube.</li>
+        <li><code class="inline">git push</code> → sube tu código a GitHub.</li>
+      </ul>
+
+      ${piensalo(
+        "¿Por qué el mensaje del commit dice \"Gestor de inventario CLI funcional\" y no \"cambios\" o \"asdf\"?",
+        "Dentro de un mes, ese mensaje es lo único que te dice qué guardaste. Un buen mensaje de commit es un mensaje para tu yo del futuro y para tu equipo. \"asdf\" no le sirve a nadie."
+      )}
+    `
+  },
+  {
+    id:"crece", num:"08", title:"La app crece: de uno a muchos", short:"De uno a muchos",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Bloque 8</div>
+      <h2 class="section-title">La app crece: de uno a muchos productos</h2>
+      <p>Nuestra app es buena... pero maneja UN solo producto. Una tienda real tiene cientos. ¿Vamos a crear <code class="inline">nombre1</code>, <code class="inline">nombre2</code>... <code class="inline">nombre300</code>? Sería imposible de mantener. Para esto existe el <strong>arreglo (array)</strong>: una sola variable que guarda <strong>muchos</strong> valores del mismo tipo, numerados por posición.</p>
+
+      <div class="callout analogia">
+        <span class="ic">🌎</span>
+        <p><strong>Analogía:</strong> un array es un <strong>edificio de casilleros</strong>. Una sola estructura (<code class="inline">nombres</code>), muchas casillas numeradas (<code class="inline">nombres[0]</code>, <code class="inline">nombres[1]</code>...). Cada casilla guarda un nombre.</p>
+      </div>
+
+      <h3>De variable suelta a array</h3>
+      <p>Lo único que cambia de verdad es <code class="inline">Operaciones</code>. La variable suelta se vuelve un array, y agregamos un contador <code class="inline">total</code> que dice cuántos productos hay guardados. <code class="inline">MAX</code> es la capacidad; lo definimos con <code class="inline">final</code> porque es un valor fijo que no cambia.</p>
+
+      ${code("Operaciones.java", `import java.util.Scanner;
+
+public class Operaciones {
+
+    static final int MAX = 50;
+    static String[] nombres = new String[MAX];
+    static int[] cantidades = new int[MAX];
+    static double[] precios = new double[MAX];
+    static int total = 0;
+}`)}
+
+      ${piensalo(
+        "Tenemos tres arrays separados: nombres, cantidades, precios. ¿Cómo sabe la app que nombres[0], cantidades[0] y precios[0] son del MISMO producto?",
+        "Por la posición. El acuerdo es: el producto número 0 tiene su nombre en nombres[0], su cantidad en cantidades[0] y su precio en precios[0]. Mismo índice = mismo producto. Por eso se llaman arrays paralelos: caminan juntos."
+      )}
+
+      <h3>Registrar: ahora guarda en la siguiente casilla libre</h3>
+      <p>Usamos <code class="inline">total</code> como índice: la posición donde va el próximo producto. Después de guardar, subimos <code class="inline">total</code> en uno. Antes revisamos que no esté lleno: si <code class="inline">total == MAX</code>, no cabe más.</p>
+
+      ${code("Operaciones.java", `    public static void registrar(Scanner sc) {
+        if (total == MAX) {
+            System.out.println("Inventario lleno. No se pueden agregar mas productos.");
+            return;
+        }
+        nombres[total] = Validador.leerTexto(sc, "Nombre del producto: ");
+        cantidades[total] = Validador.leerEntero(sc, "Cantidad: ");
+        precios[total] = Validador.leerDecimal(sc, "Precio unitario: ");
+        total++;
+        System.out.println("Producto registrado correctamente.");
+    }`)}
+
+      <h3>Listar: aquí brilla el ciclo <code class="inline">for</code></h3>
+      <p>Ahora "Ver producto" se vuelve "Listar inventario". Recorremos con un <code class="inline">for</code> desde 0 hasta <code class="inline">total</code> (no hasta <code class="inline">MAX</code>, o mostraríamos casillas vacías). Aquí se reúnen las dos herramientas: el <strong>array</strong> que guarda muchos, y el <strong><code class="inline">for</code></strong> que ya dominabas para recorrer.</p>
+
+      ${code("Operaciones.java", `    public static void listar() {
+        if (total == 0) {
+            System.out.println("Aun no hay productos registrados.");
+            return;
+        }
+        System.out.println("--- INVENTARIO ---");
+        for (int i = 0; i < total; i++) {
+            System.out.println((i + 1) + ". " + nombres[i]
+                    + " | cant: " + cantidades[i]
+                    + " | precio: " + precios[i]);
+        }
+    }`)}
+
+      ${piensalo(
+        "¿Por qué el for va i < total y no i < MAX o i < nombres.length?",
+        "El array tiene 50 casillas (MAX), pero quizá solo 2 están llenas. Si recorremos hasta MAX, mostramos 48 casillas vacías (null, 0, 0.0). total nos dice cuántas están realmente ocupadas. Recorremos solo lo que existe."
+      )}
+
+      <h3>Actualizar y total: ahora con índice</h3>
+      <p>Para actualizar, primero listamos, el usuario elige el <strong>número</strong> del producto, y validamos que exista. Ojo: el usuario ve "1, 2, 3" pero el array empieza en 0, por eso <code class="inline">pos - 1</code>. El valor total ahora <strong>suma</strong> el valor de todos con un ciclo acumulador.</p>
+
+      ${code("Operaciones.java", `    public static void actualizarCantidad(Scanner sc) {
+        if (total == 0) {
+            System.out.println("Aun no hay productos registrados.");
+            return;
+        }
+        listar();
+        int pos = Validador.leerEntero(sc, "Numero del producto a actualizar: ");
+        if (pos < 1 || pos > total) {
+            System.out.println("Ese numero no existe en el inventario.");
+            return;
+        }
+        cantidades[pos - 1] = Validador.leerEntero(sc, "Nueva cantidad: ");
+        System.out.println("Cantidad actualizada.");
+    }
+
+    public static void verValorTotal() {
+        if (total == 0) {
+            System.out.println("Aun no hay productos registrados.");
+            return;
+        }
+        double suma = 0;
+        for (int i = 0; i < total; i++) {
+            suma = suma + (cantidades[i] * precios[i]);
+        }
+        System.out.println("Valor total del inventario: " + suma);
+    }
+}`)}
+
+      <h3>Ajuste mínimo en Menu y App</h3>
+      <p>Solo cambia el <strong>texto</strong> de la opción 2 ("Listar inventario") y la <strong>llamada</strong> del <code class="inline">case 2</code> (<code class="inline">Operaciones.listar()</code>). El resto del director queda <strong>idéntico</strong>.</p>
+
+      <div class="callout tip">
+        <span class="ic">💡</span>
+        <p><strong>La lección de oro:</strong> como organizamos bien desde el principio, pasar de un producto a muchos tocó <strong>una sola clase</strong> a fondo. Si todo hubiera estado en un solo archivo, habría sido reescribir todo. Para esto separamos responsabilidades.</p>
+      </div>
+
+      <div class="appstate"><span class="ic">✅</span><p><strong>Así va la app:</strong> ahora maneja un inventario completo de varios productos. Vuelve a hacer commit y push con el mensaje <code class="inline">"Inventario con soporte para varios productos"</code>.</p></div>
+    `
+  },
+  {
+    id:"cierre", num:"09", title:"Cierre y puente al Módulo 2", short:"Cierre",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Bloque 9</div>
+      <h2 class="section-title">Presentación técnica y cierre</h2>
+      <h3>Cómo presentar tu proyecto</h3>
+      <p>En 2 minutos, muestra:</p>
+      <ol>
+        <li><strong>El problema</strong> que resuelve la app (en una frase de negocio).</li>
+        <li><strong>Cómo organizaste</strong> el código (las 4 clases y qué hace cada una).</li>
+        <li><strong>Una demo</strong> en vivo: registrar dos productos y ver el total.</li>
+        <li><strong>El link de GitHub.</strong></li>
+      </ol>
+
+      ${piensalo(
+        "Arrancamos el módulo con una variable. Terminamos con una app organizada en GitHub. ¿Qué hizo posible ese salto?",
+        "Las piezas fundamentales juntas: variables para guardar, operadores para calcular, condicionales para decidir, ciclos para repetir, métodos para organizar. Hoy las usaste todas a la vez en algo real. Eso es programar."
+      )}
+
+      <div class="bridge">
+        <div class="blabel">🌉 Puente hacia el Módulo 2</div>
+        <h3>De tres arrays sueltos a un objeto</h3>
+        <p>Hoy la app guarda nombre, cantidad y precio en <strong>tres arrays separados</strong> que mantenemos sincronizados a mano. Funciona, pero es frágil.</p>
+        <p>¿Y si pudiéramos guardar "un producto" como UNA sola cosa que ya trae su nombre, su cantidad y su precio juntos? Eso es un <strong>objeto</strong>. Y es exactamente donde arranca el <strong>Módulo 2: Programación Orientada a Objetos.</strong> Nos vemos allá.</p>
+      </div>
+    `
+  },
+  {
+    id:"codigo", num:"10", title:"Código completo", short:"Código completo",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Referencia</div>
+      <h2 class="section-title">Código completo (versión final)</h2>
+      <p>Los cuatro archivos de la app con soporte para varios productos, listos para copiar.</p>
+
+      ${code("App.java", `import java.util.Scanner;
+
+public class App {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int opcion = 0;
+
+        while (opcion != 5) {
+            Menu.mostrar();
+            opcion = Menu.leerOpcion(sc);
+
+            switch (opcion) {
+                case 1:
+                    Operaciones.registrar(sc);
+                    break;
+                case 2:
+                    Operaciones.listar();
+                    break;
+                case 3:
+                    Operaciones.actualizarCantidad(sc);
+                    break;
+                case 4:
+                    Operaciones.verValorTotal();
+                    break;
+                case 5:
+                    System.out.println("Gracias por usar el gestor. Hasta pronto.");
+                    break;
+                default:
+                    System.out.println("Opcion no valida. Elige entre 1 y 5.");
+            }
+        }
+        sc.close();
+    }
+}`)}
+
+      ${code("Menu.java", `import java.util.Scanner;
+
+public class Menu {
+
+    public static void mostrar() {
+        System.out.println();
+        System.out.println("=== GESTOR DE INVENTARIO ===");
+        System.out.println("1. Registrar producto");
+        System.out.println("2. Listar inventario");
+        System.out.println("3. Actualizar cantidad");
+        System.out.println("4. Ver valor total");
+        System.out.println("5. Salir");
+    }
+
+    public static int leerOpcion(Scanner sc) {
+        return Validador.leerEntero(sc, "Elige una opcion: ");
+    }
+}`)}
+
+      ${code("Validador.java", `import java.util.Scanner;
+
+public class Validador {
+
+    public static int leerEntero(Scanner sc, String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            if (sc.hasNextInt()) {
+                int valor = sc.nextInt();
+                sc.nextLine();
+                return valor;
+            } else {
+                System.out.println("Eso no es un numero entero. Intenta de nuevo.");
+                sc.nextLine();
+            }
+        }
+    }
+
+    public static double leerDecimal(Scanner sc, String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            if (sc.hasNextDouble()) {
+                double valor = sc.nextDouble();
+                sc.nextLine();
+                return valor;
+            } else {
+                System.out.println("Eso no es un numero valido. Intenta de nuevo.");
+                sc.nextLine();
+            }
+        }
+    }
+
+    public static String leerTexto(Scanner sc, String mensaje) {
+        System.out.print(mensaje);
+        return sc.nextLine();
+    }
+}`)}
+
+      ${code("Operaciones.java", `import java.util.Scanner;
+
+public class Operaciones {
+
+    static final int MAX = 50;
+    static String[] nombres = new String[MAX];
+    static int[] cantidades = new int[MAX];
+    static double[] precios = new double[MAX];
+    static int total = 0;
+
+    public static void registrar(Scanner sc) {
+        if (total == MAX) {
+            System.out.println("Inventario lleno. No se pueden agregar mas productos.");
+            return;
+        }
+        nombres[total] = Validador.leerTexto(sc, "Nombre del producto: ");
+        cantidades[total] = Validador.leerEntero(sc, "Cantidad: ");
+        precios[total] = Validador.leerDecimal(sc, "Precio unitario: ");
+        total++;
+        System.out.println("Producto registrado correctamente.");
+    }
+
+    public static void listar() {
+        if (total == 0) {
+            System.out.println("Aun no hay productos registrados.");
+            return;
+        }
+        System.out.println("--- INVENTARIO ---");
+        for (int i = 0; i < total; i++) {
+            System.out.println((i + 1) + ". " + nombres[i]
+                    + " | cant: " + cantidades[i]
+                    + " | precio: " + precios[i]);
+        }
+    }
+
+    public static void actualizarCantidad(Scanner sc) {
+        if (total == 0) {
+            System.out.println("Aun no hay productos registrados.");
+            return;
+        }
+        listar();
+        int pos = Validador.leerEntero(sc, "Numero del producto a actualizar: ");
+        if (pos < 1 || pos > total) {
+            System.out.println("Ese numero no existe en el inventario.");
+            return;
+        }
+        cantidades[pos - 1] = Validador.leerEntero(sc, "Nueva cantidad: ");
+        System.out.println("Cantidad actualizada.");
+    }
+
+    public static void verValorTotal() {
+        if (total == 0) {
+            System.out.println("Aun no hay productos registrados.");
+            return;
+        }
+        double suma = 0;
+        for (int i = 0; i < total; i++) {
+            suma = suma + (cantidades[i] * precios[i]);
+        }
+        System.out.println("Valor total del inventario: " + suma);
+    }
+}`)}
+    `
+  },
+  {
+    id:"ejercicios", num:"11", title:"Ejercicios de refuerzo", short:"Ejercicios",
+    html:`
+      <div class="eyebrow"><span class="dot"></span>Práctica</div>
+      <h2 class="section-title">Ejercicios de refuerzo</h2>
+      <p>Cada uno entrena una pieza por separado, por si quieres practicar más.</p>
+      <div class="ex-grid">
+        <div class="ex-card"><div class="ex-h"><span class="ex-badge">A</span><span class="ex-t">Solo menú</span></div><p>Una app que muestre un menú de 3 opciones y repita hasta elegir "Salir". Sin operaciones, solo el ciclo y el <code class="inline">switch</code>.</p></div>
+        <div class="ex-card"><div class="ex-h"><span class="ex-badge">B</span><span class="ex-t">Solo validación</span></div><p>Pide al usuario su edad. Si escribe algo que no es número, vuelve a preguntar. Reutiliza la idea de <code class="inline">leerEntero</code>.</p></div>
+        <div class="ex-card"><div class="ex-h"><span class="ex-badge">C</span><span class="ex-t">Solo array</span></div><p>Crea un array con 5 números fijos y recórrelo con un <code class="inline">for</code> para imprimir la suma.</p></div>
+        <div class="ex-card"><div class="ex-h"><span class="ex-badge">D</span><span class="ex-t">Mini inventario de texto</span></div><p>Un array de 3 nombres de productos. Recórrelo y muestra cada uno numerado (1, 2, 3).</p></div>
+        <div class="ex-card"><div class="ex-h"><span class="ex-badge">E</span><span class="ex-t">Acumulador</span></div><p>Pide 4 precios al usuario, guárdalos en un array y muestra el promedio.</p></div>
+        <div class="ex-card"><div class="ex-h"><span class="ex-badge">F</span><span class="ex-t">Buscar en array</span></div><p>Con el array del ejercicio D, pregunta al usuario un nombre y di si está o no en el inventario (usa una bandera <code class="inline">boolean</code>).</p></div>
+      </div>
+    `
+  }
+];
+
+/* ============================================================
+   HELPERS de render (definidos antes de usarse arriba via hoisting)
+   ============================================================ */
+function piensalo(q, a){
+  const id = "ans-" + Math.random().toString(36).slice(2,9);
+  return `
+    <div class="piensalo">
+      <div class="pq"><span class="ic">🤔</span><div class="qt">${q}</div></div>
+      <button class="reveal-btn" data-target="${id}">💡 Ver respuesta</button>
+      <div class="answer" id="${id}"><p><span class="tag">Respuesta</span>${a}</p></div>
+    </div>`;
+}
+
+function esc(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+/* Resaltador de sintaxis simple para Java/bash/text.
+   Usa centinelas de uso privado para no corromper tokens ya marcados. */
+function highlight(raw, lang){
+  let s = esc(raw);
+  const S = "\uE000", E = "\uE001"; // sentinelas
+  const wrap = (cls, txt) => S + cls + "|" + txt + E;
+
+  if(lang === "text" || lang === "bash"){
+    // comentarios bash
+    s = s.replace(/(#[^\n]*)/g, (m)=>wrap("tok-com", m));
+    // strings
+    s = s.replace(/("[^"]*")/g, (m)=>wrap("tok-str", m));
+    if(lang === "bash"){
+      s = s.replace(/\b(git|javac|java|cd|mkdir)\b/g, (m)=>wrap("tok-fn", m));
+    }
+  } else {
+    // comentarios //
+    s = s.replace(/(\/\/[^\n]*)/g, (m)=>wrap("tok-com", m));
+    // strings
+    s = s.replace(/("(?:[^"\\]|\\.)*")/g, (m)=>wrap("tok-str", m));
+    // keywords
+    s = s.replace(/\b(public|private|static|final|class|void|return|new|while|for|if|else|switch|case|break|default|import|true|false|null)\b/g, (m)=>wrap("tok-key", m));
+    // tipos
+    s = s.replace(/\b(int|double|String|boolean|Scanner|System|Math|char|long|float)\b/g, (m)=>wrap("tok-type", m));
+    // números
+    s = s.replace(/\b(\d+\.?\d*)\b/g, (m)=>wrap("tok-num", m));
+  }
+  // expandir sentinelas a spans
+  s = s.replace(new RegExp(S + "([a-z-]+)\\|", "g"), '<span class="$1">')
+       .replace(new RegExp(E, "g"), '</span>');
+  return s;
+}
+
+function code(file, raw, lang){
+  lang = lang || "java";
+  const id = "code-" + Math.random().toString(36).slice(2,9);
+  const isDot = file.startsWith(".");
+  const fileLabel = isDot
+    ? `<span class="dotfile">${file}</span>`
+    : file;
+  const langLabel = lang === "bash" ? "Terminal" : (lang === "text" ? "Texto" : "Java");
+  return `
+    <div class="codeblock">
+      <div class="code-head">
+        <span class="file">${file === "terminal" ? "▸ terminal" : "📄 " + fileLabel}</span>
+        <span class="lang">${langLabel}</span>
+        <button class="copy-btn" data-code="${id}">⧉ Copiar</button>
+      </div>
+      <pre><code id="${id}" data-raw="${esc(raw).replace(/"/g,'&quot;')}">${highlight(raw, lang)}</code></pre>
+    </div>`;
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const content = document.getElementById("content");
+const nav = document.getElementById("nav");
+
+SECTIONS.forEach((sec, i) => {
+  const el = document.createElement("section");
+  el.className = "section";
+  el.id = sec.id;
+  el.dataset.index = i;
+  el.innerHTML = sec.html;
+  content.appendChild(el);
+
+  const a = document.createElement("a");
+  a.href = "#" + sec.id;
+  a.dataset.index = i;
+  a.innerHTML = `<span class="num">${sec.num}</span><span>${sec.short}</span>`;
+  nav.appendChild(a);
+});
+
+/* ============================================================
+   COPY
+   ============================================================ */
+document.addEventListener("click", (e)=>{
+  const btn = e.target.closest(".copy-btn");
+  if(!btn) return;
+  const codeEl = document.getElementById(btn.dataset.code);
+  const raw = codeEl.getAttribute("data-raw")
+    .replace(/&quot;/g,'"').replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&");
+  navigator.clipboard.writeText(raw).then(()=>{
+    btn.classList.add("copied");
+    btn.textContent = "✓ Copiado";
+    setTimeout(()=>{ btn.classList.remove("copied"); btn.textContent="⧉ Copiar"; }, 1600);
+  });
+});
+
+/* ============================================================
+   PIÉNSALO toggle
+   ============================================================ */
+document.addEventListener("click", (e)=>{
+  const btn = e.target.closest(".reveal-btn");
+  if(!btn) return;
+  const ans = document.getElementById(btn.dataset.target);
+  const open = ans.classList.toggle("open");
+  btn.innerHTML = open ? "🙈 Ocultar respuesta" : "💡 Ver respuesta";
+});
+
+/* ============================================================
+   NAV: sidebar toggle, scroll-spy, progreso
+   ============================================================ */
+const body = document.body;
+const menuToggle = document.getElementById("menuToggle");
+const backdrop = document.getElementById("backdrop");
+const navLinks = [...nav.querySelectorAll("a")];
+const sections = [...content.querySelectorAll(".section")];
+const crumbText = document.getElementById("crumbText");
+const progFill = document.getElementById("progFill");
+const progPct = document.getElementById("progPct");
+const visited = new Set();
+
+// estado inicial sidebar: abierto en desktop, cerrado en móvil
+function initSidebar(){
+  if(window.innerWidth <= 920){ body.classList.add("nav-closed"); }
+  else { body.classList.remove("nav-closed"); }
+}
+initSidebar();
+
+menuToggle.addEventListener("click", ()=> body.classList.toggle("nav-closed"));
+backdrop.addEventListener("click", ()=> body.classList.add("nav-closed"));
+navLinks.forEach(a=>a.addEventListener("click", ()=>{
+  if(window.innerWidth <= 920) body.classList.add("nav-closed");
+}));
+
+function setActive(idx){
+  navLinks.forEach(a=>a.classList.remove("active"));
+  if(navLinks[idx]){
+    navLinks[idx].classList.add("active");
+    crumbText.textContent = SECTIONS[idx].title;
+  }
+  for(let k=0;k<=idx;k++){ visited.add(k); }
+  navLinks.forEach((a,k)=>{ if(visited.has(k)) a.classList.add("done"); });
+  const pct = Math.round((visited.size / SECTIONS.length) * 100);
+  progFill.style.width = pct + "%";
+  progPct.textContent = pct + "%";
+}
+
+const spy = new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      setActive(parseInt(en.target.dataset.index));
+    }
+  });
+}, { rootMargin:"-45% 0px -50% 0px", threshold:0 });
+sections.forEach(s=>spy.observe(s));
+setActive(0);
+
+/* ============================================================
+   MODO PRESENTACIÓN
+   ============================================================ */
+let presenting = false;
+let pIndex = 0;
+const presentBtn = document.getElementById("presentBtn");
+const hudCount = document.getElementById("hudCount");
+
+function showSlide(i){
+  pIndex = Math.max(0, Math.min(SECTIONS.length-1, i));
+  sections.forEach((s,k)=> s.classList.toggle("present-active", k===pIndex));
+  hudCount.textContent = (pIndex+1) + " / " + SECTIONS.length;
+  document.querySelector(".section.present-active")?.scrollIntoView({block:"start"});
+  window.scrollTo(0,0);
+}
+function enterPresent(){
+  presenting = true; body.classList.add("present");
+  // arranca en la sección visible actual
+  let cur = 0;
+  navLinks.forEach((a,k)=>{ if(a.classList.contains("active")) cur=k; });
+  showSlide(cur);
+}
+function exitPresent(){
+  presenting = false; body.classList.remove("present");
+  sections.forEach(s=>s.classList.remove("present-active"));
+  document.getElementById(SECTIONS[pIndex].id)?.scrollIntoView({block:"start"});
+}
+presentBtn.addEventListener("click", enterPresent);
+
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "p" || e.key === "P"){
+    const tag = (e.target.tagName||"").toLowerCase();
+    if(tag==="input"||tag==="textarea") return;
+    presenting ? exitPresent() : enterPresent();
+  }
+  if(!presenting) return;
+  if(e.key === "ArrowRight" || e.key === " " || e.key === "PageDown"){ e.preventDefault(); showSlide(pIndex+1); }
+  if(e.key === "ArrowLeft" || e.key === "PageUp"){ e.preventDefault(); showSlide(pIndex-1); }
+  if(e.key === "Escape"){ exitPresent(); }
+  if(e.key === "Home"){ showSlide(0); }
+  if(e.key === "End"){ showSlide(SECTIONS.length-1); }
+});
+
+window.addEventListener("resize", ()=>{ if(!presenting) initSidebar(); });
+</script>
+</body>
+</html>
