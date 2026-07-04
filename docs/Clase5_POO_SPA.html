@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<!--
+============================================================================
+  © 2026 Ana Alvarado — Todos los derechos reservados.
+  Educadora Tech & Desarrolladora Full Stack.
+  Material de autoría exclusiva. Prohibida su reproducción, redistribución,
+  modificación o uso fuera del contexto de clase sin autorización escrita.
+============================================================================
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Ana Alvarado">
+<meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+<title>Clase 5 · POO moderna y encapsulación real · Java AI Backend Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --principal:#5418CC;
+    --vibrante:#6018F0;
+    --oscuro:#3C1884;
+    --acento-claro:#9B6BFF;
+    --bg:#0c0a14;
+    --bg-2:#12101d;
+    --card:#181528;
+    --card-2:#1f1b32;
+    --linea:#2a2540;
+    --texto:#e8e6f0;
+    --texto-mute:#a29fb8;
+    --texto-dim:#726f88;
+    --ok:#3ecf8e;
+    --warn:#f0b429;
+    --err:#f0506e;
+    --mono:'JetBrains Mono',monospace;
+    --sans:'Inter',system-ui,sans-serif;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  html{scroll-behavior:smooth}
+
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--texto);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    user-select:none;
+  }
+
+  /* permitir seleccionar solo en código */
+  pre,pre *{user-select:text}
+
+  /* ===== barra de progreso superior ===== */
+  #progreso-top{
+    position:fixed;top:0;left:0;height:3px;width:0%;
+    background:linear-gradient(90deg,var(--vibrante),var(--acento-claro));
+    z-index:200;transition:width .3s ease;
+    box-shadow:0 0 12px rgba(96,24,240,.6);
+  }
+
+  /* ===== layout ===== */
+  .layout{display:flex;min-height:100vh}
+
+  /* ===== sidebar ===== */
+  .sidebar{
+    width:280px;flex-shrink:0;
+    background:var(--bg-2);
+    border-right:1px solid var(--linea);
+    position:fixed;top:0;left:0;bottom:0;
+    display:flex;flex-direction:column;
+    z-index:100;
+    transition:transform .3s ease;
+  }
+  .side-head{
+    padding:22px 22px 18px;
+    border-bottom:1px solid var(--linea);
+  }
+  .badge-curso{
+    font-family:var(--mono);font-size:10px;font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;
+    color:var(--acento-claro);
+    display:inline-block;margin-bottom:10px;
+    padding:3px 9px;border:1px solid var(--oscuro);border-radius:20px;
+    background:rgba(96,24,240,.08);
+  }
+  .side-head h1{
+    font-size:17px;font-weight:800;line-height:1.3;letter-spacing:-.01em;
+  }
+  .side-head .clase-num{color:var(--acento-claro)}
+  .side-head p{
+    font-size:11.5px;color:var(--texto-dim);margin-top:6px;
+    font-family:var(--mono);
+  }
+
+  .side-progreso{padding:14px 22px;border-bottom:1px solid var(--linea)}
+  .side-progreso .fila{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:11px;color:var(--texto-mute);margin-bottom:7px;
+    font-family:var(--mono);letter-spacing:.03em;
+  }
+  .barra{height:6px;background:var(--card-2);border-radius:6px;overflow:hidden}
+  .barra > i{
+    display:block;height:100%;width:0%;
+    background:linear-gradient(90deg,var(--principal),var(--acento-claro));
+    border-radius:6px;transition:width .4s ease;
+  }
+
+  nav{flex:1;overflow-y:auto;padding:12px 0}
+  nav::-webkit-scrollbar{width:6px}
+  nav::-webkit-scrollbar-thumb{background:var(--linea);border-radius:6px}
+  .nav-item{
+    display:flex;align-items:center;gap:11px;
+    padding:9px 22px;cursor:pointer;
+    font-size:13.5px;color:var(--texto-mute);
+    border-left:3px solid transparent;
+    transition:all .18s ease;
+  }
+  .nav-item .ico{font-size:16px;width:22px;text-align:center;flex-shrink:0}
+  .nav-item .txt{flex:1;line-height:1.3}
+  .nav-item:hover{background:var(--card);color:var(--texto)}
+  .nav-item.activo{
+    background:linear-gradient(90deg,rgba(96,24,240,.14),transparent);
+    color:#fff;border-left-color:var(--vibrante);font-weight:600;
+  }
+  .nav-item .check{font-size:11px;color:var(--ok);opacity:0;transition:opacity .2s}
+  .nav-item.visto .check{opacity:1}
+
+  .side-foot{
+    padding:14px 22px;border-top:1px solid var(--linea);
+    font-size:10.5px;color:var(--texto-dim);font-family:var(--mono);
+  }
+  .side-foot a{color:var(--acento-claro);text-decoration:none}
+
+  /* ===== contenido ===== */
+  .contenido{
+    flex:1;margin-left:280px;
+    padding:56px 40px 90px;
+    min-height:100vh;
+  }
+  .col{max-width:940px;margin:0 auto} /* CENTRADO clave */
+
+  .seccion{display:none;animation:fade .4s ease}
+  .seccion.activa{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;font-weight:600;
+    letter-spacing:.16em;text-transform:uppercase;
+    color:var(--acento-claro);margin-bottom:12px;
+    display:flex;align-items:center;gap:9px;
+  }
+  .eyebrow .n{
+    background:var(--oscuro);color:#fff;
+    width:26px;height:26px;border-radius:7px;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:12px;
+  }
+  h2.titulo{
+    font-size:33px;font-weight:800;letter-spacing:-.02em;
+    line-height:1.15;margin-bottom:14px;
+  }
+  h2.titulo .em{font-size:30px;margin-right:10px}
+  .subtitulo{
+    color:var(--texto-mute);font-size:16px;max-width:640px;
+    margin-bottom:34px;
+  }
+
+  h3{
+    font-size:19px;font-weight:700;letter-spacing:-.01em;
+    margin:30px 0 12px;display:flex;align-items:center;gap:9px;
+  }
+  h3 .h3ico{font-size:18px}
+  h4{font-size:15px;font-weight:700;margin:20px 0 8px;color:var(--texto)}
+
+  p{margin-bottom:13px;color:var(--texto)}
+  p.mute{color:var(--texto-mute)}
+  strong{color:#fff;font-weight:700}
+  code.inline{
+    font-family:var(--mono);font-size:.88em;
+    background:var(--card-2);color:var(--acento-claro);
+    padding:2px 7px;border-radius:5px;border:1px solid var(--linea);
+  }
+
+  /* ===== tarjetas ===== */
+  .card{
+    background:var(--card);border:1px solid var(--linea);
+    border-radius:14px;padding:22px 24px;margin:16px 0;
+  }
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+
+  /* definición técnica + vida real */
+  .def{
+    display:grid;grid-template-columns:1fr 1fr;gap:0;
+    border:1px solid var(--linea);border-radius:14px;overflow:hidden;margin:16px 0;
+  }
+  .def > div{padding:20px 22px}
+  .def .tec{background:var(--card);border-right:1px solid var(--linea)}
+  .def .vida{background:var(--card-2)}
+  .def .rot{
+    font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;gap:7px;
+  }
+  .def .tec .rot{color:var(--acento-claro)}
+  .def .vida .rot{color:var(--ok)}
+
+  /* banner tip */
+  .tip{
+    display:flex;gap:14px;align-items:flex-start;
+    background:linear-gradient(135deg,rgba(96,24,240,.12),rgba(96,24,240,.03));
+    border:1px solid var(--oscuro);border-left:4px solid var(--vibrante);
+    border-radius:12px;padding:16px 20px;margin:18px 0;
+  }
+  .tip.ok{background:linear-gradient(135deg,rgba(62,207,142,.1),transparent);
+    border-color:rgba(62,207,142,.3);border-left-color:var(--ok)}
+  .tip.warn{background:linear-gradient(135deg,rgba(240,180,41,.1),transparent);
+    border-color:rgba(240,180,41,.3);border-left-color:var(--warn)}
+  .tip.err{background:linear-gradient(135deg,rgba(240,80,110,.1),transparent);
+    border-color:rgba(240,80,110,.3);border-left-color:var(--err)}
+  .tip .tico{font-size:22px;flex-shrink:0;line-height:1.2}
+  .tip .tcont{flex:1;font-size:14px}
+  .tip .tcont b{color:#fff}
+
+  /* ===== bloques de código ===== */
+  .archivo{
+    font-family:var(--mono);font-size:11.5px;color:var(--texto-dim);
+    margin:20px 0 -8px;display:flex;align-items:center;gap:8px;
+    letter-spacing:.02em;
+  }
+  .archivo .ar-ico{color:var(--acento-claro)}
+  .archivo b{color:var(--texto-mute);font-weight:600}
+
+  .codebox{
+    background:#0a0812;border:1px solid var(--linea);
+    border-radius:12px;overflow:hidden;margin:12px 0 18px;
+    position:relative;
+  }
+  .code-top{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:8px 14px;background:#0f0c1a;border-bottom:1px solid var(--linea);
+  }
+  .code-top .lang{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--texto-dim);
+  }
+  .code-top .dots{display:flex;gap:6px}
+  .code-top .dots i{width:10px;height:10px;border-radius:50%;display:block}
+  .code-top .dots i:nth-child(1){background:#f0506e}
+  .code-top .dots i:nth-child(2){background:#f0b429}
+  .code-top .dots i:nth-child(3){background:#3ecf8e}
+  .btn-copy{
+    font-family:var(--mono);font-size:11px;font-weight:600;
+    background:var(--card-2);color:var(--acento-claro);
+    border:1px solid var(--linea);border-radius:6px;
+    padding:4px 11px;cursor:pointer;transition:all .15s;
+  }
+  .btn-copy:hover{background:var(--oscuro);color:#fff;border-color:var(--vibrante)}
+  .btn-copy.ok{color:var(--ok);border-color:var(--ok)}
+  pre{
+    margin:0;padding:16px 18px;overflow-x:auto;
+    font-family:var(--mono);font-size:13px;line-height:1.7;
+  }
+  pre::-webkit-scrollbar{height:8px}
+  pre::-webkit-scrollbar-thumb{background:var(--linea);border-radius:8px}
+  pre code{font-family:var(--mono);white-space:pre}
+
+  /* syntax highlight */
+  .tk{color:#c792ea}   /* keyword */
+  .ty{color:#82aaff}   /* tipo/clase */
+  .st{color:#c3e88d}   /* string */
+  .cm{color:#5f6a8a;font-style:italic} /* comentario */
+  .nm{color:#f78c6c}   /* número */
+  .mt{color:#82aaff}   /* método */
+  .pl{color:#e8e6f0}   /* plain */
+
+  /* salida de consola */
+  .salida{
+    background:#0a0812;border:1px solid var(--linea);border-left:3px solid var(--ok);
+    border-radius:10px;padding:14px 18px;margin:12px 0 18px;
+    font-family:var(--mono);font-size:12.5px;line-height:1.75;color:#b8f0d4;
+    white-space:pre-wrap;
+  }
+  .salida .lbl{
+    color:var(--texto-dim);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    display:block;margin-bottom:8px;
+  }
+  .salida .err-line{color:var(--err)}
+
+  /* ===== piénsalo colapsable ===== */
+  .piensa{
+    background:var(--card-2);border:1px solid var(--linea);
+    border-radius:12px;margin:18px 0;overflow:hidden;
+  }
+  .piensa summary{
+    padding:16px 20px;cursor:pointer;font-weight:600;font-size:15px;
+    display:flex;align-items:center;gap:11px;list-style:none;
+    transition:background .15s;
+  }
+  .piensa summary::-webkit-details-marker{display:none}
+  .piensa summary:hover{background:var(--card)}
+  .piensa summary .q-ico{font-size:19px}
+  .piensa summary .flecha{margin-left:auto;color:var(--texto-dim);
+    transition:transform .25s;font-size:13px}
+  .piensa[open] summary .flecha{transform:rotate(90deg)}
+  .piensa .resp{
+    padding:0 20px 18px 51px;font-size:14.5px;color:var(--texto);
+    border-top:1px solid var(--linea);padding-top:15px;margin-top:2px;
+  }
+  .piensa .resp .ver{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ok);display:block;margin-bottom:7px;
+  }
+
+  /* tabla modificadores */
+  .tabla{width:100%;border-collapse:collapse;margin:16px 0;
+    border:1px solid var(--linea);border-radius:10px;overflow:hidden}
+  .tabla th,.tabla td{padding:11px 16px;text-align:left;font-size:13.5px;
+    border-bottom:1px solid var(--linea)}
+  .tabla th{background:var(--card-2);font-family:var(--mono);font-size:11px;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--acento-claro)}
+  .tabla td:first-child code{font-family:var(--mono);color:var(--acento-claro);font-weight:600}
+  .tabla tr:last-child td{border-bottom:none}
+  .tabla .fut{color:var(--texto-dim);font-size:12px}
+
+  /* aviso copyright */
+  .aviso-cr{
+    background:var(--card);border:1px solid var(--linea);border-left:4px solid var(--vibrante);
+    border-radius:12px;padding:18px 22px;margin:24px 0;
+  }
+  .aviso-cr .cr-tit{
+    font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;
+    color:var(--acento-claro);display:flex;align-items:center;gap:9px;margin-bottom:9px;
+  }
+  .aviso-cr p{font-size:13px;color:var(--texto-mute);margin:0}
+
+  /* chips / evolución */
+  .evo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+  .chip{
+    font-family:var(--mono);font-size:12px;padding:6px 13px;border-radius:8px;
+    background:var(--card-2);border:1px solid var(--linea);color:var(--texto-mute);
+  }
+  .chip.on{background:rgba(96,24,240,.14);border-color:var(--vibrante);color:#fff;font-weight:600}
+  .evo .arrow{color:var(--texto-dim);font-size:14px}
+
+  /* footer */
+  .footer{
+    max-width:940px;margin:60px auto 0;padding-top:22px;
+    border-top:1px solid var(--linea);
+    font-size:12px;color:var(--texto-dim);text-align:center;line-height:1.9;
+  }
+  .footer a{color:var(--acento-claro);text-decoration:none}
+
+  /* marca de agua */
+  .watermark{
+    position:fixed;bottom:12px;right:16px;z-index:80;
+    font-family:var(--mono);font-size:11px;color:var(--texto-dim);
+    opacity:.4;pointer-events:none;
+  }
+
+  /* nav inferior secciones */
+  .nav-sec{
+    display:flex;justify-content:space-between;gap:14px;
+    max-width:940px;margin:34px auto 0;
+  }
+  .nav-sec button{
+    flex:1;background:var(--card);border:1px solid var(--linea);
+    border-radius:12px;padding:14px 18px;cursor:pointer;text-align:left;
+    color:var(--texto);transition:all .18s;font-family:var(--sans);
+  }
+  .nav-sec button:hover:not(:disabled){border-color:var(--vibrante);background:var(--card-2)}
+  .nav-sec button:disabled{opacity:.35;cursor:not-allowed}
+  .nav-sec button.next{text-align:right}
+  .nav-sec .dir{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--texto-dim)}
+  .nav-sec .lbl{font-size:14px;font-weight:600;margin-top:3px;color:var(--texto)}
+
+  /* botón hamburguesa móvil */
+  .menu-btn{
+    display:none;position:fixed;top:14px;left:14px;z-index:150;
+    background:var(--card);border:1px solid var(--linea);border-radius:10px;
+    width:44px;height:44px;font-size:20px;color:var(--texto);cursor:pointer;
+  }
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:90}
+
+  /* pista modo presentación */
+  .pista-pres{
+    max-width:940px;margin:0 auto 22px;
+    font-family:var(--mono);font-size:11.5px;color:var(--texto-dim);
+    display:flex;align-items:center;gap:8px;
+  }
+  .pista-pres kbd{
+    background:var(--card-2);border:1px solid var(--linea);border-radius:5px;
+    padding:2px 8px;font-family:var(--mono);color:var(--acento-claro);font-size:11px;
+  }
+
+  /* ===== modo presentación ===== */
+  body.presentacion .sidebar,
+  body.presentacion .menu-btn,
+  body.presentacion .watermark,
+  body.presentacion .pista-pres,
+  body.presentacion .nav-sec{display:none}
+  body.presentacion .contenido{margin-left:0;padding:64px 40px;
+    display:flex;align-items:center;min-height:100vh}
+  body.presentacion .col{margin:0 auto;width:100%}
+  body.presentacion h2.titulo{font-size:40px}
+  body.presentacion .indic-pres{display:flex}
+
+  .indic-pres{
+    display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    z-index:150;align-items:center;gap:14px;
+    background:var(--card);border:1px solid var(--linea);border-radius:30px;
+    padding:8px 18px;font-family:var(--mono);font-size:12px;color:var(--texto-mute);
+  }
+  .indic-pres b{color:var(--acento-claro)}
+  .indic-pres .esc{font-size:10.5px;color:var(--texto-dim)}
+
+  /* responsive */
+  @media(max-width:860px){
+    .sidebar{transform:translateX(-100%)}
+    .sidebar.abierta{transform:translateX(0)}
+    .contenido{margin-left:0;padding:70px 18px 70px}
+    .menu-btn{display:block}
+    .sidebar.abierta ~ .overlay,.overlay.on{display:block}
+    .grid-2,.grid-3,.def{grid-template-columns:1fr}
+    .def .tec{border-right:none;border-bottom:1px solid var(--linea)}
+    h2.titulo{font-size:26px}
+    .watermark{display:none}
+    .nav-sec{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+
+<div id="progreso-top"></div>
+<button class="menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="overlay" onclick="toggleSidebar()"></div>
+
+<div class="layout">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">
+      <span class="badge-curso">Java AI Backend · Módulo 2</span>
+      <h1><span class="clase-num">Clase 5 ·</span> POO moderna y encapsulación real</h1>
+      <p>Clases, objetos y datos protegidos</p>
+    </div>
+
+    <div class="side-progreso">
+      <div class="fila"><span>Progreso</span><span id="pct">0%</span></div>
+      <div class="barra"><i id="barra-prog"></i></div>
+    </div>
+
+    <nav id="nav"></nav>
+
+    <div class="side-foot">
+      © 2026 Ana Alvarado<br>
+      <a href="https://linkedin.com/in/ana-alvarado-instructora-full-stack" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </aside>
+
+  <!-- ===================== CONTENIDO ===================== -->
+  <main class="contenido">
+    <div class="col">
+      <div class="pista-pres">
+        <span>💡 Presiona</span><kbd>P</kbd><span>para modo presentación · flechas para avanzar · </span><kbd>Esc</kbd><span>para salir</span>
+      </div>
+      <div id="secciones"></div>
+
+      <div class="nav-sec" id="navsec">
+        <button class="prev" onclick="mover(-1)"><span class="dir">← Anterior</span><span class="lbl" id="lbl-prev">—</span></button>
+        <button class="next" onclick="mover(1)"><span class="dir">Siguiente →</span><span class="lbl" id="lbl-next">—</span></button>
+      </div>
+
+      <footer class="footer">
+        © 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados<br>
+        <a href="https://linkedin.com/in/ana-alvarado-instructora-full-stack" target="_blank" rel="noopener">linkedin.com/in/ana-alvarado-instructora-full-stack</a>
+      </footer>
+    </div>
+  </main>
+</div>
+
+<div class="watermark">© 2026 Ana Alvarado</div>
+<div class="indic-pres">
+  <span>Diapositiva <b id="pres-num">1</b> / <span id="pres-total">1</span></span>
+  <span class="esc">Esc para salir</span>
+</div>
+
+<script>
+/* ============================================================
+   © 2026 Ana Alvarado — Todos los derechos reservados.
+   Material de autoría exclusiva. Prohibida su reproducción.
+   ============================================================ */
+
+/* ---------- datos de secciones (para nav + presentación) ---------- */
+const SECCIONES = [
+  {id:'intro',   ico:'🚀', titulo:'¿Por qué nace la POO?'},
+  {id:'clase-obj', ico:'🧩', titulo:'Clase y objeto'},
+  {id:'atrib',   ico:'📦', titulo:'Atributos y métodos'},
+  {id:'constr',  ico:'🏗️', titulo:'Constructores'},
+  {id:'encap',   ico:'🔐', titulo:'Encapsulación real'},
+  {id:'tostring',ico:'🖨️', titulo:'toString()'},
+  {id:'prueba',  ico:'✅', titulo:'La cuenta en acción'},
+  {id:'ejercicio',ico:'🎯', titulo:'Practica y explora'},
+];
+
+let actual = 0;
+
+/* ---------- render de nav lateral ---------- */
+const nav = document.getElementById('nav');
+SECCIONES.forEach((s,i)=>{
+  const d = document.createElement('div');
+  d.className='nav-item'+(i===0?' activo':'');
+  d.dataset.i=i;
+  d.innerHTML=`<span class="ico">${s.ico}</span><span class="txt">${s.titulo}</span><span class="check">✓</span>`;
+  d.onclick=()=>irA(i);
+  nav.appendChild(d);
+});
+document.getElementById('pres-total').textContent=SECCIONES.length;
+
+/* ---------- navegación ---------- */
+function irA(i){
+  if(i<0||i>=SECCIONES.length) return;
+  document.querySelectorAll('.seccion')[actual]?.classList.remove('activa');
+  document.querySelectorAll('.nav-item')[actual]?.classList.remove('activo');
+  actual=i;
+  const secs=document.querySelectorAll('.seccion');
+  secs[actual].classList.add('activa');
+  const items=document.querySelectorAll('.nav-item');
+  items[actual].classList.add('activo');
+  items[actual].classList.add('visto');
+  actualizarProgreso();
+  actualizarNavSec();
+  document.getElementById('pres-num').textContent=actual+1;
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(window.innerWidth<=860) cerrarSidebar();
+}
+function mover(d){irA(actual+d)}
+
+function actualizarNavSec(){
+  const prev=document.querySelector('.nav-sec .prev'), next=document.querySelector('.nav-sec .next');
+  const lp=document.getElementById('lbl-prev'), ln=document.getElementById('lbl-next');
+  prev.disabled=actual===0; next.disabled=actual===SECCIONES.length-1;
+  lp.textContent=actual>0?SECCIONES[actual-1].titulo:'—';
+  ln.textContent=actual<SECCIONES.length-1?SECCIONES[actual+1].titulo:'—';
+}
+
+function actualizarProgreso(){
+  const vistas=document.querySelectorAll('.nav-item.visto').length;
+  const pct=Math.round(vistas/SECCIONES.length*100);
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('barra-prog').style.width=pct+'%';
+  document.getElementById('progreso-top').style.width=((actual+1)/SECCIONES.length*100)+'%';
+}
+
+/* ---------- sidebar móvil ---------- */
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('abierta');
+  document.querySelector('.overlay').classList.toggle('on');
+}
+function cerrarSidebar(){
+  document.getElementById('sidebar').classList.remove('abierta');
+  document.querySelector('.overlay').classList.remove('on');
+}
+
+/* ---------- modo presentación ---------- */
+let enPres=false;
+function togglePres(){
+  enPres=!enPres;
+  document.body.classList.toggle('presentacion',enPres);
+  if(enPres && document.documentElement.requestFullscreen){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  }else if(!enPres && document.fullscreenElement){
+    document.exitFullscreen().catch(()=>{});
+  }
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='p'||e.key==='P'){
+    if(!/input|textarea/i.test(document.activeElement.tagName)) togglePres();
+  }
+  if(e.key==='Escape'&&enPres) togglePres();
+  if(e.key==='ArrowRight'||(enPres&&e.key===' ')){e.preventDefault();mover(1);}
+  if(e.key==='ArrowLeft'){e.preventDefault();mover(-1);}
+});
+
+/* ---------- copiar código ---------- */
+function copiar(btn){
+  const code=btn.closest('.codebox').querySelector('code').innerText;
+  navigator.clipboard.writeText(code).then(()=>{
+    btn.textContent='✓ Copiado'; btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('ok');},1600);
+  });
+}
+
+/* ---------- disuasión de copia (no bloqueo real) ---------- */
+document.addEventListener('contextmenu',e=>{
+  if(!e.target.closest('pre')) e.preventDefault();
+});
+
+/* ---------- consola: autoría ---------- */
+console.log('%c© 2026 Ana Alvarado','color:#9B6BFF;font-weight:bold;font-size:16px');
+console.log('%cEducadora Tech & Desarrolladora Full Stack — Todos los derechos reservados','color:#a29fb8');
+console.log('%cEste material es de autoría exclusiva. Prohibida su reproducción o redistribución sin autorización.','color:#726f88');
+
+/* init */
+document.querySelector('.nav-item').classList.add('visto');
+actualizarProgreso();
+actualizarNavSec();
+</script>
+
+<!-- El contenido de secciones se inyecta aquí para mantener el <script> arriba legible -->
+<script>
+const HTML = `
+<!-- ============ 1. INTRO ============ -->
+<section class="seccion activa" id="s-intro">
+  <div class="eyebrow"><span class="n">01</span> Introducción</div>
+  <h2 class="titulo"><span class="em">🚀</span>¿Por qué nace la Programación Orientada a Objetos?</h2>
+  <p class="subtitulo">Hasta ahora guardabas datos sueltos. Hoy vas a aprender a modelar el software como se ve el mundo real: cosas que tienen datos y comportamiento, todo junto.</p>
+
+  <div class="aviso-cr">
+    <div class="cr-tit">© AVISO DE DERECHOS DE AUTOR</div>
+    <p>Este material es de <strong>autoría exclusiva de Ana Alvarado</strong> y su acceso está limitado a las y los estudiantes de esta cohorte. Queda <strong>prohibida su reproducción, redistribución o uso fuera de clase</strong> sin autorización escrita de la autora.</p>
+  </div>
+
+  <h3><span class="h3ico">🏦</span>Piensa en un problema real</h3>
+  <p>Imagina un banco con <strong>50.000 clientes</strong>. De cada uno guardas su nombre, su número de cuenta y su saldo. Con lo que ya sabes, la salida más natural sería usar <strong>arreglos paralelos</strong>: uno para nombres, otro para saldos, otro para números de cuenta.</p>
+
+  <div class="tip warn">
+    <span class="tico">⚠️</span>
+    <div class="tcont"><b>El problema de los arreglos paralelos:</b> el dato de un mismo cliente queda repartido en tres lugares distintos, unidos solo por la posición del índice. Si un arreglo se desordena, el saldo de una persona termina en la cuenta de otra.</div>
+  </div>
+
+  <details class="piensa">
+    <summary><span class="q-ico">🤔</span> ¿Cómo organizarías los datos de esos 50.000 clientes? <span class="flecha">▶</span></summary>
+    <div class="resp">
+      <span class="ver">Ver explicación</span>
+      Sí se puede con arreglos paralelos, pero es frágil: cada dato de una persona vive separado y todo depende de que el índice esté perfectamente sincronizado. Lo ideal es que cada cliente sea <strong>una sola cosa</strong> que agrupe sus propios datos. Esa "cosa" es lo que en POO llamamos un <strong>objeto</strong>.
+    </div>
+  </details>
+
+  <h3><span class="h3ico">💡</span>La idea que lo cambia todo</h3>
+  <p>En el mundo real, una cuenta bancaria no es "un nombre por un lado y un saldo por otro". Es <strong>una sola cosa</strong> que tiene datos (titular, saldo) <strong>y</strong> comportamientos (depositar, retirar), todo junto.</p>
+  <p>La <strong>Programación Orientada a Objetos (POO)</strong> nace justo de esa idea: modelar el software como vemos el mundo, agrupando datos y comportamiento en una sola unidad.</p>
+
+  <div class="tip">
+    <span class="tico">🧵</span>
+    <div class="tcont"><b>Hilo conductor de hoy:</b> vamos a construir, paso a paso, una clase <code style="font-family:var(--mono);color:#9B6BFF">CuentaBancaria</code> completa y protegida. Cada tema le suma una capacidad nueva.</div>
+  </div>
+</section>
+
+<!-- ============ 2. CLASE Y OBJETO ============ -->
+<section class="seccion" id="s-clase-obj">
+  <div class="eyebrow"><span class="n">02</span> Fundamentos</div>
+  <h2 class="titulo"><span class="em">🧩</span>Clase y objeto</h2>
+  <p class="subtitulo">La distinción más importante de la POO: el molde no es lo mismo que la cosa fabricada con ese molde.</p>
+
+  <div class="def">
+    <div class="tec">
+      <div class="rot">◆ Definición técnica</div>
+      <p style="margin:0"><strong>Clase:</strong> la plantilla o molde que define cómo son y qué pueden hacer los objetos de un tipo.<br><br><strong>Objeto:</strong> una instancia concreta creada a partir de una clase.</p>
+    </div>
+    <div class="vida">
+      <div class="rot">● En la vida real</div>
+      <p style="margin:0">La <strong>clase</strong> es el <strong>plano de un apartamento</strong>: define las habitaciones, dónde va la cocina. El plano no es un lugar donde vivir.<br><br>El <strong>objeto</strong> es el <strong>apartamento ya construido</strong>. Del mismo plano se levantan muchos, cada uno con sus propios habitantes.</p>
+    </div>
+  </div>
+
+  <div class="tip">
+    <span class="tico">🔑</span>
+    <div class="tcont">Un solo molde (clase) → muchos objetos, cada uno con sus propios valores.</div>
+  </div>
+
+  <details class="piensa">
+    <summary><span class="q-ico">🤔</span> Si tienes la clase <code style="font-family:var(--mono);color:#9B6BFF">Perro</code>, ¿"Firulais" es la clase o el objeto? <span class="flecha">▶</span></summary>
+    <div class="resp">
+      <span class="ver">Ver explicación</span>
+      "Firulais" es un <strong>objeto</strong>: una instancia concreta. <code style="font-family:var(--mono);color:#9B6BFF">Perro</code> es la <strong>clase</strong> (el molde). Del molde <code style="font-family:var(--mono);color:#9B6BFF">Perro</code> puedes crear a Firulais, a Rocky y a mil perros más.
+    </div>
+  </details>
+
+  <h3><span class="h3ico">✍️</span>Cómo se ve una clase</h3>
+  <p>Una clase se declara con la palabra <code class="inline">class</code> y su nombre en <strong>PascalCase</strong> (cada palabra con mayúscula inicial). Dentro van sus <strong>atributos</strong> (datos) y sus <strong>métodos</strong> (lo que sabe hacer).</p>
+
+  <div class="archivo"><span class="ar-ico">📄</span> Crea un archivo nuevo: <b>Perro.java</b></div>
+  {{COD_PERRO}}
+
+  <h3><span class="h3ico">▶️</span>Crear objetos con <code class="inline">new</code></h3>
+  <p>Para <strong>crear un objeto</strong> a partir de la clase usas la palabra <code class="inline">new</code>. <code class="inline">new Perro()</code> construye un perro nuevo en memoria y te devuelve una referencia a él.</p>
+
+  <div class="archivo"><span class="ar-ico">📄</span> Crea un archivo nuevo con el <b>main</b>: <b>AppPerro.java</b></div>
+  {{COD_APPPERRO}}
+
+  <div class="salida"><span class="lbl">Salida en consola</span>Firulais dice: ¡Guau!
+Rocky dice: ¡Guau!</div>
+
+  <div class="tip ok">
+    <span class="tico">🔑</span>
+    <div class="tcont">Una sola clase <code style="font-family:var(--mono);color:#9B6BFF">Perro</code>, dos objetos independientes. Cambiar <code style="font-family:var(--mono);color:#9B6BFF">miPerro</code> no afecta a <code style="font-family:var(--mono);color:#9B6BFF">otroPerro</code>.</div>
+  </div>
+</section>
+
+<!-- ============ 3. ATRIBUTOS Y MÉTODOS ============ -->
+<section class="seccion" id="s-atrib">
+  <div class="eyebrow"><span class="n">03</span> Estado y comportamiento</div>
+  <h2 class="titulo"><span class="em">📦</span>Atributos y métodos</h2>
+  <p class="subtitulo">Los atributos describen qué <em>es</em> el objeto. Los métodos describen qué <em>hace</em>.</p>
+
+  <div class="def">
+    <div class="tec">
+      <div class="rot">◆ Definición técnica</div>
+      <p style="margin:0"><strong>Atributos:</strong> las variables que describen el estado del objeto (sus datos).<br><br><strong>Métodos:</strong> las funciones dentro de la clase que describen su comportamiento. Un método puede retornar un valor o no.</p>
+    </div>
+    <div class="vida">
+      <div class="rot">● En la vida real</div>
+      <p style="margin:0">En un <strong>carro</strong>: los atributos son color, marca, nivel de gasolina. Los métodos son acelerar, frenar, encender.<br><br>El estado <em>es</em>; el método <em>hace</em>.</p>
+    </div>
+  </div>
+
+  <h3><span class="h3ico">✍️</span>Un método que retorna un valor</h3>
+  <p>Aquí el método <code class="inline">descripcion()</code> <strong>retorna</strong> un <code class="inline">String</code> (usa <code class="inline">return</code>) en lugar de imprimir directamente. Fíjate en el tipo de retorno escrito antes del nombre del método.</p>
+
+  <div class="archivo"><span class="ar-ico">📄</span> Crea un archivo nuevo: <b>Libro.java</b></div>
+  {{COD_LIBRO}}
+
+  <div class="archivo"><span class="ar-ico">📄</span> Crea un archivo nuevo: <b>AppLibro.java</b></div>
+  {{COD_APPLIBRO}}
+
+  <div class="salida"><span class="lbl">Salida en consola</span>Clean Code de Robert Martin (464 paginas)</div>
+
+  <h3><span class="h3ico">🧵</span>Así nace nuestra CuentaBancaria</h3>
+  <p>Ya puedes modelar la entidad de negocio. Por ahora, solo con sus atributos. Una cuenta tiene <strong>titular</strong>, <strong>número de cuenta</strong> y <strong>saldo</strong>. El saldo es <code class="inline">double</code> porque maneja decimales.</p>
+
+  <div class="archivo"><span class="ar-ico">📄</span> Crea un archivo nuevo: <b>CuentaBancaria.java</b></div>
+  {{COD_CUENTA1}}
+
+  <div class="tip warn">
+    <span class="tico">🔎</span>
+    <div class="tcont">Los dejamos "abiertos" a propósito por ahora. Más adelante verás por qué esto es peligroso y cómo se protege.</div>
+  </div>
+</section>
+
+<!-- ============ 4. CONSTRUCTORES ============ -->
+<section class="seccion" id="s-constr">
+  <div class="eyebrow"><span class="n">04</span> Objetos bien formados</div>
+  <h2 class="titulo"><span class="em">🏗️</span>Constructores</h2>
+  <p class="subtitulo">La herramienta que garantiza que un objeto nazca completo y con datos válidos desde el primer instante.</p>
+
+  <details class="piensa">
+    <summary><span class="q-ico">🤔</span> Cuando abres una cuenta en el banco, ¿te entregan una cuenta vacía y luego la llenas, o te la entregan ya lista con tus datos? <span class="flecha">▶</span></summary>
+    <div class="resp">
+      <span class="ver">Ver explicación</span>
+      En el mundo real la cuenta se crea <strong>ya bien formada</strong>, con los datos desde el inicio. En Java, la herramienta para lograr eso es el <strong>constructor</strong>.
+    </div>
+  </details>
+
+  <div class="def">
+    <div class="tec">
+      <div class="rot">◆ Definición técnica</div>
+      <p style="margin:0">Un <strong>constructor</strong> es un método especial que se ejecuta automáticamente al crear el objeto con <code class="inline">new</code>. Se llama igual que la clase y no tiene tipo de retorno.</p>
+    </div>
+    <div class="vida">
+      <div class="rot">● En la vida real</div>
+      <p style="margin:0">Es la <strong>línea de ensamblaje</strong> de una fábrica. El objeto no sale a medio hacer: el constructor garantiza que salga completo y funcional.</p>
+    </div>
+  </div>
+
+  <div class="tip">
+    <span class="tico">🔑</span>
+    <div class="tcont"><b>La palabra <code style="font-family:var(--mono);color:#9B6BFF">this</code>:</b> cuando el parámetro se llama igual que el atributo, usas <code style="font-family:var(--mono);color:#9B6BFF">this.</code> para diferenciarlos. <code style="font-family:var(--mono);color:#9B6BFF">this.saldo</code> es el atributo del objeto; <code style="font-family:var(--mono);color:#9B6BFF">saldo</code> a secas es el parámetro que llegó.</div>
+  </div>
+
+  <h3><span class="h3ico">✍️</span>Dos constructores: vacío y con parámetros</h3>
+  <p>Una clase puede tener <strong>varios constructores</strong> con distinta lista de parámetros. A eso se le llama <strong>sobrecarga de constructores</strong>. Aquí tienes uno vacío (valores por defecto) y otro con parámetros (datos reales).</p>
+
+  <div class="archivo"><span class="ar-ico">📄</span> Ejemplo aparte, crea un archivo nuevo: <b>Producto.java</b></div>
+  {{COD_PRODUCTO}}
+
+  <div class="archivo"><span class="ar-ico">📄</span> Crea un archivo nuevo: <b>AppProducto.java</b></div>
+  {{COD_APPPRODUCTO}}
+
+  <div class="salida"><span class="lbl">Salida en consola</span>Sin nombre -&gt; $0.0
+Cafe -&gt; $12000.0</div>
+
+  <div class="tip warn">
+    <span class="tico">⚠️</span>
+    <div class="tcont"><b>Error frecuente:</b> si defines <em>solo</em> el constructor con parámetros y luego intentas <code style="font-family:var(--mono);color:#9B6BFF">new Producto()</code> sin argumentos, Java no compila. El error se lee como <em>"constructor Producto in class Producto cannot be applied to given types"</em>. Regla: si escribes un constructor con parámetros, el vacío ya no viene gratis; hay que declararlo si lo necesitas.</div>
+  </div>
+
+  <h3><span class="h3ico">🧵</span>Así va nuestra CuentaBancaria</h3>
+  <p>Le damos sus dos constructores. En el de parámetros aprovechamos para <strong>no dejar entrar un saldo negativo</strong> desde el nacimiento.</p>
+
+  <div class="archivo"><span class="ar-ico">📄</span> Actualiza: <b>CuentaBancaria.java</b></div>
+  {{COD_CUENTA2}}
+</section>
+
+<!-- ============ 5. ENCAPSULACIÓN ============ -->
+<section class="seccion" id="s-encap">
+  <div class="eyebrow"><span class="n">05</span> El corazón de la clase</div>
+  <h2 class="titulo"><span class="em">🔐</span>Encapsulación real</h2>
+  <p class="subtitulo">Proteger los datos sensibles para que solo se modifiquen a través de operaciones con reglas. Aquí la palabra <code class="inline" style="font-size:.7em">private</code> cobra sentido de negocio.</p>
+
+  <details class="piensa">
+    <summary><span class="q-ico">🤔</span> Si el saldo está abierto, ¿qué impide que alguien escriba <code style="font-family:var(--mono);color:#9B6BFF">cuenta.saldo = 999999999;</code> y se vuelva millonario sin depositar nada? <span class="flecha">▶</span></summary>
+    <div class="resp">
+      <span class="ver">Ver explicación</span>
+      <strong>Nada lo impide</strong>, y ese es exactamente el problema. Un dato tan sensible como el saldo no puede estar expuesto para que cualquiera lo modifique sin reglas. Debe cambiarse solo a través de operaciones controladas (depositar, retirar). Eso es <strong>encapsulación</strong>.
+    </div>
+  </details>
+
+  <div class="def">
+    <div class="tec">
+      <div class="rot">◆ Definición técnica</div>
+      <p style="margin:0"><strong>Encapsulación:</strong> principio de la POO que consiste en ocultar el estado interno del objeto y exponer solo lo necesario a través de métodos controlados. Protege los datos de modificaciones inválidas.</p>
+    </div>
+    <div class="vida">
+      <div class="rot">● En la vida real</div>
+      <p style="margin:0">El banco: lo que el <strong>cliente ve</strong> (consultar saldo, pedir un retiro en ventanilla) es público. Lo que pasa <strong>dentro de la bóveda</strong> es privado. Nadie mete la mano a la bóveda: todo pasa por el cajero, que valida.</p>
+    </div>
+  </div>
+
+  <h3><span class="h3ico">🔐</span>Modificadores de acceso</h3>
+  <p>Java usa <strong>modificadores de acceso</strong> para decidir quién puede ver o tocar cada atributo o método:</p>
+
+  <table class="tabla">
+    <tr><th>Modificador</th><th>Quién puede acceder</th></tr>
+    <tr><td><code>public</code></td><td>Cualquiera, desde cualquier clase.</td></tr>
+    <tr><td><code>private</code></td><td>Solo la propia clase. Nadie de afuera.</td></tr>
+    <tr><td><code>protected</code></td><td class="fut">La clase y sus hijas (herencia). → lo verás en la Clase 6.</td></tr>
+    <tr><td><span style="color:var(--texto-dim);font-family:var(--mono);font-size:12px">(sin nada)</span></td><td class="fut">Solo el mismo paquete (default). → más adelante.</td></tr>
+  </table>
+
+  <div class="tip">
+    <span class="tico">🧭</span>
+    <div class="tcont">Hoy usas a fondo <code style="font-family:var(--mono);color:#9B6BFF">public</code> y <code style="font-family:var(--mono);color:#9B6BFF">private</code>. Los otros dos existen y los conocerás cuando lleguemos a <b>herencia</b>. Es bueno saber que el mapa completo está ahí.</div>
+  </div>
+
+  <h3><span class="h3ico">🧨</span>Prueba a romperlo (a propósito)</h3>
+  <p>Marca <code class="inline">saldo</code> como <code class="inline">private</code> y, desde el <code class="inline">main</code>, intenta <code class="inline">cuenta.saldo = 999999;</code>. El compilador <strong>no te deja</strong> y muestra:</p>
+
+  <div class="salida"><span class="lbl">Salida en consola</span><span class="err-line">error: saldo has private access in CuentaBancaria</span></div>
+
+  <div class="tip ok">
+    <span class="tico">🛡️</span>
+    <div class="tcont">Ese error, lejos de ser un problema, es <b>la protección funcionando</b>. El banco no te deja tocar la bóveda directamente.</div>
+  </div>
+
+  <h3><span class="h3ico">🔓</span>Getters y operaciones con reglas</h3>
+  <p>Si el atributo es <code class="inline">private</code>, ¿cómo lo lees o lo modificas de forma legítima? Con <strong>getters</strong> (leer) y <strong>operaciones controladas</strong> (modificar con reglas).</p>
+  <p class="mute">En lugar de un <code class="inline">setSaldo()</code> que pise el valor sin control, usamos métodos de negocio con validación: <code class="inline">depositar()</code> y <code class="inline">retirar()</code>. Así el saldo nunca queda en un estado inválido.</p>
+
+  <div class="archivo"><span class="ar-ico">📄</span> Actualiza (versión encapsulada): <b>CuentaBancaria.java</b></div>
+  {{COD_CUENTA3}}
+
+  <details class="piensa">
+    <summary><span class="q-ico">🤔</span> ¿Por qué <code style="font-family:var(--mono);color:#9B6BFF">depositar</code> es mejor que un <code style="font-family:var(--mono);color:#9B6BFF">setSaldo</code> que solo asigna el valor? <span class="flecha">▶</span></summary>
+    <div class="resp">
+      <span class="ver">Ver explicación</span>
+      Un <code style="font-family:var(--mono);color:#9B6BFF">setSaldo</code> reemplazaría el saldo por cualquier valor, sin reglas (podría dejarlo negativo). <code style="font-family:var(--mono);color:#9B6BFF">depositar</code> y <code style="font-family:var(--mono);color:#9B6BFF">retirar</code> <strong>contienen la lógica de negocio</strong>: validan antes de tocar el dato. Encapsular no es solo esconder; es <strong>proteger con reglas</strong>.
+    </div>
+  </details>
+</section>
+
+<!-- ============ 6. toString ============ -->
+<section class="seccion" id="s-tostring">
+  <div class="eyebrow"><span class="n">06</span> Representación legible</div>
+  <h2 class="titulo"><span class="em">🖨️</span>El método toString()</h2>
+  <p class="subtitulo">Enséñale a Java cómo mostrar tu objeto en texto, para que imprimirlo sea claro y útil.</p>
+
+  <details class="piensa">
+    <summary><span class="q-ico">🤔</span> Si haces <code style="font-family:var(--mono);color:#9B6BFF">System.out.println(cuenta);</code>, ¿qué crees que imprime? <span class="flecha">▶</span></summary>
+    <div class="resp">
+      <span class="ver">Ver explicación</span>
+      Imprime algo poco útil como <code style="font-family:var(--mono);color:#9B6BFF">CuentaBancaria@1b6d3586</code> (el nombre de la clase y un código de memoria). Java no sabe <strong>cómo</strong> mostrar tu objeto en texto… a menos que se lo enseñes con <code style="font-family:var(--mono);color:#9B6BFF">toString()</code>.
+    </div>
+  </details>
+
+  <div class="def">
+    <div class="tec">
+      <div class="rot">◆ Definición técnica</div>
+      <p style="margin:0"><code class="inline">toString()</code> es un método que define la representación en texto del objeto. Cuando lo defines, <code class="inline">System.out.println(objeto)</code> lo usa automáticamente.</p>
+    </div>
+    <div class="vida">
+      <div class="rot">● En la vida real</div>
+      <p style="margin:0">Es como la <strong>etiqueta legible</strong> de un producto: en vez de un código de barras que nadie entiende, muestra el nombre, el precio y la información clara para una persona.</p>
+    </div>
+  </div>
+
+  <div class="archivo"><span class="ar-ico">📄</span> Agrega este método dentro de <b>CuentaBancaria.java</b></div>
+  {{COD_TOSTRING}}
+</section>
+
+<!-- ============ 7. PRUEBA ============ -->
+<section class="seccion" id="s-prueba">
+  <div class="eyebrow"><span class="n">07</span> Todo junto</div>
+  <h2 class="titulo"><span class="em">✅</span>La cuenta en acción</h2>
+  <p class="subtitulo">Probamos la cuenta completa con operaciones válidas e inválidas, para ver la encapsulación protegiendo el dato en tiempo real.</p>
+
+  <div class="archivo"><span class="ar-ico">📄</span> Crea un archivo nuevo con el <b>main</b>: <b>App.java</b></div>
+  {{COD_APP}}
+
+  <div class="salida"><span class="lbl">Salida en consola (verificada con OpenJDK 21)</span>Cuenta 1001 | Titular: Ana Alvarado | Saldo: $50000.0
+Deposito exitoso. Nuevo saldo: $70000.0
+<span class="err-line">Error: fondos insuficientes. Saldo actual: $70000.0</span>
+Retiro exitoso. Nuevo saldo: $40000.0
+<span class="err-line">Error: el monto a depositar debe ser mayor a cero.</span>
+Saldo final (getter): $40000.0
+Cuenta 1001 | Titular: Ana Alvarado | Saldo: $40000.0</div>
+
+  <div class="tip ok">
+    <span class="tico">🔑</span>
+    <div class="tcont"><b>Lectura de negocio:</b> el retiro de $100.000 fue rechazado (no había fondos) y el depósito de -$500 también. El saldo <b>nunca</b> quedó en un estado inválido. Eso es encapsulación real trabajando.</div>
+  </div>
+</section>
+
+<!-- ============ 8. EJERCICIO ============ -->
+<section class="seccion" id="s-ejercicio">
+  <div class="eyebrow"><span class="n">08</span> Tu turno</div>
+  <h2 class="titulo"><span class="em">🎯</span>Practica y explora</h2>
+  <p class="subtitulo">Lleva la CuentaBancaria un paso más allá sin romper su encapsulación. Todo se conecta con lo que construiste hoy.</p>
+
+  <h3><span class="h3ico">📈</span>Reto evolutivo</h3>
+  <p>Sobre tu clase <code class="inline">CuentaBancaria</code>, agrega una capacidad nueva sin exponer los atributos:</p>
+  <div class="card">
+    <p style="margin-bottom:10px"><strong>1.</strong> Un atributo <code class="inline">private String tipoCuenta</code> (ahorros / corriente), inicializado en el constructor.</p>
+    <p style="margin:0"><strong>2.</strong> Un método <code class="inline">transferir(CuentaBancaria destino, double monto)</code> que <strong>reutilice</strong> <code class="inline">retirar</code> en la cuenta origen y <code class="inline">depositar</code> en la destino.</p>
+  </div>
+
+  <div class="tip">
+    <span class="tico">💡</span>
+    <div class="tcont">Una transferencia bien hecha <b>no</b> toca <code style="font-family:var(--mono);color:#9B6BFF">saldo</code> directamente: llama a los métodos que ya validan. Ese es el premio de encapsular bien.</div>
+  </div>
+
+  <h3><span class="h3ico">🤖</span>Explora con Cursor AI</h3>
+  <p>Pídele a Cursor que genere una clase <code class="inline">Cliente</code> con encapsulación (atributos privados, constructor, getters). Luego <strong>revísala con ojo crítico</strong>:</p>
+  <div class="card">
+    <p style="margin-bottom:8px">· ¿Respetó <code class="inline">private</code> en los atributos?</p>
+    <p style="margin:0">· ¿Los setters validan, o solo asignan sin reglas?</p>
+  </div>
+  <div class="tip warn">
+    <span class="tico">🧠</span>
+    <div class="tcont">La IA propone; tú <b>auditas con criterio</b>. Saber cuándo el código generado está bien o mal es parte de tu trabajo como desarrollador.</div>
+  </div>
+
+  <h3><span class="h3ico">🔮</span>Lo que viene en la Clase 6</h3>
+  <p>Hoy cada cuenta es independiente. En la próxima clase verás qué pasa cuando quieres una <code class="inline">CuentaAhorros</code> y una <code class="inline">CuentaCorriente</code> que comparten lo común pero se comportan distinto: ahí entran <strong>herencia</strong>, <code class="inline">protected</code> y la <strong>sobreescritura</strong> de métodos.</p>
+</section>
+`;
+document.getElementById('secciones').innerHTML = HTML;
+</script>
+
+<!-- ===== inyección de bloques de código (separado para legibilidad) ===== -->
+<script>
+function bloque(lang, htmlCode){
+  return `<div class="codebox"><div class="code-top"><div style="display:flex;align-items:center;gap:10px"><div class="dots"><i></i><i></i><i></i></div><span class="lang">${lang}</span></div><button class="btn-copy" onclick="copiar(this)">Copiar</button></div><pre><code>${htmlCode}</code></pre></div>`;
+}
+
+const COD = {
+COD_PERRO: bloque('Java',
+`<span class="tk">public class</span> <span class="ty">Perro</span> {
+    <span class="ty">String</span> nombre;
+    <span class="ty">String</span> raza;
+
+    <span class="tk">void</span> <span class="mt">ladrar</span>() {
+        <span class="ty">System</span>.out.<span class="mt">println</span>(nombre + <span class="st">" dice: ¡Guau!"</span>);
+    }
+}`),
+
+COD_APPPERRO: bloque('Java',
+`<span class="tk">public class</span> <span class="ty">AppPerro</span> {
+    <span class="tk">public static void</span> <span class="mt">main</span>(<span class="ty">String</span>[] args) {
+        <span class="ty">Perro</span> miPerro = <span class="tk">new</span> <span class="ty">Perro</span>();
+        miPerro.nombre = <span class="st">"Firulais"</span>;
+        miPerro.raza = <span class="st">"Labrador"</span>;
+        miPerro.<span class="mt">ladrar</span>();
+
+        <span class="ty">Perro</span> otroPerro = <span class="tk">new</span> <span class="ty">Perro</span>();
+        otroPerro.nombre = <span class="st">"Rocky"</span>;
+        otroPerro.<span class="mt">ladrar</span>();
+    }
+}`),
+
+COD_LIBRO: bloque('Java',
+`<span class="tk">public class</span> <span class="ty">Libro</span> {
+    <span class="ty">String</span> titulo;
+    <span class="ty">String</span> autor;
+    <span class="tk">int</span> paginas;
+
+    <span class="ty">String</span> <span class="mt">descripcion</span>() {
+        <span class="tk">return</span> titulo + <span class="st">" de "</span> + autor + <span class="st">" ("</span> + paginas + <span class="st">" paginas)"</span>;
+    }
+}`),
+
+COD_APPLIBRO: bloque('Java',
+`<span class="tk">public class</span> <span class="ty">AppLibro</span> {
+    <span class="tk">public static void</span> <span class="mt">main</span>(<span class="ty">String</span>[] args) {
+        <span class="ty">Libro</span> libro = <span class="tk">new</span> <span class="ty">Libro</span>();
+        libro.titulo = <span class="st">"Clean Code"</span>;
+        libro.autor = <span class="st">"Robert Martin"</span>;
+        libro.paginas = <span class="nm">464</span>;
+        <span class="ty">System</span>.out.<span class="mt">println</span>(libro.<span class="mt">descripcion</span>());
+    }
+}`),
+
+COD_CUENTA1: bloque('Java',
+`<span class="tk">public class</span> <span class="ty">CuentaBancaria</span> {
+    <span class="ty">String</span> titular;
+    <span class="ty">String</span> numeroCuenta;
+    <span class="tk">double</span> saldo;
+}`),
+
+COD_PRODUCTO: bloque('Java',
+`<span class="tk">public class</span> <span class="ty">Producto</span> {
+    <span class="ty">String</span> nombre;
+    <span class="tk">double</span> precio;
+
+    <span class="ty">Producto</span>() {
+        <span class="tk">this</span>.nombre = <span class="st">"Sin nombre"</span>;
+        <span class="tk">this</span>.precio = <span class="nm">0.0</span>;
+    }
+
+    <span class="ty">Producto</span>(<span class="ty">String</span> nombre, <span class="tk">double</span> precio) {
+        <span class="tk">this</span>.nombre = nombre;
+        <span class="tk">this</span>.precio = precio;
+    }
+
+    <span class="tk">void</span> <span class="mt">mostrar</span>() {
+        <span class="ty">System</span>.out.<span class="mt">println</span>(nombre + <span class="st">" -&gt; $"</span> + precio);
+    }
+}`),
+
+COD_APPPRODUCTO: bloque('Java',
+`<span class="tk">public class</span> <span class="ty">AppProducto</span> {
+    <span class="tk">public static void</span> <span class="mt">main</span>(<span class="ty">String</span>[] args) {
+        <span class="ty">Producto</span> vacio = <span class="tk">new</span> <span class="ty">Producto</span>();
+        vacio.<span class="mt">mostrar</span>();
+
+        <span class="ty">Producto</span> cafe = <span class="tk">new</span> <span class="ty">Producto</span>(<span class="st">"Cafe"</span>, <span class="nm">12000.0</span>);
+        cafe.<span class="mt">mostrar</span>();
+    }
+}`),
+
+COD_CUENTA2: bloque('Java',
+`<span class="tk">public class</span> <span class="ty">CuentaBancaria</span> {
+    <span class="ty">String</span> titular;
+    <span class="ty">String</span> numeroCuenta;
+    <span class="tk">double</span> saldo;
+
+    <span class="tk">public</span> <span class="ty">CuentaBancaria</span>() {
+        <span class="tk">this</span>.titular = <span class="st">"Sin asignar"</span>;
+        <span class="tk">this</span>.numeroCuenta = <span class="st">"0000"</span>;
+        <span class="tk">this</span>.saldo = <span class="nm">0.0</span>;
+    }
+
+    <span class="tk">public</span> <span class="ty">CuentaBancaria</span>(<span class="ty">String</span> titular, <span class="ty">String</span> numeroCuenta, <span class="tk">double</span> saldoInicial) {
+        <span class="tk">this</span>.titular = titular;
+        <span class="tk">this</span>.numeroCuenta = numeroCuenta;
+        <span class="tk">if</span> (saldoInicial &gt;= <span class="nm">0</span>) {
+            <span class="tk">this</span>.saldo = saldoInicial;
+        } <span class="tk">else</span> {
+            <span class="tk">this</span>.saldo = <span class="nm">0.0</span>;
+        }
+    }
+}`),
+
+COD_CUENTA3: bloque('Java',
+`<span class="tk">public class</span> <span class="ty">CuentaBancaria</span> {
+    <span class="tk">private</span> <span class="ty">String</span> titular;
+    <span class="tk">private</span> <span class="ty">String</span> numeroCuenta;
+    <span class="tk">private</span> <span class="tk">double</span> saldo;
+
+    <span class="tk">public</span> <span class="ty">CuentaBancaria</span>() {
+        <span class="tk">this</span>.titular = <span class="st">"Sin asignar"</span>;
+        <span class="tk">this</span>.numeroCuenta = <span class="st">"0000"</span>;
+        <span class="tk">this</span>.saldo = <span class="nm">0.0</span>;
+    }
+
+    <span class="tk">public</span> <span class="ty">CuentaBancaria</span>(<span class="ty">String</span> titular, <span class="ty">String</span> numeroCuenta, <span class="tk">double</span> saldoInicial) {
+        <span class="tk">this</span>.titular = titular;
+        <span class="tk">this</span>.numeroCuenta = numeroCuenta;
+        <span class="tk">if</span> (saldoInicial &gt;= <span class="nm">0</span>) {
+            <span class="tk">this</span>.saldo = saldoInicial;
+        } <span class="tk">else</span> {
+            <span class="tk">this</span>.saldo = <span class="nm">0.0</span>;
+        }
+    }
+
+    <span class="tk">public</span> <span class="ty">String</span> <span class="mt">getTitular</span>() {
+        <span class="tk">return</span> titular;
+    }
+
+    <span class="tk">public</span> <span class="tk">double</span> <span class="mt">getSaldo</span>() {
+        <span class="tk">return</span> saldo;
+    }
+
+    <span class="tk">public</span> <span class="tk">void</span> <span class="mt">depositar</span>(<span class="tk">double</span> monto) {
+        <span class="tk">if</span> (monto &lt;= <span class="nm">0</span>) {
+            <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"Error: el monto a depositar debe ser mayor a cero."</span>);
+            <span class="tk">return</span>;
+        }
+        saldo += monto;
+        <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"Deposito exitoso. Nuevo saldo: $"</span> + saldo);
+    }
+
+    <span class="tk">public</span> <span class="tk">void</span> <span class="mt">retirar</span>(<span class="tk">double</span> monto) {
+        <span class="tk">if</span> (monto &lt;= <span class="nm">0</span>) {
+            <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"Error: el monto a retirar debe ser mayor a cero."</span>);
+            <span class="tk">return</span>;
+        }
+        <span class="tk">if</span> (monto &gt; saldo) {
+            <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"Error: fondos insuficientes. Saldo actual: $"</span> + saldo);
+            <span class="tk">return</span>;
+        }
+        saldo -= monto;
+        <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"Retiro exitoso. Nuevo saldo: $"</span> + saldo);
+    }
+}`),
+
+COD_TOSTRING: bloque('Java',
+`<span class="tk">public</span> <span class="ty">String</span> <span class="mt">toString</span>() {
+    <span class="tk">return</span> <span class="st">"Cuenta "</span> + numeroCuenta + <span class="st">" | Titular: "</span> + titular + <span class="st">" | Saldo: $"</span> + saldo;
+}`),
+
+COD_APP: bloque('Java',
+`<span class="tk">public class</span> <span class="ty">App</span> {
+    <span class="tk">public static void</span> <span class="mt">main</span>(<span class="ty">String</span>[] args) {
+        <span class="ty">CuentaBancaria</span> cuenta = <span class="tk">new</span> <span class="ty">CuentaBancaria</span>(<span class="st">"Ana Alvarado"</span>, <span class="st">"1001"</span>, <span class="nm">50000.0</span>);
+
+        <span class="ty">System</span>.out.<span class="mt">println</span>(cuenta);
+
+        cuenta.<span class="mt">depositar</span>(<span class="nm">20000</span>);
+        cuenta.<span class="mt">retirar</span>(<span class="nm">100000</span>);
+        cuenta.<span class="mt">retirar</span>(<span class="nm">30000</span>);
+        cuenta.<span class="mt">depositar</span>(<span class="nm">-500</span>);
+
+        <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"Saldo final (getter): $"</span> + cuenta.<span class="mt">getSaldo</span>());
+        <span class="ty">System</span>.out.<span class="mt">println</span>(cuenta);
+    }
+}`)
+};
+
+let html = document.getElementById('secciones').innerHTML;
+for(const k in COD){ html = html.replace('{{'+k+'}}', COD[k]); }
+document.getElementById('secciones').innerHTML = html;
+
+/* re-activar la primera sección tras el reemplazo */
+document.querySelectorAll('.seccion')[0].classList.add('activa');
+</script>
+
+</body>
+</html>
