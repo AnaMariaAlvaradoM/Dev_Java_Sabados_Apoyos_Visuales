@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<!--
+============================================================================
+  © 2026 Ana Alvarado — Todos los derechos reservados.
+  Educadora Tech & Desarrolladora Full Stack.
+  Material de autoría exclusiva. Prohibida su reproducción, redistribución,
+  modificación o uso fuera del contexto de clase sin autorización escrita.
+============================================================================
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       META FIJO — no tocar
+       ════════════════════════════════════════════════════════════════════ -->
+  <meta name="author" content="Ana Alvarado">
+  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+
+  <!-- ┌──────────────────────────────────────────────────────────────────┐
+       │  HUECO 1 · TÍTULO DE LA CLASE                                      │
+       │  Cambia solo el texto de <title> por el de la clase.               │
+       └──────────────────────────────────────────────────────────────────┘ -->
+  <title>Clase 6 · Herencia, interfaces y abstracción · Ana Alvarado</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══════════════════════════════════════════════════════════════════
+       ESTILOS FIJOS — no se regeneran entre clases.
+       Lo ÚNICO que se cambia aquí es el bloque "ACENTO POR EMPRESA".
+       ══════════════════════════════════════════════════════════════════ */
+
+    /* ┌────────────────────────────────────────────────────────────────┐
+       │  HUECO 2 · ACENTO POR EMPRESA                                    │
+       │  Descomenta el bloque de la empresa de esta clase.               │
+       │  Solo uno de los dos debe quedar activo.                         │
+       └────────────────────────────────────────────────────────────────┘ */
+
+    :root {
+      /* ── DEV SENIOR (morado) ── ACTIVO POR DEFECTO ── */
+      --accent:      #A88CFF;   /* acento principal en modo oscuro */
+      --accent-2:    #8B6FE8;   /* acento secundario / hover */
+      --accent-ink:  #5418CC;   /* acento fuerte para modo claro */
+
+      /* ── GENERATION COLOMBIA (azul) ── descomenta para usar ──
+      --accent:      #4FA3D9;
+      --accent-2:    #3B8BC4;
+      --accent-ink:  #006CA8;
+      */
+    }
+
+    /* ── PALETA MODO OSCURO (por defecto) ── */
+    :root {
+      --bg:        #16151C;
+      --surface:   #1C1B24;
+      --surface-2: #23222D;
+      --border:    #2C2A38;
+      --text:      #EAE8F0;
+      --text-dim:  #9C98A8;
+      --code-bg:   #121016;
+      --code-text: #E4E1EA;
+      --shadow:    rgba(0,0,0,0.3);
+    }
+
+    /* ── PALETA MODO CLARO (papel cálido) ── */
+    :root[data-tema="claro"] {
+      --bg:        #FAF8F3;
+      --surface:   #F4F1EA;
+      --surface-2: #FFFFFF;
+      --border:    #E8E3D9;
+      --text:      #2A2620;
+      --text-dim:  #8A8478;
+      --code-bg:   #2A2620;
+      --code-text: #F0EDE6;
+      --shadow:    rgba(0,0,0,0.08);
+      --accent:    var(--accent-ink);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.35s, color 0.35s;
+      user-select: none;               /* protección: no seleccionar en general */
+    }
+
+    /* ── LAYOUT: barra lateral fija + contenido centrado ── */
+    .layout { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 0.5px solid var(--border);
+      padding: 28px 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      transition: background 0.35s, border-color 0.35s;
+    }
+
+    .sidebar-brand {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 19px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 2px;
+      line-height: 1.25;
+    }
+    .sidebar-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 26px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      color: var(--text-dim);
+      font-size: 13.5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      border-left: 2px solid transparent;
+      border-radius: 0 8px 8px 0;
+    }
+    .nav-item:hover { background: var(--surface-2); color: var(--text); }
+    .nav-item.active {
+      color: var(--text);
+      font-weight: 500;
+      border-left: 2px solid var(--accent);
+      background: var(--surface-2);
+    }
+    .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+    /* ── ÁREA DE CONTENIDO: columna centrada (clave para proyectar) ── */
+    .content-area { flex: 1; padding: 0 24px; }
+    .content-column {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 48px 0 80px;
+    }
+
+    /* ── ENCABEZADO DE CLASE ── */
+    .clase-header { margin-bottom: 36px; }
+    .clase-kicker {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .clase-titulo {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 34px;
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--text);
+    }
+
+    /* ── SECCIONES ── */
+    .seccion { margin-bottom: 44px; scroll-margin-top: 32px; }
+    .seccion-numero {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .seccion h2 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 25px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .seccion h3 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      margin: 24px 0 10px;
+    }
+    .seccion p { margin-bottom: 14px; color: var(--text); }
+    .seccion strong { font-weight: 600; color: var(--text); }
+
+    /* ── TARJETA ── */
+    .card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 18px;
+      transition: background 0.35s, border-color 0.35s;
+    }
+
+    /* ── BLOQUE TIP / DESTACADO (borde de acento, sin relleno de color) ── */
+    .tip {
+      background: var(--surface);
+      border-left: 2px solid var(--accent);
+      border-radius: 0;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      transition: background 0.35s;
+    }
+    .tip-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .tip p { margin: 0; color: var(--text-dim); font-size: 14.5px; }
+
+    /* ── DEFINICIÓN (técnica + vida real) ── */
+    .definicion { border-left: 2px solid var(--border); padding-left: 18px; margin-bottom: 18px; }
+    .definicion .tecnica { color: var(--text); margin-bottom: 8px; }
+    .definicion .real { color: var(--text-dim); font-size: 14.5px; }
+    .definicion .real::before { content: "🌎 "; }
+
+    /* ── BLOQUE DE REFLEXIÓN (colapsable) ── */
+    .reflexion {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+      transition: background 0.35s;
+    }
+    .reflexion-pregunta {
+      font-weight: 500;
+      color: var(--text);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .reflexion-pregunta::before { content: "💭"; }
+    .ver-explicacion {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--accent);
+      cursor: pointer;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+    .explicacion {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .explicacion.abierta { max-height: 600px; }
+    .explicacion-inner {
+      padding-top: 12px;
+      margin-top: 12px;
+      border-top: 0.5px solid var(--border);
+      color: var(--text-dim);
+      font-size: 14.5px;
+    }
+
+    /* ── BLOQUE DE CÓDIGO (seleccionable + botón copiar) ── */
+    .code-block {
+      background: var(--code-bg);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 18px;
+      overflow: hidden;
+      position: relative;
+    }
+    .code-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      border-bottom: 0.5px solid rgba(255,255,255,0.06);
+    }
+    .code-file {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--text-dim);
+    }
+    .copy-btn {
+      background: transparent;
+      border: 0.5px solid var(--border);
+      color: var(--text-dim);
+      font-size: 11.5px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .code-block pre {
+      padding: 14px 16px;
+      overflow-x: auto;
+      user-select: text;               /* protección: código SÍ seleccionable */
+    }
+    .code-block code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--code-text);
+      user-select: text;
+    }
+    .code-block pre, .code-block code { -webkit-user-select: text; }
+
+    /* ── AVISO DE COPYRIGHT (tarjeta seria) ── */
+    .aviso-copyright {
+      border-left: 3px solid var(--accent);
+      background: var(--surface);
+      border-radius: 0;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+    }
+    .aviso-titulo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .aviso-copyright p { font-size: 13px; color: var(--text-dim); margin: 0; }
+
+    /* ── PIE DE PÁGINA ── */
+    .footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 0.5px solid var(--border);
+      font-size: 12px;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    /* ── MARCA DE AGUA FIJA ── */
+    .watermark {
+      position: fixed;
+      bottom: 14px;
+      right: 16px;
+      font-size: 11px;
+      color: var(--text-dim);
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 50;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── BOTONES FLOTANTES (toggle tema + modo presentación) ── */
+    .controls {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      gap: 8px;
+      z-index: 60;
+    }
+    .ctrl-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 0.5px solid var(--border);
+      background: var(--surface-2);
+      color: var(--accent);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.25s;
+    }
+    .ctrl-btn:hover { border-color: var(--accent); }
+
+    /* ── BARRA DE PROGRESO ── */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      background: var(--accent);
+      width: 0%;
+      z-index: 70;
+      transition: width 0.15s;
+    }
+
+    /* ── MODO PRESENTACIÓN ── */
+    body.presentacion .sidebar,
+    body.presentacion .watermark,
+    body.presentacion .controls { display: none; }
+    body.presentacion .seccion { display: none; }
+    body.presentacion .seccion.slide-activa {
+      display: block;
+      min-height: 80vh;
+      animation: fadeIn 0.3s ease;
+    }
+    body.presentacion .content-column { max-width: 940px; padding-top: 80px; }
+    body.presentacion .clase-header { display: none; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    .slide-hint {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: var(--text-dim);
+      background: var(--surface);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 0.5px solid var(--border);
+      z-index: 60;
+    }
+    body.presentacion .slide-hint { display: block; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 0.5px solid var(--border); }
+      .content-column { padding: 32px 0 60px; }
+      .clase-titulo { font-size: 27px; }
+      .watermark { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- CONTROLES FIJOS -->
+  <div class="controls">
+    <button class="ctrl-btn" id="temaBtn" aria-label="Cambiar tema claro u oscuro" title="Claro / oscuro">☀️</button>
+    <button class="ctrl-btn" id="presentBtn" aria-label="Modo presentación" title="Modo presentación (P)">▢</button>
+  </div>
+
+  <div class="layout">
+
+    <!-- BARRA LATERAL -->
+    <aside class="sidebar">
+      <!-- ┌──────────────────────────────────────────────────────────┐
+           │  HUECO 3 · NAVEGACIÓN                                      │
+           │  Un .nav-item por sección. El href apunta al id.          │
+           └──────────────────────────────────────────────────────────┘ -->
+      <div class="sidebar-brand">Java AI Backend Developer</div>
+      <div class="sidebar-sub">Módulo 2 · Clase 6</div>
+      <nav id="nav">
+        <a class="nav-item active" href="#sec-1"><span class="nav-icon">🔁</span> Repaso Clase 5</a>
+        <a class="nav-item" href="#sec-2"><span class="nav-icon">🧬</span> Herencia</a>
+        <a class="nav-item" href="#sec-3"><span class="nav-icon">✍️</span> Sobreescritura</a>
+        <a class="nav-item" href="#sec-4"><span class="nav-icon">🎭</span> Polimorfismo</a>
+        <a class="nav-item" href="#sec-5"><span class="nav-icon">🚫</span> Clases abstractas</a>
+        <a class="nav-item" href="#sec-6"><span class="nav-icon">📜</span> Interfaces</a>
+        <a class="nav-item" href="#sec-7"><span class="nav-icon">🏛️</span> Arquitectura por capas</a>
+        <a class="nav-item" href="#sec-8"><span class="nav-icon">🔷</span> Cierre: Figuras</a>
+        <a class="nav-item" href="#sec-9"><span class="nav-icon">🔶</span> Cierre: Medios de pago</a>
+        <a class="nav-item" href="#sec-10"><span class="nav-icon">🤖</span> Práctica con Cursor AI</a>
+        <a class="nav-item" href="#sec-11"><span class="nav-icon">✅</span> Lo que te llevas</a>
+      </nav>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="content-area">
+      <div class="content-column">
+
+        <!-- ENCABEZADO -->
+        <header class="clase-header">
+          <!-- HUECO 1 (repetido) · kicker + título de la clase -->
+          <div class="clase-kicker">Java AI Backend Developer · Módulo 2 · Clase 6</div>
+          <h1 class="clase-titulo">Herencia, interfaces, abstracción y arquitectura limpia inicial</h1>
+        </header>
+
+        <!-- AVISO DE COPYRIGHT (fijo) -->
+        <div class="aviso-copyright">
+          <div class="aviso-titulo">© AVISO DE DERECHOS DE AUTOR</div>
+          <p>Este material es de <strong>autoría exclusiva de Ana Alvarado</strong> y su acceso está limitado a las y los <strong>estudiantes de esta cohorte</strong>. Queda prohibida su reproducción, redistribución o uso fuera de clase sin autorización escrita de la autora.</p>
+        </div>
+
+        <!-- ┌────────────────────────────────────────────────────────────┐
+             │  HUECO 4 · SECCIONES DE CONTENIDO                            │
+             │  Aquí va TODO el contenido del .md. Una <section> por tema.  │
+             │  Usa los patrones de abajo (card, tip, definición,          │
+             │  reflexión, código). Numera con .seccion-numero "01 ·".      │
+             └────────────────────────────────────────────────────────────┘ -->
+
+        <!-- ═══ 01 · REPASO CLASE 5 ═══ -->
+        <section class="seccion slide-activa" id="sec-1">
+          <div class="seccion-numero">01 · PUNTO DE PARTIDA</div>
+          <h2>🔁 Lo que ya sabes de la clase pasada</h2>
+
+          <p>Todo lo de hoy se para sobre lo que viste en la Clase 5. Antes de avanzar, refresquemos lo esencial, porque lo vas a usar de inmediato.</p>
+
+          <h3>Encapsulamiento</h3>
+          <div class="definicion">
+            <p class="tecnica"><strong>Encapsular</strong> es ocultar el estado interno de un objeto y exponerlo solo a través de métodos controlados.</p>
+            <p class="real">En tu cuenta bancaria, el <code>saldo</code> era <code>private</code>: nadie de afuera lo tocaba directo, solo <code>depositar()</code> y <code>retirar()</code>, que validaban antes de modificar.</p>
+          </div>
+          <div class="tip">
+            <div class="tip-label">Idea clave</div>
+            <p>La encapsulación no es solo esconder; es <strong>proteger con reglas de negocio</strong>.</p>
+          </div>
+
+          <h3>¿Por qué usamos modificadores de acceso?</h3>
+          <p>Porque deciden <strong>quién puede tocar qué</strong>. No es capricho: son lo que hace posible la encapsulación.</p>
+          <div class="card">
+            <p><code>public</code> → cualquiera, desde cualquier clase.</p>
+            <p><code>private</code> → solo la propia clase.</p>
+            <p><code>protected</code> → la clase <strong>y sus hijas</strong>. <em>Hoy lo estrenas.</em></p>
+            <p><em>(nada)</em> → solo el mismo paquete (default).</p>
+          </div>
+
+          <h3>La palabra que quedó pendiente: sobreescritura</h3>
+          <p>Al final de la Clase 5 quedó una promesa. Guarda esta diferencia, porque hoy la vives:</p>
+          <div class="card">
+            <p><strong>Sobrecarga</strong> (Clase 5): mismo nombre de método, <strong>distintos parámetros</strong>, en la misma clase.</p>
+            <p><strong>Sobreescritura</strong> (hoy): una <strong>clase hija redefine</strong> un método que heredó del padre. Es cosa de herencia.</p>
+          </div>
+          <p>También viste <code>toString()</code>, que define cómo se ve un objeto en texto. Hoy lo reutilizas.</p>
+        </section>
+
+        <!-- ═══ 02 · HERENCIA ═══ -->
+        <section class="seccion" id="sec-2">
+          <div class="seccion-numero">02 · REUTILIZAR</div>
+          <h2>🧬 Herencia con <code>extends</code></h2>
+
+          <p>Imagina que construyes una <strong>plataforma tipo tienda online</strong>. Tienes clientes que compran, vendedores que publican y administradores que gestionan. Los tres son <strong>usuarios</strong>: los tres tienen nombre y correo, los tres inician sesión.</p>
+
+          <div class="reflexion">
+            <div class="reflexion-pregunta">¿Creas tres clases totalmente separadas y copias el nombre y el correo en cada una?</div>
+            <span class="ver-explicacion">▸ Ver explicación</span>
+            <div class="explicacion">
+              <div class="explicacion-inner">Se puede, pero estarías copiando y pegando los mismos atributos y métodos en tres lugares. Si mañana el correo cambia de reglas, tendrías que corregirlo tres veces. Cuando varias clases comparten lo mismo, ese "lo mismo" debería vivir en un solo lugar. Esa es la puerta de entrada a la herencia.</div>
+            </div>
+          </div>
+
+          <div class="definicion">
+            <p class="tecnica"><strong>Herencia:</strong> mecanismo por el cual una clase (hija) adquiere los atributos y métodos de otra (padre) y puede además agregar los suyos. Se declara con <code>extends</code>.</p>
+            <p class="real">Un smartphone <em>es un</em> teléfono: hereda "hacer llamadas" y encima agrega cámara, apps, internet. No reinventa el llamar; lo hereda y suma lo suyo.</p>
+          </div>
+          <div class="tip">
+            <div class="tip-label">Regla mental</div>
+            <p>Herencia = relación <strong>"es un / es una"</strong>. Un Cliente <strong>es un</strong> Usuario.</p>
+          </div>
+
+          <h3>Ejemplo aislado: <code>Vehiculo</code> y <code>Moto</code></h3>
+          <p>El padre <code>Vehiculo</code> define <code>marca</code>, <code>velocidad</code> y <code>acelerar()</code>. La hija <code>Moto</code> hereda todo eso con <code>extends</code> y agrega lo suyo. Fíjate en <code>super(marca)</code>: la moto le pasa la marca al constructor del padre.</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Vehiculo.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Vehiculo {
+    protected String marca;
+    protected int velocidad;
+
+    public Vehiculo(String marca) {
+        this.marca = marca;
+        this.velocidad = 0;
+    }
+
+    public void acelerar() {
+        velocidad += 10;
+        System.out.println(marca + " acelera a " + velocidad + " km/h");
+    }
+}</code></pre>
+          </div>
+          <div class="tip">
+            <div class="tip-label">Ojo al protected</div>
+            <p>Aquí estrenas el modificador que quedó pendiente. <code>marca</code> es <code>protected</code> para que la hija pueda usarlo, pero siga oculto para el resto del mundo. Ni tan abierto (<code>public</code>) ni tan cerrado (<code>private</code>).</p>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Moto.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Moto extends Vehiculo {
+    public Moto(String marca) {
+        super(marca);
+    }
+
+    public void hacerCaballito() {
+        System.out.println(marca + " hace un caballito");
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">AppVehiculo.java · con el main</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class AppVehiculo {
+    public static void main(String[] args) {
+        Moto moto = new Moto("Yamaha");
+        moto.acelerar();
+        moto.hacerCaballito();
+    }
+}</code></pre>
+          </div>
+          <div class="card">
+            <p><strong>Imprime:</strong></p>
+            <p><code>Yamaha acelera a 10 km/h</code><br><code>Yamaha hace un caballito</code></p>
+          </div>
+          <div class="tip">
+            <div class="tip-label">Idea clave</div>
+            <p><code>moto.acelerar()</code> funciona <strong>sin escribirlo en Moto</strong>. Se heredó de <code>Vehiculo</code>. Escribes una vez, reutilizas siempre.</p>
+          </div>
+
+          <h3>Así nace nuestro hilo: <code>Usuario</code> y <code>Cliente</code></h3>
+          <p>Creamos el padre <code>Usuario</code> con lo común y una hija <code>Cliente</code> que solo agrega lo suyo (<code>puntos</code>). Nota que <code>Cliente</code> no repite <code>nombre</code> ni <code>email</code>: los hereda.</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Usuario.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Usuario {
+    protected String nombre;
+    protected String email;
+
+    public Usuario(String nombre, String email) {
+        this.nombre = nombre;
+        this.email = email;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Cliente.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Cliente extends Usuario {
+    private int puntos;
+
+    public Cliente(String nombre, String email) {
+        super(nombre, email);
+        this.puntos = 0;
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- ═══ 03 · SOBREESCRITURA ═══ -->
+        <section class="seccion" id="sec-3">
+          <div class="seccion-numero">03 · REDEFINIR</div>
+          <h2>✍️ Sobreescritura con <code>@Override</code></h2>
+
+          <p>Ya tienes <code>Cliente</code>, <code>Vendedor</code> y <code>Administrador</code> heredando de <code>Usuario</code>. Pero el <strong>panel de inicio</strong> de cada uno es distinto: el cliente ve sus compras, el admin ve reportes, el vendedor ve sus productos.</p>
+
+          <div class="reflexion">
+            <div class="reflexion-pregunta">Si el método <code>panelInicio()</code> vive en el padre, ¿cómo hace cada hijo para mostrar su panel y no uno genérico?</div>
+            <span class="ver-explicacion">▸ Ver explicación</span>
+            <div class="explicacion">
+              <div class="explicacion-inner">La tentación es un <code>if</code> gigante que pregunte el tipo, pero eso es justo lo que la POO viene a eliminar. La solución elegante es que cada hija <strong>redefina</strong> el método a su manera. Eso es sobreescritura.</div>
+            </div>
+          </div>
+
+          <div class="definicion">
+            <p class="tecnica"><strong>Sobreescritura (<code>@Override</code>):</strong> una clase hija redefine un método que heredó del padre, dándole su propia implementación. La firma es la misma; cambia el cuerpo.</p>
+            <p class="real">Todos los empleados de una empresa "saludan al cliente" (método heredado). Pero el de ventas saluda distinto al de soporte. Mismo deber, forma distinta.</p>
+          </div>
+          <div class="tip">
+            <div class="tip-label">La anotación @Override</div>
+            <p>Le avisa al compilador "esto redefine algo del padre". Si te equivocas en el nombre, te avisa con un error en vez de crear un método nuevo por accidente. Es una red de seguridad.</p>
+          </div>
+
+          <h3>Ejemplo aislado: <code>Animal</code> y <code>Gato</code></h3>
+          <p>El padre <code>Animal</code> tiene un <code>hacerSonido()</code> genérico. <code>Gato</code> lo sobreescribe para devolver "Miau".</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Animal.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Animal {
+    protected String nombre;
+
+    public Animal(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String hacerSonido() {
+        return "Sonido generico";
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Gato.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Gato extends Animal {
+    public Gato(String nombre) {
+        super(nombre);
+    }
+
+    @Override
+    public String hacerSonido() {
+        return "Miau";
+    }
+}</code></pre>
+          </div>
+          <div class="card">
+            <p><strong>Al llamar <code>hacerSonido()</code> sobre un Animal y un Gato imprime:</strong></p>
+            <p><code>Criatura: Sonido generico</code><br><code>Michi: Miau</code></p>
+          </div>
+
+          <h3>Así va el hilo: cada hija su panel</h3>
+          <p>Le damos a <code>Usuario</code> un <code>panelInicio()</code> y hacemos que cada hija lo sobreescriba. Mismo método, tres comportamientos.</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Usuario.java · agregar este método</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public String panelInicio() {
+    return "Panel generico de usuario";
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Cliente.java · agregar método sobreescrito</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>@Override
+public String panelInicio() {
+    return "Panel de Cliente: ver productos y mis compras";
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Administrador.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Administrador extends Usuario {
+    public Administrador(String nombre, String email) {
+        super(nombre, email);
+    }
+
+    @Override
+    public String panelInicio() {
+        return "Panel de Admin: gestionar usuarios y reportes";
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Vendedor.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Vendedor extends Usuario {
+    public Vendedor(String nombre, String email) {
+        super(nombre, email);
+    }
+
+    @Override
+    public String panelInicio() {
+        return "Panel de Vendedor: publicar y gestionar mis productos";
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- ═══ 04 · POLIMORFISMO ═══ -->
+        <section class="seccion" id="sec-4">
+          <div class="seccion-numero">04 · UNA LISTA, MUCHAS FORMAS</div>
+          <h2>🎭 Polimorfismo: el premio de sobreescribir</h2>
+
+          <p>El admin quiere ver, en pantalla, el panel de <strong>todos</strong> los usuarios de la plataforma. Son cientos, mezclados: clientes, vendedores, admins.</p>
+
+          <div class="reflexion">
+            <div class="reflexion-pregunta">¿Los recorres con listas separadas y un <code>if</code> por tipo, o puedes meterlos todos en una sola lista y que cada uno muestre su panel solo?</div>
+            <span class="ver-explicacion">▸ Ver explicación</span>
+            <div class="explicacion">
+              <div class="explicacion-inner">Puedes meterlos todos juntos en una lista de tipo <code>Usuario</code> y recorrerla una sola vez. Cada objeto, aunque lo trates como <code>Usuario</code>, responde según lo que realmente es. Eso es polimorfismo.</div>
+            </div>
+          </div>
+
+          <div class="definicion">
+            <p class="tecnica"><strong>Polimorfismo:</strong> capacidad de tratar objetos de distintas clases hijas a través del tipo del padre, de modo que cada uno responde con su propia versión sobreescrita del método. Un mismo llamado, muchas formas de responder.</p>
+            <p class="real">Un control remoto con un botón "Play". Sirve para el TV, el equipo y el DVD. Un solo botón (mismo llamado), y cada aparato reacciona a su manera.</p>
+          </div>
+
+          <h3>Cómo se ve en código</h3>
+          <p>Guardamos hijas distintas en un arreglo del tipo del <strong>padre</strong> (<code>Usuario[]</code>). Al recorrerlo y llamar <code>panelInicio()</code>, Java ejecuta automáticamente la versión de cada hija. En este punto todas tus clases viven juntas en la misma carpeta; más adelante las organizamos en paquetes.</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">PruebaPolimorfismo.java · con el main</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class PruebaPolimorfismo {
+    public static void main(String[] args) {
+        Usuario[] usuarios = {
+            new Cliente("Ana", "ana@mail.com"),
+            new Administrador("Luis", "luis@mail.com"),
+            new Vendedor("Marta", "marta@mail.com")
+        };
+
+        for (Usuario u : usuarios) {
+            System.out.println(u.getNombre() + " -> " + u.panelInicio());
+        }
+    }
+}</code></pre>
+          </div>
+          <div class="card">
+            <p><strong>Imprime:</strong></p>
+            <p><code>Ana -> Panel de Cliente: ver productos y mis compras</code><br>
+            <code>Luis -> Panel de Admin: gestionar usuarios y reportes</code><br>
+            <code>Marta -> Panel de Vendedor: publicar y gestionar mis productos</code></p>
+          </div>
+          <div class="tip">
+            <div class="tip-label">Idea clave</div>
+            <p>La variable es <code>Usuario</code>, pero cada objeto recuerda quién es. El bucle nunca pregunta "¿eres cliente? ¿eres admin?", y aun así cada uno responde distinto. Agregar un nuevo tipo de usuario mañana <strong>no te obliga a tocar este bucle</strong>. Eso es código que escala.</p>
+          </div>
+        </section>
+
+        <!-- ═══ 05 · CLASES ABSTRACTAS ═══ -->
+        <section class="seccion" id="sec-5">
+          <div class="seccion-numero">05 · PROHIBIR LO IMPOSIBLE</div>
+          <h2>🚫 Clases abstractas</h2>
+
+          <div class="reflexion">
+            <div class="reflexion-pregunta">En tu plataforma, ¿tiene sentido que exista un usuario que sea solo <code>Usuario</code>, sin ser ni cliente, ni vendedor, ni admin? ¿Un usuario "genérico" suelto?</div>
+            <span class="ver-explicacion">▸ Ver explicación</span>
+            <div class="explicacion">
+              <div class="explicacion-inner">No. En el negocio, todo usuario es de algún tipo concreto. Un <code>Usuario</code> genérico no debería poder crearse: es una plantilla incompleta, no una entidad real. Java tiene una herramienta para decir "esta clase existe para ser heredada, pero no para instanciarse": la clase abstracta.</div>
+            </div>
+          </div>
+
+          <div class="definicion">
+            <p class="tecnica"><strong>Clase abstracta:</strong> clase marcada con <code>abstract</code> que no se puede instanciar con <code>new</code>. Sirve como base. Puede tener métodos abstractos (declarados sin cuerpo) que obligan a las hijas a implementarlos.</p>
+            <p class="real">"Vehículo" en abstracto no existe en la calle: no compras "un vehículo genérico". Compras un carro, una moto, un bus. Lo que rueda es siempre un tipo concreto.</p>
+          </div>
+
+          <h3>El método abstracto: de dónde sale y por qué se ve raro</h3>
+          <p>Sigamos la pista de <code>panelInicio()</code>, porque aquí se transforma:</p>
+          <div class="card">
+            <p>En la sección anterior nació <strong>con cuerpo</strong> en el padre: tenía llaves <code>{ }</code> y un <code>return</code>.</p>
+            <p>Ahora, al volver <code>Usuario</code> abstracta, ese "panel genérico" no significa nada. Le quitamos el cuerpo y lo dejamos como contrato:</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">método abstracto</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public abstract String panelInicio();</code></pre>
+          </div>
+          <p>Un método <code>abstract</code> <strong>no tiene cuerpo</strong>: no lleva llaves, solo la firma y un <code>;</code>. Eso es lo que se ve raro la primera vez. Su mensaje es: "yo, el padre, declaro que este método existe, pero NO lo implemento; obligo a cada hija a definirlo".</p>
+          <div class="tip">
+            <div class="tip-label">Sobre public abstract</div>
+            <p>La palabra <code>abstract</code> es obligatoria (es la que dice "sin cuerpo"). El <code>public</code> es solo visibilidad; podría ser <code>protected abstract</code>. Lo único prohibido es <code>private abstract</code>: sería una contradicción (te obligo a redefinirlo, pero no dejo que nadie lo vea).</p>
+          </div>
+
+          <h3>Ejemplo aislado: <code>Figura</code></h3>
+          <p>No existe "una figura" a secas; existen círculos, rectángulos. <code>Figura</code> es abstracta y su <code>calcularArea()</code> es abstracto: cada figura lo calcula distinto, pero todas están obligadas a tenerlo. Lo retomamos completo al final.</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Figura.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public abstract class Figura {
+    public abstract double calcularArea();
+}</code></pre>
+          </div>
+
+          <div class="tip">
+            <div class="tip-label">Error a propósito, para verlo en vivo</div>
+            <p>Con <code>Usuario</code> ya <code>abstract</code>, si en un <code>main</code> intentas <code>new Usuario("X", "x@mail.com");</code>, el compilador no deja y muestra: <em>"Usuario is abstract; cannot be instantiated"</em>. Ese error es la regla de negocio funcionando: nadie crea un usuario "sin tipo".</p>
+          </div>
+
+          <h3>Así va el hilo: <code>Usuario</code> abstracta</h3>
+          <p>Convertimos <code>Usuario</code> en abstracta y su <code>panelInicio()</code> en método abstracto. Ya no damos panel genérico: obligamos a cada hija a definir el suyo. También traemos aquí el <code>toString()</code> de la Clase 5.</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Usuario.java · así va la clase</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public abstract class Usuario {
+    protected String nombre;
+    protected String email;
+
+    public Usuario(String nombre, String email) {
+        this.nombre = nombre;
+        this.email = email;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public abstract String panelInicio();
+
+    @Override
+    public String toString() {
+        return nombre + " <" + email + ">";
+    }
+}</code></pre>
+          </div>
+          <div class="tip">
+            <div class="tip-label">Idea clave</div>
+            <p><code>panelInicio()</code> ya no tiene cuerpo en el padre. Si una hija olvida implementarlo, <strong>no compila</strong>. La clase abstracta garantiza que ninguna hija quede incompleta.</p>
+          </div>
+        </section>
+
+        <!-- ═══ 06 · INTERFACES ═══ -->
+        <section class="seccion" id="sec-6">
+          <div class="seccion-numero">06 · QUÉ PUEDE HACER</div>
+          <h2>📜 Interfaces</h2>
+
+          <p>Quieres enviar <strong>notificaciones</strong>. Pero ojo: notifican los clientes (por email) y los vendedores (por SMS), <strong>pero los administradores no</strong>. "Poder ser notificado" no es un tipo de usuario: es una capacidad que solo algunos tienen.</p>
+
+          <div class="reflexion">
+            <div class="reflexion-pregunta">¿La metes en la clase <code>Usuario</code> de la que todos heredan?</div>
+            <span class="ver-explicacion">▸ Ver explicación</span>
+            <div class="explicacion">
+              <div class="explicacion-inner">Si la pones en <code>Usuario</code>, el admin también la hereda y no debería. "Ser notificable" no describe qué es el objeto (eso lo hace la herencia), sino qué puede hacer. Para capacidades transversales que solo algunas clases tienen, Java usa interfaces.</div>
+            </div>
+          </div>
+
+          <div class="definicion">
+            <p class="tecnica"><strong>Interfaz:</strong> un contrato que declara métodos que una clase se compromete a implementar, sin decir cómo. Se adopta con <code>implements</code>. Una clase hereda de una sola clase, pero puede implementar varias interfaces.</p>
+            <p class="real">"Ser mamífero" es qué eres (herencia): naces siéndolo. "Saber nadar" es qué puedes hacer (interfaz): lo cumplen el pez, el humano y el perro, que no son de la misma familia.</p>
+          </div>
+
+          <h3>La distinción clave del día</h3>
+          <div class="card">
+            <p><strong>Herencia / clase abstracta</strong> responde a <strong>"qué ES"</strong> el objeto · palabra <code>extends</code> · solo una padre · <em>un Cliente es un Usuario</em>.</p>
+            <p><strong>Interfaz</strong> responde a <strong>"qué PUEDE HACER"</strong> · palabra <code>implements</code> · varias a la vez · <em>un Cliente puede ser Notificable</em>.</p>
+          </div>
+
+          <h3>Ejemplo aislado: <code>MetodoPago</code></h3>
+          <p>Distintas formas de pago (tarjeta, PSE) no son "familia" entre sí, pero todas se comprometen a <code>procesarPago()</code>. Lo retomamos completo al final.</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">MetodoPago.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public interface MetodoPago {
+    String procesarPago(double monto);
+}</code></pre>
+          </div>
+
+          <div class="tip">
+            <div class="tip-label">Error a propósito, para verlo en vivo</div>
+            <p>En <code>Cliente</code>, agrega <code>implements Notificable</code> pero no escribas todavía el método. El error salta en la línea de la clase: <em>"Cliente is not abstract and does not override abstract method recibirNotificacion(String) in Notificable"</em>. Significa: firmaste el contrato pero no lo cumpliste.</p>
+          </div>
+
+          <h3>Así va el hilo: <code>Notificable</code></h3>
+          <p>Creamos la interfaz. Luego <strong>solo</strong> <code>Cliente</code> y <code>Vendedor</code> la implementan, cada uno a su manera; <code>Administrador</code> <strong>no</strong>, porque no recibe notificaciones.</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Notificable.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public interface Notificable {
+    String recibirNotificacion(String mensaje);
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Cliente.java · así queda</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Cliente extends Usuario implements Notificable {
+    private int puntos;
+
+    public Cliente(String nombre, String email) {
+        super(nombre, email);
+        this.puntos = 0;
+    }
+
+    @Override
+    public String panelInicio() {
+        return "Panel de Cliente: ver productos y mis compras";
+    }
+
+    @Override
+    public String recibirNotificacion(String mensaje) {
+        return "Email a " + email + ": " + mensaje;
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Vendedor.java · así queda</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Vendedor extends Usuario implements Notificable {
+    public Vendedor(String nombre, String email) {
+        super(nombre, email);
+    }
+
+    @Override
+    public String panelInicio() {
+        return "Panel de Vendedor: publicar y gestionar mis productos";
+    }
+
+    @Override
+    public String recibirNotificacion(String mensaje) {
+        return "SMS al vendedor " + nombre + ": " + mensaje;
+    }
+}</code></pre>
+          </div>
+          <div class="tip">
+            <div class="tip-label">Fíjate en la línea</div>
+            <p><code>class Cliente extends Usuario implements Notificable</code>. Hereda de una clase Y cumple un contrato, a la vez. <code>Administrador</code> se queda solo con <code>extends Usuario</code>.</p>
+          </div>
+        </section>
+
+        <!-- ═══ 07 · ARQUITECTURA POR CAPAS ═══ -->
+        <section class="seccion" id="sec-7">
+          <div class="seccion-numero">07 · ORDENAR EL PROYECTO</div>
+          <h2>🏛️ Arquitectura por capas (limpia inicial)</h2>
+
+          <p>Ya tienes <code>Usuario</code>, tres hijas, una interfaz y un <code>main</code> que lo usa todo.</p>
+
+          <div class="reflexion">
+            <div class="reflexion-pregunta">Si dejas todos los archivos revueltos en una sola carpeta, ¿qué pasa cuando el proyecto tenga 200 clases? ¿Dónde vive la lógica del negocio, dónde lo que ve el usuario?</div>
+            <span class="ver-explicacion">▸ Ver explicación</span>
+            <div class="explicacion">
+              <div class="explicacion-inner">Buscar por nombre no escala. Los proyectos serios separan responsabilidades en capas, cada una en su paquete. Así el negocio no se mezcla con la pantalla ni con los detalles técnicos. Ese es el corazón de la arquitectura limpia.</div>
+            </div>
+          </div>
+
+          <div class="definicion">
+            <p class="tecnica"><strong>Arquitectura por capas:</strong> organizar el código según responsabilidades, cada una en su paquete. Usamos los mismos nombres de Spring Boot, para que cuando llegues allá ya te suenen.</p>
+            <p class="real">Un restaurante: el <code>model</code> es la cocina (el saber hacer), el <code>service</code> es el mesero (lleva y trae), el <code>controller</code> es el comedor (donde el cliente pide). La cocina no necesita saber cómo están decoradas las mesas.</p>
+          </div>
+
+          <div class="card">
+            <p><strong>model</strong> → las entidades y reglas del negocio (<code>Usuario</code>, hijas, <code>Notificable</code>). El corazón.</p>
+            <p><strong>service</strong> → orquesta el negocio (procesar la lista de usuarios).</p>
+            <p><strong>controller</strong> → lo que interactúa con el usuario (hoy el <code>main</code>; en Spring, los endpoints).</p>
+          </div>
+          <div class="tip">
+            <div class="tip-label">Falta una capa que verás pronto</div>
+            <p><code>repository</code>, la que habla con la base de datos. Hoy no aparece porque todavía no guardamos datos en ninguna parte. La estrenas en la próxima clase.</p>
+          </div>
+
+          <div class="tip">
+            <div class="tip-label">La regla de oro</div>
+            <p>Las dependencias <strong>apuntan hacia el model</strong>, nunca al revés. El controller conoce al service; el service conoce al model. El model no conoce a nadie: no sabe que existe una pantalla ni una base de datos.</p>
+          </div>
+
+          <h3>Otros nombres, misma idea</h3>
+          <p>Quizás veas por ahí <code>dominio / servicio / presentacion</code>: son los nombres conceptuales de Clean Architecture y significan exactamente lo mismo. La equivalencia es directa: <code>model</code> ≈ dominio, <code>service</code> ≈ servicio, <code>controller</code> ≈ presentación.</p>
+
+          <h3>Cómo queda organizado</h3>
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">estructura de carpetas</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>plataforma/
+├── model/
+│   ├── Usuario.java
+│   ├── Notificable.java
+│   ├── Cliente.java
+│   ├── Administrador.java
+│   └── Vendedor.java
+├── service/
+│   └── PlataformaService.java
+└── controller/
+    └── App.java</code></pre>
+          </div>
+          <div class="tip">
+            <div class="tip-label">Dos cosas nuevas al separar en paquetes</div>
+            <p><code>package</code>: la primera línea de cada archivo dice a qué paquete pertenece. <code>import</code>: cuando una clase usa otra de otro paquete, la importa arriba. Las del mismo paquete no se importan entre sí.</p>
+          </div>
+
+          <h3>La capa <code>service</code></h3>
+          <p>Recibe el arreglo de usuarios y los procesa. <code>mostrarPaneles</code> usa el polimorfismo. En <code>notificarATodos</code> aparece <code>instanceof</code>: pregunta "¿este usuario cumple el contrato <code>Notificable</code>?" y solo notifica a los que sí. La línea <code>(Notificable) u</code> es un <em>cast</em>: "trátalo ahora como Notificable".</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">service/PlataformaService.java</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>package plataforma.service;
+
+import plataforma.model.Usuario;
+import plataforma.model.Notificable;
+
+public class PlataformaService {
+
+    public void mostrarPaneles(Usuario[] usuarios) {
+        for (Usuario u : usuarios) {
+            System.out.println(u.getNombre() + " -> " + u.panelInicio());
+        }
+    }
+
+    public void notificarATodos(Usuario[] usuarios, String mensaje) {
+        for (Usuario u : usuarios) {
+            if (u instanceof Notificable) {
+                Notificable n = (Notificable) u;
+                System.out.println(n.recibirNotificacion(mensaje));
+            }
+        }
+    }
+}</code></pre>
+          </div>
+
+          <h3>La capa <code>controller</code> (junta todo)</h3>
+          <p>El <code>main</code> arma la lista mezclada y le pide todo al service. No calcula nada por su cuenta: solo arma los datos y delega. Aquí se juntan todos los conceptos de la clase.</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">controller/App.java · con el main</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>package plataforma.controller;
+
+import plataforma.model.Usuario;
+import plataforma.model.Cliente;
+import plataforma.model.Administrador;
+import plataforma.model.Vendedor;
+import plataforma.service.PlataformaService;
+
+public class App {
+    public static void main(String[] args) {
+        Usuario[] usuarios = {
+            new Cliente("Ana", "ana@mail.com"),
+            new Administrador("Luis", "luis@mail.com"),
+            new Vendedor("Marta", "marta@mail.com")
+        };
+
+        PlataformaService servicio = new PlataformaService();
+
+        System.out.println("--- Paneles ---");
+        servicio.mostrarPaneles(usuarios);
+
+        System.out.println("--- Notificaciones ---");
+        servicio.notificarATodos(usuarios, "Oferta del dia");
+    }
+}</code></pre>
+          </div>
+          <div class="card">
+            <p><strong>Imprime:</strong></p>
+            <p><code>--- Paneles ---</code><br>
+            <code>Ana -> Panel de Cliente: ver productos y mis compras</code><br>
+            <code>Luis -> Panel de Admin: gestionar usuarios y reportes</code><br>
+            <code>Marta -> Panel de Vendedor: publicar y gestionar mis productos</code><br>
+            <code>--- Notificaciones ---</code><br>
+            <code>Email a ana@mail.com: Oferta del dia</code><br>
+            <code>SMS al vendedor Marta: Oferta del dia</code></p>
+          </div>
+          <div class="tip">
+            <div class="tip-label">Lectura de negocio</div>
+            <p>Los tres muestran su panel (polimorfismo). En las notificaciones, <strong>Luis el admin no aparece</strong>: no implementa <code>Notificable</code>. Cliente notifica por email, vendedor por SMS. Todo sin un solo <code>if</code> preguntando "¿eres cliente? ¿eres vendedor?".</p>
+          </div>
+
+          <div class="tip">
+            <div class="tip-label">Crear proyecto y correr — IntelliJ / VS Code</div>
+            <p><strong>Crear paquete:</strong> en IntelliJ, clic derecho sobre <code>src</code> → New → Package (<code>plataforma.model</code>). En VS Code, creas las carpetas y mueves cada <code>.java</code>. <strong>Ejecutar:</strong> en ambos, botón ▶️ Run sobre <code>App</code>, o por terminal <code>javac</code> + <code>java</code>. El Java es idéntico en los dos; solo cambian los atajos.</p>
+          </div>
+        </section>
+
+        <!-- ═══ 08 · CIERRE FIGURAS ═══ -->
+        <section class="seccion" id="sec-8">
+          <div class="seccion-numero">08 · CONSOLIDAR (ABSTRACTA)</div>
+          <h2>🔷 Cierre: Figuras geométricas</h2>
+
+          <p>Este ejemplo refuerza <strong>clase abstracta + polimorfismo por herencia</strong>, desde otro ángulo. Ya viste <code>Figura</code> y <code>Circulo</code>. Agregamos <code>Rectangulo</code> y las recorremos polimórficamente: mismo <code>calcularArea()</code>, resultados distintos.</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Circulo.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Circulo extends Figura {
+    private double radio;
+
+    public Circulo(double radio) {
+        this.radio = radio;
+    }
+
+    @Override
+    public double calcularArea() {
+        return Math.PI * radio * radio;
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">Rectangulo.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class Rectangulo extends Figura {
+    private double base;
+    private double altura;
+
+    public Rectangulo(double base, double altura) {
+        this.base = base;
+        this.altura = altura;
+    }
+
+    @Override
+    public double calcularArea() {
+        return base * altura;
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">AppFiguras.java · con el main</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class AppFiguras {
+    public static void main(String[] args) {
+        Figura[] figuras = {
+            new Circulo(5),
+            new Rectangulo(4, 6)
+        };
+        for (Figura f : figuras) {
+            System.out.printf("Area: %.2f%n", f.calcularArea());
+        }
+    }
+}</code></pre>
+          </div>
+          <div class="card">
+            <p><strong>Imprime:</strong></p>
+            <p><code>Area: 78.54</code><br><code>Area: 24.00</code></p>
+          </div>
+        </section>
+
+        <!-- ═══ 09 · CIERRE PAGOS ═══ -->
+        <section class="seccion" id="sec-9">
+          <div class="seccion-numero">09 · CONSOLIDAR (INTERFAZ)</div>
+          <h2>🔶 Cierre: Medios de pago</h2>
+
+          <p>Este ejemplo refuerza <strong>interfaz + polimorfismo por contrato</strong>. Ya viste <code>MetodoPago</code> y <code>PagoTarjeta</code>. Agregamos <code>PagoPSE</code> y los tratamos a todos como <code>MetodoPago</code>: mismo contrato, cada uno lo cumple a su manera.</p>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">PagoTarjeta.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class PagoTarjeta implements MetodoPago {
+    @Override
+    public String procesarPago(double monto) {
+        return "Cobrando $" + monto + " a la tarjeta de credito";
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">PagoPSE.java · crear archivo nuevo</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class PagoPSE implements MetodoPago {
+    @Override
+    public String procesarPago(double monto) {
+        return "Redirigiendo al banco para pagar $" + monto + " por PSE";
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-head">
+              <span class="code-file">AppPagos.java · con el main</span>
+              <button class="copy-btn">Copiar</button>
+            </div>
+            <pre><code>public class AppPagos {
+    public static void main(String[] args) {
+        MetodoPago[] metodos = {
+            new PagoTarjeta(),
+            new PagoPSE()
+        };
+        for (MetodoPago m : metodos) {
+            System.out.println(m.procesarPago(50000));
+        }
+    }
+}</code></pre>
+          </div>
+          <div class="card">
+            <p><strong>Imprime:</strong></p>
+            <p><code>Cobrando $50000.0 a la tarjeta de credito</code><br><code>Redirigiendo al banco para pagar $50000.0 por PSE</code></p>
+          </div>
+          <div class="tip">
+            <div class="tip-label">El contraste, lado a lado</div>
+            <p><code>Figura</code> usa <strong>clase abstracta</strong> porque un círculo <em>es una</em> figura. <code>MetodoPago</code> usa <strong>interfaz</strong> porque una tarjeta y un PSE no son "familia", solo cumplen la misma capacidad. Misma idea (polimorfismo), dos herramientas según la relación real.</p>
+          </div>
+        </section>
+
+        <!-- ═══ 10 · CURSOR AI ═══ -->
+        <section class="seccion" id="sec-10">
+          <div class="seccion-numero">10 · PRÁCTICA</div>
+          <h2>🤖 Refactorización con Cursor AI</h2>
+
+          <p>La IA propone; tú auditas con criterio de arquitecto. Ese criterio es justo lo que construiste hoy.</p>
+
+          <h3>Ejercicio guiado</h3>
+          <p>Pídele a Cursor AI que agregue un nuevo tipo de usuario, <code>UsuarioInvitado</code>, que hereda de <code>Usuario</code> pero <strong>no</strong> implementa <code>Notificable</code> (un invitado no recibe notificaciones). Luego audita con criterio:</p>
+          <div class="card">
+            <p>¿Respetó que <code>Usuario</code> es abstracta?</p>
+            <p>¿Sobreescribió <code>panelInicio()</code> con <code>@Override</code>?</p>
+            <p>¿Puso la clase en el paquete <code>model</code> correcto?</p>
+            <p>¿Rompió la regla de las capas (metió lógica de <code>controller</code> dentro del <code>model</code>)?</p>
+          </div>
+
+          <h3>Reto de refactor</h3>
+          <p>Pídele a Cursor que extraiga la lógica de "cómo se envía" la notificación (email vs SMS) hacia algo más limpio. Discute: ¿esto se parece a una nueva interfaz? Sin implementarlo aún, solo detectar la oportunidad. Ese olfato es señal de que la arquitectura ya se te está volviendo natural.</p>
+        </section>
+
+        <!-- ═══ 11 · CIERRE ═══ -->
+        <section class="seccion" id="sec-11">
+          <div class="seccion-numero">11 · RESUMEN</div>
+          <h2>✅ Lo que te llevas hoy</h2>
+
+          <div class="card">
+            <p><strong>Herencia</strong> (<code>extends</code>): una hija reutiliza lo del padre. Relación "es un".</p>
+            <p><strong>protected</strong>: abre los atributos del padre a las hijas, sin abrirlos al mundo.</p>
+            <p><strong>Sobreescritura</strong> (<code>@Override</code>): la hija redefine un método heredado. Mismo deber, forma distinta.</p>
+            <p><strong>Polimorfismo</strong>: tratar hijas por el tipo del padre; cada una responde a su manera. Adiós al <code>if</code> gigante.</p>
+            <p><strong>Clase abstracta</strong>: base que no se instancia y obliga a las hijas a completar métodos.</p>
+            <p><strong>Interfaz</strong> (<code>implements</code>): contrato de capacidades. Responde "qué puede hacer", no "qué es". Puedes implementar varias.</p>
+            <p><strong>Arquitectura por capas</strong>: <code>model</code>, <code>service</code>, <code>controller</code> (y <code>repository</code> viene con las bases de datos). Las dependencias apuntan al <code>model</code>.</p>
+          </div>
+
+          <div class="tip">
+            <div class="tip-label">Lo que viene</div>
+            <p>Hoy ordenaste el código en capas y usaste arreglos de objetos. En la próxima clase das el paso natural: <strong>bases de datos</strong>, donde estrenas la capa <code>repository</code> y empiezas a guardar datos de verdad.</p>
+          </div>
+        </section>
+
+        <!-- FIN HUECO 4 -->
+
+        <!-- PIE DE PÁGINA (fijo) -->
+        <footer class="footer">
+          © 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack
+        </footer>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MARCA DE AGUA FIJA -->
+  <div class="watermark">© 2026 Ana Alvarado</div>
+
+  <!-- HINT MODO PRESENTACIÓN -->
+  <div class="slide-hint">← → para navegar · Esc para salir</div>
+
+  <script>
+  /* ══════════════════════════════════════════════════════════════════════
+     SCRIPT FIJO — no se regenera entre clases.
+     Toggle tema con memoria · navegación · presentación · copiar · consola.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* ── Mensajes de consola (protección de autoría) ── */
+  console.log('%c© 2026 Ana Alvarado', 'color:#A88CFF;font-weight:bold;font-size:16px');
+  console.log('Educadora Tech & Desarrolladora Full Stack — Todos los derechos reservados.');
+  console.log('Este material es de autoría exclusiva. Prohibida su reproducción o redistribución sin autorización.');
+
+  /* ── Toggle tema claro/oscuro con memoria ── */
+  const root = document.documentElement;
+  const temaBtn = document.getElementById('temaBtn');
+  const temaGuardado = localStorage.getItem('ana-tema');
+  if (temaGuardado === 'claro') { root.setAttribute('data-tema', 'claro'); temaBtn.textContent = '🌙'; }
+  temaBtn.addEventListener('click', () => {
+    const esClaro = root.getAttribute('data-tema') === 'claro';
+    if (esClaro) { root.removeAttribute('data-tema'); temaBtn.textContent = '☀️'; localStorage.setItem('ana-tema', 'oscuro'); }
+    else { root.setAttribute('data-tema', 'claro'); temaBtn.textContent = '🌙'; localStorage.setItem('ana-tema', 'claro'); }
+  });
+
+  /* ── Botones de copiar código ── */
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.closest('.code-block').querySelector('code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copiado';
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      });
+    });
+  });
+
+  /* ── Ver explicación (colapsable) ── */
+  document.querySelectorAll('.ver-explicacion').forEach(link => {
+    link.addEventListener('click', () => {
+      const exp = link.nextElementSibling;
+      const abierta = exp.classList.toggle('abierta');
+      link.innerHTML = (abierta ? '▾ Ocultar explicación' : '▸ Ver explicación');
+    });
+  });
+
+  /* ── Navegación: resaltar sección activa al hacer scroll ── */
+  const secciones = document.querySelectorAll('.seccion');
+  const navItems = document.querySelectorAll('.nav-item');
+  const progressBar = document.getElementById('progressBar');
+
+  window.addEventListener('scroll', () => {
+    let actual = '';
+    secciones.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 80) actual = sec.id;
+    });
+    navItems.forEach(item => {
+      item.classList.toggle('active', item.getAttribute('href') === '#' + actual);
+    });
+    const h = document.body.scrollHeight - window.innerHeight;
+    progressBar.style.width = (window.scrollY / h * 100) + '%';
+  });
+
+  /* ── Modo presentación ── */
+  const presentBtn = document.getElementById('presentBtn');
+  let slideActual = 0;
+  const slides = Array.from(secciones);
+
+  function entrarPresentacion() {
+    document.body.classList.add('presentacion');
+    slideActual = 0;
+    mostrarSlide();
+    if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
+  }
+  function salirPresentacion() {
+    document.body.classList.remove('presentacion');
+    slides.forEach(s => s.classList.remove('slide-activa'));
+    if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+  }
+  function mostrarSlide() {
+    slides.forEach((s, i) => s.classList.toggle('slide-activa', i === slideActual));
+    window.scrollTo(0, 0);
+  }
+  presentBtn.addEventListener('click', entrarPresentacion);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'p' && !document.body.classList.contains('presentacion')) { entrarPresentacion(); }
+    if (!document.body.classList.contains('presentacion')) return;
+    if (e.key === 'Escape') salirPresentacion();
+    if (e.key === 'ArrowRight' && slideActual < slides.length - 1) { slideActual++; mostrarSlide(); }
+    if (e.key === 'ArrowLeft' && slideActual > 0) { slideActual--; mostrarSlide(); }
+  });
+
+  /* ── Protección: clic derecho desactivado excepto en bloques de código ── */
+  document.addEventListener('contextmenu', (e) => {
+    if (!e.target.closest('.code-block')) e.preventDefault();
+  });
+  </script>
+</body>
+</html>
