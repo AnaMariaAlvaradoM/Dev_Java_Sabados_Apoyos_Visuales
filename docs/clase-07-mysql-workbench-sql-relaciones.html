@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<!--
+============================================================================
+  © 2026 Ana Alvarado — Todos los derechos reservados.
+  Educadora Tech & Desarrolladora Full Stack.
+  Material de autoría exclusiva. Prohibida su reproducción, redistribución,
+  modificación o uso fuera del contexto de clase sin autorización escrita.
+  linkedin.com/in/ana-alvarado-instructora-full-stack
+============================================================================
+  ARCHIVOS QUE ACOMPAÑAN A ESTE HTML (deben estar en la misma carpeta):
+    · ana-estilos.css → identidad visual y acento por empresa
+    · ana-clase.js    → navegación, tema, presentación y código
+============================================================================
+-->
+<!-- ACENTO POR EMPRESA · cambia SOLO este atributo: "dev-senior" (morado) o "generation" (azul) -->
+<html lang="es" data-empresa="dev-senior">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Ana Alvarado">
+  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <title>Clase 07 · MySQL Workbench, SQL y relaciones · Ana Alvarado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="ana-estilos.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+  <div class="controls" aria-label="Controles de lectura">
+    <button class="ctrl-btn" id="temaBtn" type="button" aria-label="Activar tema claro" title="Cambiar tema"><span aria-hidden="true">☀</span></button>
+    <button class="ctrl-btn" id="presentBtn" type="button" aria-label="Iniciar modo presentación" title="Presentación (P)"><span aria-hidden="true">▣</span></button>
+  </div>
+  <div class="layout">
+    <aside class="sidebar" aria-label="Índice de la clase">
+      <div class="sidebar-eyebrow">Libro de clase</div>
+      <div class="sidebar-brand">Java AI Backend Developer</div>
+      <div class="sidebar-sub">Clase 07 · Módulo 02</div>
+      <div class="sidebar-rule"></div>
+      <nav id="nav">
+        <a class="nav-item active" href="#persistencia"><span class="nav-index">01</span><span class="nav-label">💾 Persistencia real</span></a>
+        <a class="nav-item" href="#ecosistema-mysql"><span class="nav-index">02</span><span class="nav-label">🗄️ Ecosistema MySQL</span></a>
+        <a class="nav-item" href="#instalacion"><span class="nav-index">03</span><span class="nav-label">⚙️ Instalación</span></a>
+        <a class="nav-item" href="#workbench"><span class="nav-index">04</span><span class="nav-label">🖥️ Workbench</span></a>
+        <a class="nav-item" href="#crear-base"><span class="nav-index">05</span><span class="nav-label">🏗️ Crear la base</span></a>
+        <a class="nav-item" href="#tablas-datos"><span class="nav-index">06</span><span class="nav-label">📊 Tablas y datos</span></a>
+        <a class="nav-item" href="#llave-primaria"><span class="nav-index">07</span><span class="nav-label">🔑 Llave primaria</span></a>
+        <a class="nav-item" href="#relacion-uno-uno"><span class="nav-index">08</span><span class="nav-label">🔗 Relación 1:1</span></a>
+        <a class="nav-item" href="#relacion-uno-muchos"><span class="nav-index">09</span><span class="nav-label">🧩 Relación 1:N</span></a>
+        <a class="nav-item" href="#consultas"><span class="nav-index">10</span><span class="nav-label">🔎 Consultas SQL</span></a>
+        <a class="nav-item" href="#reto-final"><span class="nav-index">11</span><span class="nav-label">🧪 Reto integrador</span></a>
+      </nav>
+      <div class="sidebar-footer"><span>ANA ALVARADO</span><span>EDUCACIÓN TECH</span></div>
+    </aside>
+    <main class="content-area" id="contenido">
+      <article class="content-column">
+        <header class="clase-header">
+          <div class="clase-kicker">Java AI Backend Developer · Módulo 2 · Clase 07</div>
+          <h1 class="clase-titulo">MySQL Workbench, SQL moderno y relaciones</h1>
+          <p class="clase-bajada">Comprenderás cómo persistir información real, modelar relaciones entre tablas y consultar datos de una tienda con MySQL.</p>
+        </header>
+        <div class="aviso-copyright" role="note">
+          <div class="aviso-titulo">Material exclusivo de clase</div>
+          <p>Este recurso es de <strong>autoría de Ana Alvarado</strong> y está destinado a estudiantes de la cohorte. No se autoriza su reproducción o redistribución fuera del contexto formativo.</p>
+        </div>
+
+        <section class="seccion slide-activa" id="persistencia">
+          <div class="seccion-meta"><span>01</span><span>FUNDAMENTO</span></div>
+          <h2>💾 Del objeto temporal al dato persistente</h2>
+          <div class="apertura"><p class="apertura-label">Punto de partida</p><p class="apertura-pregunta">Tu aplicación registró 40 pedidos. Cierras el programa, apagas el computador y vuelves al día siguiente. ¿Dónde quedaron esos pedidos?</p></div>
+          <p>Hasta ahora, los objetos que creabas vivían en la memoria RAM. Esa memoria es rápida, pero temporal: se limpia cuando el proceso termina.</p>
+          <p>Un negocio real necesita que clientes, pedidos, perfiles y movimientos sobrevivan al cierre del programa. Esa capacidad se llama <em>persistencia</em>.</p>
+          <div class="modelo-mental"><p class="componente-label">Cómo imaginarlo</p><p>La RAM es como una mesa de trabajo: mientras estás allí, todo está disponible. La base de datos es el archivo permanente donde guardas lo que debe seguir existiendo mañana.</p></div>
+          <div class="definicion">
+            <div class="definicion-bloque"><p class="componente-label">Definición técnica</p><p class="tecnica">La persistencia es la capacidad de conservar el estado de los datos más allá del tiempo de ejecución de una aplicación.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">En palabras sencillas</p><p class="sencilla">Es lograr que la información no desaparezca cuando cierras el programa.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">Ejemplo real</p><p class="real">El saldo de una cuenta bancaria debe seguir igual aunque el sistema se reinicie.</p></div>
+          </div>
+          <div class="caso-negocio"><p class="componente-label">Caso de negocio</p><h3>Tienda digital</h3><p>La tienda necesita registrar usuarios, perfiles, clientes y pedidos. Guardaremos esos datos en tablas relacionadas para consultarlos sin depender de objetos temporales.</p></div>
+          <div class="reflexion"><p class="reflexion-label">Antes de continuar</p><div class="reflexion-pregunta">¿Guardar la información en una lista de Java resuelve la persistencia?</div><button class="ver-explicacion" type="button" aria-expanded="false">Mostrar explicación</button><div class="explicacion" aria-hidden="true"><div class="explicacion-inner">Una lista funciona mientras la aplicación está ejecutándose, pero sus datos desaparecen al finalizar el proceso. Para conservarlos se necesita un mecanismo persistente, como una base de datos.</div></div></div>
+        </section>
+
+        <section class="seccion" id="ecosistema-mysql">
+          <div class="seccion-meta"><span>02</span><span>CONCEPTO</span></div>
+          <h2>🗄️ MySQL Server, SQL y Workbench</h2>
+          <p>En esta clase trabajarás con tres piezas relacionadas, pero diferentes. Comprender su función evita uno de los errores más comunes al comenzar con bases de datos.</p>
+          <div class="definicion">
+            <div class="definicion-bloque"><p class="componente-label">Definición técnica</p><p class="tecnica"><em>MySQL</em> es un sistema gestor de bases de datos relacionales que almacena información en tablas y procesa instrucciones escritas en SQL.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">En palabras sencillas</p><p class="sencilla">Es el motor que guarda, organiza y entrega los datos cuando se los solicitas.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">Ejemplo real</p><p class="real">Funciona como un bibliotecario que sabe dónde está cada libro y responde a peticiones precisas.</p></div>
+          </div>
+          <div class="modelo-mental"><p class="componente-label">Las tres piezas</p><p><strong>MySQL Server</strong> guarda los datos. <strong>SQL</strong> es el lenguaje con el que solicitas operaciones. <strong>MySQL Workbench</strong> es la interfaz visual desde la que escribes y observas los resultados.</p></div>
+          <div class="tip"><p class="componente-label">Buena práctica</p><p>No confundas la interfaz con el motor. Cerrar Workbench no elimina la base ni detiene necesariamente el servidor.</p></div>
+          <div class="reflexion"><p class="reflexion-label">Antes de continuar</p><div class="reflexion-pregunta">Si Workbench es la interfaz, ¿quién guarda realmente los datos?</div><button class="ver-explicacion" type="button" aria-expanded="false">Mostrar explicación</button><div class="explicacion" aria-hidden="true"><div class="explicacion-inner">El motor MySQL Server es quien almacena y procesa la información. Workbench solo facilita la comunicación con él mediante una interfaz gráfica.</div></div></div>
+        </section>
+
+        <section class="seccion" id="instalacion">
+          <div class="seccion-meta"><span>03</span><span>CONFIGURACIÓN</span></div>
+          <h2>⚙️ Instalación y configuración inicial</h2>
+          <div class="caso-negocio"><p class="componente-label">Objetivo técnico</p><h3>Preparar el entorno local</h3><p>Instalarás el servidor y la herramienta visual para construir y consultar la base de datos de la tienda desde tu computador.</p></div>
+          <ol class="pasos">
+            <li><span>01</span><p>Descarga <strong>MySQL Installer Community</strong> desde el sitio oficial de MySQL.</p></li>
+            <li><span>02</span><p>Ejecuta el instalador y selecciona <strong>Developer Default</strong> para incluir Server y Workbench.</p></li>
+            <li><span>03</span><p>Conserva el puerto <strong>3306</strong> y la configuración de desarrollo.</p></li>
+            <li><span>04</span><p>Define una contraseña segura para el usuario administrador <em>root</em> y guárdala.</p></li>
+            <li><span>05</span><p>Activa el servicio de Windows para que MySQL pueda iniciar con el sistema.</p></li>
+            <li><span>06</span><p>Abre Workbench y prueba la conexión local con la contraseña configurada.</p></li>
+          </ol>
+          <div class="advertencia"><p class="componente-label">Error frecuente</p><p><strong>Qué ocurre:</strong> aparece “Access denied for user 'root'”.</p><p><strong>Cómo leerlo:</strong> MySQL está rechazando las credenciales del usuario administrador.</p><p><strong>Cómo resolverlo:</strong> verifica la contraseña, el usuario y que la conexión apunte al servidor local correcto.</p></div>
+          <div class="tip"><p class="componente-label">Buena práctica</p><p>Usa <em>root</em> solo para aprendizaje y administración local. En proyectos reales se crean usuarios con permisos limitados.</p></div>
+        </section>
+
+        <section class="seccion" id="workbench">
+          <div class="seccion-meta"><span>04</span><span>HERRAMIENTA</span></div>
+          <h2>🖥️ Reconocer MySQL Workbench</h2>
+          <div class="modelo-mental"><p class="componente-label">Tres zonas esenciales</p><p>El panel <strong>Schemas</strong> muestra las bases y tablas. El <strong>Query Editor</strong> recibe instrucciones SQL. El panel de resultados informa qué ocurrió y muestra los datos recuperados.</p></div>
+          <div class="definicion">
+            <div class="definicion-bloque"><p class="componente-label">Navigator / Schemas</p><p class="tecnica">Representa la estructura disponible en el servidor conectado.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">Query Editor</p><p class="sencilla">Es el espacio donde escribes y ejecutas instrucciones SQL.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">Result Grid</p><p class="real">Muestra en filas y columnas la información devuelta por una consulta.</p></div>
+          </div>
+          <div class="reflexion"><p class="reflexion-label">Antes de continuar</p><div class="reflexion-pregunta">Tienes cinco instrucciones escritas, pero necesitas ejecutar solo una. ¿Debes borrar las otras cuatro?</div><button class="ver-explicacion" type="button" aria-expanded="false">Mostrar explicación</button><div class="explicacion" aria-hidden="true"><div class="explicacion-inner">No. Puedes ubicar el cursor en la instrucción deseada y ejecutar la sentencia actual, o seleccionar únicamente el bloque que necesitas correr.</div></div></div>
+        </section>
+
+        <section class="seccion" id="crear-base">
+          <div class="seccion-meta"><span>05</span><span>IMPLEMENTACIÓN</span></div>
+          <h2>🏗️ Crear la base de datos</h2>
+          <p>Antes de crear tablas necesitas un contenedor lógico. En MySQL ese contenedor es la base de datos.</p>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Crearemos la base <em>tienda</em> y la seleccionaremos como contexto de trabajo.</p><p class="componente-label">Por qué lo hacemos</p><p>MySQL necesita saber dentro de qué base debe crear las tablas posteriores.</p><p class="componente-label">Qué aprenderás</p><p>La diferencia entre crear una base y activarla para ejecutar instrucciones.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">EJECUTAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">CREATE DATABASE tienda;
+USE tienda;</code></pre></div>
+          <div class="advertencia"><p class="componente-label">Error frecuente</p><p><strong>Qué ocurre:</strong> MySQL indica que la base ya existe.</p><p><strong>Cómo leerlo:</strong> se intentó crear nuevamente un contenedor con el mismo nombre.</p><p><strong>Cómo resolverlo:</strong> reutiliza la base existente o elimina únicamente una base de prueba que estés seguro de no necesitar.</p></div>
+        </section>
+
+        <section class="seccion" id="tablas-datos">
+          <div class="seccion-meta"><span>06</span><span>MODELADO</span></div>
+          <h2>📊 Tablas, columnas y tipos de datos</h2>
+          <p>Una tabla representa una entidad del negocio. Cada columna describe una característica y cada fila representa un registro concreto.</p>
+          <div class="modelo-mental"><p class="componente-label">Puente con POO</p><p>Una <strong>clase</strong> se parece a una tabla, un <strong>atributo</strong> a una columna y un <strong>objeto</strong> a una fila.</p></div>
+          <div class="definicion">
+            <div class="definicion-bloque"><p class="componente-label">Definición técnica</p><p class="tecnica">Un tipo de dato establece qué valores puede almacenar una columna y cómo debe tratarlos el motor.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">En palabras sencillas</p><p class="sencilla">Define si una columna guarda texto, números, fechas o valores lógicos.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">Ejemplo real</p><p class="real">Un correo es texto, una fecha de registro es una fecha y el estado activo se representa como verdadero o falso.</p></div>
+          </div>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Crearemos la tabla <em>usuario</em> con restricciones para proteger la calidad de los datos.</p><p class="componente-label">Por qué lo hacemos</p><p>El negocio necesita correos únicos, nombres obligatorios y un estado inicial definido.</p><p class="componente-label">Qué aprenderás</p><p>Cómo combinar tipos de datos, obligatoriedad, unicidad y valores predeterminados.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">CREATE TABLE usuario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(150) NOT NULL UNIQUE,
+    activo BOOLEAN DEFAULT TRUE,
+    fecha_registro DATE
+);</code></pre></div>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Consultaremos la estructura interna que MySQL registró para la tabla.</p><p class="componente-label">Por qué lo hacemos</p><p>Necesitamos comprobar tipos, restricciones y propiedades antes de insertar información.</p><p class="componente-label">Qué aprenderás</p><p>A inspeccionar una tabla con <em>DESCRIBE</em>.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">EJECUTAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">DESCRIBE usuario;</code></pre></div>
+          <div class="tip"><p class="componente-label">Buena práctica</p><p>Para valores monetarios utiliza <em>DECIMAL</em>. Evita tipos de punto flotante cuando la exactitud financiera sea importante.</p></div>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Insertaremos dos usuarios y luego consultaremos todas sus columnas.</p><p class="componente-label">Por qué lo hacemos</p><p>Una tabla sin filas solo describe estructura; los registros permiten comprobar la persistencia.</p><p class="componente-label">Qué aprenderás</p><p>Cómo usar <em>INSERT INTO</em>, valores predeterminados y <em>SELECT</em>.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">EJECUTAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">INSERT INTO usuario (nombre, correo, fecha_registro)
+VALUES ('Ana Torres', 'ana@correo.com', '2026-07-01');
+
+INSERT INTO usuario (nombre, correo, fecha_registro)
+VALUES ('Carlos Ruiz', 'carlos@correo.com', '2026-07-05');
+
+SELECT * FROM usuario;</code></pre></div>
+        </section>
+
+        <section class="seccion" id="llave-primaria">
+          <div class="seccion-meta"><span>07</span><span>IDENTIDAD</span></div>
+          <h2>🔑 Identificar cada fila sin ambigüedad</h2>
+          <div class="apertura"><p class="apertura-label">Problema de negocio</p><p class="apertura-pregunta">Existen dos clientes llamados Carlos Ruiz. ¿Cómo sabrá el sistema a cuál pertenece un pedido?</p></div>
+          <div class="definicion">
+            <div class="definicion-bloque"><p class="componente-label">Definición técnica</p><p class="tecnica">Una llave primaria identifica de forma única cada fila, no admite duplicados y no puede ser nula.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">En palabras sencillas</p><p class="sencilla">Es el dato que permite distinguir un registro de todos los demás.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">Ejemplo real</p><p class="real">Dos personas pueden compartir nombre, pero no el mismo número de identificación.</p></div>
+          </div>
+          <div class="modelo-mental"><p class="componente-label">Dos decisiones importantes</p><p><em>PRIMARY KEY</em> declara la identidad de la fila. <em>AUTO_INCREMENT</em> permite que MySQL asigne el siguiente número automáticamente.</p></div>
+          <div class="tip"><p class="componente-label">Buena práctica</p><p>Define una llave primaria en toda tabla. Aunque el motor permita omitirla, el modelado profesional necesita una identidad estable.</p></div>
+        </section>
+
+        <section class="seccion" id="relacion-uno-uno">
+          <div class="seccion-meta"><span>08</span><span>RELACIONES</span></div>
+          <h2>🔗 Relación uno a uno</h2>
+          <p>Un usuario necesita datos esenciales para autenticarse, mientras que su perfil puede contener información adicional. Separarlos mantiene cada tabla enfocada.</p>
+          <div class="definicion">
+            <div class="definicion-bloque"><p class="componente-label">Definición técnica</p><p class="tecnica">En una relación 1:1, una fila de una tabla se asocia con una sola fila de la otra tabla, y viceversa.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">En palabras sencillas</p><p class="sencilla">Cada usuario tiene un perfil y cada perfil pertenece a un único usuario.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">Ejemplo real</p><p class="real">Una persona posee un expediente principal y ese expediente corresponde únicamente a esa persona.</p></div>
+          </div>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Crearemos la tabla <em>perfil</em> y la conectaremos con <em>usuario</em>.</p><p class="componente-label">Por qué lo hacemos</p><p>Queremos separar datos de acceso y datos complementarios sin perder la relación entre ambos.</p><p class="componente-label">Qué aprenderás</p><p>Cómo implementar una llave foránea y usar <em>UNIQUE</em> para garantizar el 1:1.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">CREATE TABLE perfil (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL UNIQUE,
+    bio VARCHAR(255),
+    telefono VARCHAR(20),
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+);</code></pre></div>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Crearemos un perfil para cada usuario existente.</p><p class="componente-label">Por qué lo hacemos</p><p>Necesitamos probar que la llave foránea apunta a filas reales.</p><p class="componente-label">Qué aprenderás</p><p>Cómo insertar datos relacionados mediante el identificador del usuario.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">EJECUTAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">INSERT INTO perfil (usuario_id, bio, telefono)
+VALUES (1, 'Desarrolladora backend', '3001234567');
+
+INSERT INTO perfil (usuario_id, bio, telefono)
+VALUES (2, 'Disenador UX', '3009876543');
+
+SELECT * FROM perfil;</code></pre></div>
+          <div class="advertencia"><p class="componente-label">Error frecuente</p><p><strong>Qué ocurre:</strong> MySQL rechaza un segundo perfil para el mismo usuario.</p><p><strong>Cómo leerlo:</strong> el mensaje indica una entrada duplicada sobre la columna <em>usuario_id</em>.</p><p><strong>Cómo resolverlo:</strong> modifica el perfil existente o usa otro usuario. La restricción <em>UNIQUE</em> está protegiendo la relación 1:1.</p></div>
+        </section>
+
+        <section class="seccion" id="relacion-uno-muchos">
+          <div class="seccion-meta"><span>09</span><span>RELACIONES</span></div>
+          <h2>🧩 Relación uno a muchos</h2>
+          <div class="apertura"><p class="apertura-label">Problema de negocio</p><p class="apertura-pregunta">Un cliente puede comprar varias veces. ¿Debemos repetir todos sus datos dentro de cada pedido?</p></div>
+          <p>Repetir el nombre, la ciudad y otros datos del cliente en cada pedido produciría duplicidad y riesgo de inconsistencias.</p>
+          <div class="modelo-mental"><p class="componente-label">Cómo piensa la base</p><p>El cliente se guarda una sola vez. Cada pedido conserva únicamente el identificador del cliente al que pertenece.</p></div>
+          <div class="definicion">
+            <div class="definicion-bloque"><p class="componente-label">Definición técnica</p><p class="tecnica">Una relación 1:N permite que una fila de la tabla principal se asocie con varias filas de una tabla dependiente.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">En palabras sencillas</p><p class="sencilla">Un cliente puede tener muchos pedidos, pero cada pedido pertenece a un solo cliente.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">Ejemplo real</p><p class="real">Una persona puede tener muchas facturas, pero cada factura tiene un único comprador.</p></div>
+          </div>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Crearemos las tablas <em>cliente</em> y <em>pedido</em>.</p><p class="componente-label">Por qué lo hacemos</p><p>El negocio necesita registrar varios pedidos por cliente sin duplicar la información del comprador.</p><p class="componente-label">Qué aprenderás</p><p>Cómo una llave foránea sin <em>UNIQUE</em> permite repetir el mismo cliente en múltiples pedidos.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">CREATE TABLE cliente (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(80)
+);
+
+CREATE TABLE pedido (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT NOT NULL,
+    producto VARCHAR(120) NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    fecha DATE,
+    FOREIGN KEY (cliente_id) REFERENCES cliente(id)
+);</code></pre></div>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Insertaremos dos clientes y tres pedidos relacionados.</p><p class="componente-label">Por qué lo hacemos</p><p>Necesitamos observar que el identificador del primer cliente puede aparecer en varios pedidos.</p><p class="componente-label">Qué aprenderás</p><p>Cómo se representa el lado “muchos” mediante valores repetidos en la llave foránea.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">EJECUTAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">INSERT INTO cliente (nombre, ciudad)
+VALUES ('Laura Gomez', 'Bogota');
+
+INSERT INTO cliente (nombre, ciudad)
+VALUES ('Pedro Diaz', 'Medellin');
+
+INSERT INTO pedido (cliente_id, producto, monto, fecha)
+VALUES (1, 'Teclado mecanico', 180000.00, '2026-07-10');
+
+INSERT INTO pedido (cliente_id, producto, monto, fecha)
+VALUES (1, 'Mouse gamer', 95000.00, '2026-07-11');
+
+INSERT INTO pedido (cliente_id, producto, monto, fecha)
+VALUES (2, 'Monitor 24', 620000.00, '2026-07-12');</code></pre></div>
+          <div class="advertencia"><p class="componente-label">Error frecuente</p><p><strong>Qué ocurre:</strong> se intenta guardar un pedido con un <em>cliente_id</em> que no existe.</p><p><strong>Cómo leerlo:</strong> MySQL informa que falla una restricción de llave foránea.</p><p><strong>Cómo resolverlo:</strong> usa el identificador de un cliente existente o crea primero el cliente correspondiente.</p></div>
+        </section>
+
+        <section class="seccion" id="consultas">
+          <div class="seccion-meta"><span>10</span><span>CONSULTAS</span></div>
+          <h2>🔎 Convertir datos en respuestas de negocio</h2>
+          <p>Guardar datos no es suficiente. El valor aparece cuando puedes responder preguntas concretas del negocio con consultas precisas.</p>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Seleccionaremos únicamente el nombre y la ciudad de cada cliente.</p><p class="componente-label">Por qué lo hacemos</p><p>No siempre necesitas recuperar todas las columnas de una tabla.</p><p class="componente-label">Qué aprenderás</p><p>Cómo elegir columnas específicas con <em>SELECT</em>.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">EJECUTAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">SELECT nombre, ciudad
+FROM cliente;</code></pre></div>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Filtraremos los pedidos cuyo monto sea mayor a 100000.</p><p class="componente-label">Por qué lo hacemos</p><p>El gerente necesita analizar únicamente compras de mayor valor.</p><p class="componente-label">Qué aprenderás</p><p>Cómo limitar filas mediante una condición <em>WHERE</em>.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">EJECUTAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">SELECT producto, monto
+FROM pedido
+WHERE monto &gt; 100000;</code></pre></div>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Ordenaremos los pedidos desde el más costoso hasta el menos costoso.</p><p class="componente-label">Por qué lo hacemos</p><p>Un reporte debe presentar los datos en un orden útil para tomar decisiones.</p><p class="componente-label">Qué aprenderás</p><p>Cómo usar <em>ORDER BY</em> con orden descendente.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">EJECUTAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">SELECT producto, monto
+FROM pedido
+ORDER BY monto DESC;</code></pre></div>
+          <div class="separador-editorial"><span>Unir información relacionada</span></div>
+          <div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Mostraremos el nombre del cliente junto con cada producto y monto comprado.</p><p class="componente-label">Por qué lo hacemos</p><p>La tabla pedido guarda el identificador del cliente, pero el reporte necesita su nombre.</p><p class="componente-label">Qué aprenderás</p><p>Cómo unir tablas relacionadas mediante <em>JOIN</em>.</p></div>
+          <div class="code-block"><div class="code-head"><div><span class="code-context">EJECUTAR</span><span class="code-file">MySQL Workbench · Query Editor</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-sql">SELECT cliente.nombre, pedido.producto, pedido.monto
+FROM cliente
+JOIN pedido ON cliente.id = pedido.cliente_id
+ORDER BY cliente.nombre;</code></pre></div>
+          <div class="reflexion"><p class="reflexion-label">Antes de continuar</p><div class="reflexion-pregunta">¿Por qué no guardamos directamente el nombre del cliente dentro de cada pedido?</div><button class="ver-explicacion" type="button" aria-expanded="false">Mostrar explicación</button><div class="explicacion" aria-hidden="true"><div class="explicacion-inner">Repetir el nombre en cada pedido produciría duplicidad y posibles inconsistencias. La relación conserva una sola fuente de verdad para el cliente y JOIN recupera la información cuando se necesita.</div></div></div>
+        </section>
+
+        <section class="seccion" id="reto-final">
+          <div class="seccion-meta"><span>11</span><span>INTEGRACIÓN</span></div>
+          <h2>🧪 Reto integrador de la tienda</h2>
+          <div class="practica"><p class="componente-label">Práctica integradora</p><h3>Amplía el modelo sin romper las relaciones</h3><p>Agrega nuevos datos a la tienda y demuestra que puedes consultar información útil respetando las restricciones del modelo.</p><ol class="pasos"><li><span>01</span><p>Inserta un tercer cliente con una ciudad diferente.</p></li><li><span>02</span><p>Registra dos pedidos para ese cliente usando su identificador.</p></li><li><span>03</span><p>Consulta únicamente los pedidos con monto superior a 150000.</p></li><li><span>04</span><p>Ordena el resultado desde el monto más alto.</p></li><li><span>05</span><p>Usa JOIN para mostrar nombre del cliente, producto, monto y fecha.</p></li><li><span>06</span><p>Explica qué restricción impediría guardar un pedido para un cliente inexistente.</p></li></ol></div>
+          <div class="caso-negocio"><p class="componente-label">Conexión con la siguiente clase</p><h3>Java hablará con MySQL</h3><p>En la siguiente etapa, JDBC permitirá que una aplicación Java envíe estas mismas instrucciones al servidor. El modelo y el SQL construidos hoy serán la base del CRUD.</p></div>
+          <div class="tip"><p class="componente-label">Criterio profesional</p><p>Antes de conectar una aplicación, valida primero que el modelo y las consultas funcionen directamente en la base de datos.</p></div>
+        </section>
+
+        <footer class="footer">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack</footer>
+      </article>
+    </main>
+  </div>
+  <div class="watermark" aria-hidden="true">© 2026 ANA ALVARADO</div>
+  <div class="slide-status" id="slideStatus" aria-live="polite"></div>
+  <div class="slide-hint">← → navegar · Esc salir · espacio avanzar</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="ana-clase.js"></script>
+</body>
+</html>
