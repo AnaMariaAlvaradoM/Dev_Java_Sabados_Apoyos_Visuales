@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<!--
+============================================================================
+  © 2026 Ana Alvarado — Todos los derechos reservados.
+  Educadora Tech & Desarrolladora Full Stack.
+  Material de autoría exclusiva. Prohibida su reproducción, redistribución,
+  modificación o uso fuera del contexto de clase sin autorización escrita.
+  linkedin.com/in/ana-alvarado-instructora-full-stack
+============================================================================
+  ARCHIVOS QUE ACOMPAÑAN A ESTE HTML (deben estar en la misma carpeta):
+    · ana-estilos.css
+    · ana-clase.js
+============================================================================
+-->
+<html lang="es" data-empresa="dev-senior">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Ana Alvarado">
+  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <title>Clase 08 · JDBC y CRUD profesional · Ana Alvarado</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="ana-estilos.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+  <div class="controls" aria-label="Controles de lectura">
+    <button class="ctrl-btn" id="temaBtn" type="button" aria-label="Activar tema claro" title="Cambiar tema">
+      <span aria-hidden="true">☀</span>
+    </button>
+    <button class="ctrl-btn" id="presentBtn" type="button" aria-label="Iniciar modo presentación" title="Presentación (P)">
+      <span aria-hidden="true">▣</span>
+    </button>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Índice de la clase">
+      <div class="sidebar-eyebrow">Libro de clase</div>
+      <div class="sidebar-brand">Java AI Backend Developer</div>
+      <div class="sidebar-sub">Clase 08 · Módulo 02</div>
+      <div class="sidebar-rule"></div>
+
+      <nav id="nav">
+        <a class="nav-item active" href="#puente-jdbc"><span class="nav-index">01</span><span class="nav-label">🌉 El puente JDBC</span></a>
+        <a class="nav-item" href="#driver-classpath"><span class="nav-index">02</span><span class="nav-label">📦 Driver y classpath</span></a>
+        <a class="nav-item" href="#primera-conexion"><span class="nav-index">03</span><span class="nav-label">🔌 Primera conexión</span></a>
+        <a class="nav-item" href="#modelo-dao"><span class="nav-index">04</span><span class="nav-label">🗂️ Modelo y DAO</span></a>
+        <a class="nav-item" href="#insertar-seguro"><span class="nav-index">05</span><span class="nav-label">➕ Insertar seguro</span></a>
+        <a class="nav-item" href="#consultar-resultados"><span class="nav-index">06</span><span class="nav-label">🔍 Consultar resultados</span></a>
+        <a class="nav-item" href="#actualizar-eliminar"><span class="nav-index">07</span><span class="nav-label">✏️ Modificar datos</span></a>
+        <a class="nav-item" href="#errores-sql"><span class="nav-index">08</span><span class="nav-label">🛡️ Leer errores SQL</span></a>
+        <a class="nav-item" href="#arquitectura-final"><span class="nav-index">09</span><span class="nav-label">🏛️ Arquitectura final</span></a>
+        <a class="nav-item" href="#crud-completo"><span class="nav-index">10</span><span class="nav-label">🚀 CRUD completo</span></a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span>ANA ALVARADO</span>
+        <span>EDUCACIÓN TECH</span>
+      </div>
+    </aside>
+
+    <main class="content-area" id="contenido">
+      <article class="content-column">
+        <header class="clase-header">
+          <div class="clase-kicker">Java AI Backend Developer · Módulo 02 · Clase 08</div>
+          <h1 class="clase-titulo">Java, MySQL y un CRUD profesional</h1>
+          <p class="clase-bajada">Construirás una aplicación Java que persiste clientes en MySQL mediante JDBC, separa el acceso a datos con DAO y ejecuta un CRUD seguro.</p>
+        </header>
+
+        <div class="aviso-copyright" role="note">
+          <div class="aviso-titulo">Material exclusivo de clase</div>
+          <p>Este recurso es de <strong>autoría de Ana Alvarado</strong> y está destinado a estudiantes de la cohorte. No se autoriza su reproducción o redistribución fuera del contexto formativo.</p>
+        </div>
+
+        <section class="seccion slide-activa" id="puente-jdbc">
+          <div class="seccion-meta"><span>01</span><span>FUNDAMENTO</span></div>
+          <h2>🌉 El puente entre Java y MySQL</h2>
+
+          <div class="apertura">
+            <p class="apertura-label">Punto de partida</p>
+            <p class="apertura-pregunta">Si la tienda ya almacena clientes en MySQL, ¿cómo puede un vendedor registrarlos desde una aplicación Java sin abrir Workbench?</p>
+          </div>
+
+          <p>Hasta ahora, las instrucciones <em>INSERT</em>, <em>SELECT</em>, <em>UPDATE</em> y <em>DELETE</em> se ejecutaban manualmente. En una aplicación real, el usuario interactúa con menús, formularios o botones; el programa debe encargarse de hablar con la base de datos.</p>
+
+          <div class="modelo-mental">
+            <p class="componente-label">Cómo imaginarlo</p>
+            <p>Java y MySQL son dos sistemas distintos. JDBC define un enchufe estándar y el driver de MySQL funciona como el cable que traduce las solicitudes para ese motor específico.</p>
+          </div>
+
+          <div class="definicion">
+            <div class="definicion-bloque">
+              <p class="componente-label">Definición técnica</p>
+              <p class="tecnica"><em>JDBC</em> es la API estándar de Java para establecer conexiones, ejecutar sentencias SQL y procesar resultados de bases de datos relacionales.</p>
+            </div>
+            <div class="definicion-bloque">
+              <p class="componente-label">En palabras sencillas</p>
+              <p class="sencilla">Es el conjunto de reglas que permite que tu código Java envíe órdenes a una base de datos y reciba sus respuestas.</p>
+            </div>
+            <div class="definicion-bloque">
+              <p class="componente-label">Ejemplo real</p>
+              <p class="real">El vendedor registra a Laura en la aplicación. Java recibe los datos, JDBC los envía a MySQL y la información queda guardada incluso después de cerrar el programa.</p>
+            </div>
+          </div>
+
+          <div class="caso-negocio">
+            <p class="componente-label">Caso de negocio</p>
+            <h3>Tienda con datos persistentes</h3>
+            <p>La base <em>tienda</em> ya contiene las tablas <em>cliente</em> y <em>pedido</em>. El objetivo ahora es conectar el sistema Java con esa información y administrar clientes mediante las cuatro operaciones CRUD.</p>
+          </div>
+
+          <div class="reflexion">
+            <p class="reflexion-label">Comprueba la idea</p>
+            <div class="reflexion-pregunta">¿JDBC y el driver de MySQL son la misma cosa?</div>
+            <button class="ver-explicacion" type="button" aria-expanded="false">Mostrar explicación</button>
+            <div class="explicacion" aria-hidden="true"><div class="explicacion-inner">No. JDBC viene con Java y define las reglas generales. MySQL Connector/J es la implementación específica que traduce esas reglas para MySQL.</div></div>
+          </div>
+        </section>
+
+        <section class="seccion" id="driver-classpath">
+          <div class="seccion-meta"><span>02</span><span>CONFIGURACIÓN</span></div>
+          <h2>📦 Driver y classpath</h2>
+
+          <p>Para que JDBC pueda comunicarse con MySQL, el proyecto necesita la librería oficial <em>MySQL Connector/J</em>. Se distribuye como un archivo <em>.jar</em>: un paquete de clases Java ya compiladas.</p>
+
+          <div class="definicion">
+            <div class="definicion-bloque">
+              <p class="componente-label">Archivo JAR</p>
+              <p class="tecnica">Un <em>Java Archive</em> empaqueta clases y recursos reutilizables en un solo archivo.</p>
+            </div>
+            <div class="definicion-bloque">
+              <p class="componente-label">Classpath</p>
+              <p class="sencilla">Es la lista de ubicaciones donde Java busca las clases necesarias para compilar y ejecutar.</p>
+            </div>
+            <div class="definicion-bloque">
+              <p class="componente-label">Relación entre ambos</p>
+              <p class="real">Guardar el JAR no basta: debes agregarlo al classpath para que Java pueda encontrar y cargar el driver.</p>
+            </div>
+          </div>
+
+          <div class="practica">
+            <p class="componente-label">Preparar el proyecto</p>
+            <h3>Descarga y registra MySQL Connector/J</h3>
+            <ol class="pasos">
+              <li><span>01</span><p>Descarga MySQL Connector/J desde <em>dev.mysql.com/downloads/connector/j/</em> y elige la distribución <strong>Platform Independent</strong>.</p></li>
+              <li><span>02</span><p>Descomprime el archivo y copia <em>mysql-connector-j-9.x.x.jar</em> dentro de una carpeta nueva llamada <em>lib</em>.</p></li>
+              <li><span>03</span><p>En IntelliJ, usa <strong>Add as Library</strong>. En VS Code, agrégalo desde <strong>Java Projects → Referenced Libraries</strong>.</p></li>
+            </ol>
+          </div>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Verificar la estructura mínima antes de escribir Java.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>La ubicación del driver y su registro en el classpath deben quedar claros antes de intentar una conexión.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A distinguir entre tener una librería guardada y tenerla disponible para el proyecto.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">crud-tienda/</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-treeview">crud-tienda/
+├── lib/
+│   └── mysql-connector-j-9.x.x.jar
+└── src/</code></pre>
+          </div>
+
+          <div class="tip"><p class="componente-label">Conexión futura</p><p>Más adelante Maven administrará esta dependencia automáticamente. Hacerlo manualmente primero permite entender qué problema resuelve un gestor de dependencias.</p></div>
+        </section>
+
+        <section class="seccion" id="primera-conexion">
+          <div class="seccion-meta"><span>03</span><span>CONEXIÓN</span></div>
+          <h2>🔌 Primera conexión</h2>
+
+          <p>Una conexión necesita cuatro datos: protocolo y motor, host y puerto, nombre de la base, y credenciales. Para este proyecto la URL será <em>jdbc:mysql://localhost:3306/tienda</em>.</p>
+
+          <div class="modelo-mental">
+            <p class="componente-label">Anatomía de la URL</p>
+            <p><em>jdbc:mysql</em> identifica el protocolo y el motor; <em>localhost</em> señala tu computador; <em>3306</em> es el puerto habitual de MySQL; <em>tienda</em> es la base que se abrirá.</p>
+          </div>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Crear una clase exclusiva para abrir conexiones.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>Centralizar la configuración evita repetir URL, usuario y contraseña en cada operación.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A usar <em>DriverManager</em>, devolver un objeto <em>Connection</em> y reconocer que la conexión puede lanzar <em>SQLException</em>.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">src/config/ConexionBD.java</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-java">package config;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public final class ConexionBD {
+
+    private static final String URL = "jdbc:mysql://localhost:3306/tienda";
+    private static final String USUARIO = "root";
+    private static final String CLAVE = "admin";
+
+    private ConexionBD() {
+    }
+
+    public static Connection obtenerConexion() throws SQLException {
+        return DriverManager.getConnection(URL, USUARIO, CLAVE);
+    }
+}</code></pre>
+          </div>
+
+          <div class="advertencia">
+            <p class="componente-label">Credenciales locales</p>
+            <p><strong>Qué ocurre:</strong> copiar <em>root/admin</em> puede producir acceso denegado.</p>
+            <p><strong>Cómo leerlo:</strong> el mensaje contiene <em>Access denied for user</em>.</p>
+            <p><strong>Cómo resolverlo:</strong> usa el usuario y la contraseña configurados en tu instalación de MySQL.</p>
+          </div>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Abrir y cerrar una conexión de prueba.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>Es mejor confirmar la infraestructura antes de añadir el CRUD.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A usar <em>try-with-resources</em> para cerrar recursos automáticamente.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">src/app/App.java</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-java">package app;
+
+import config.ConexionBD;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+public class App {
+    public static void main(String[] args) {
+        try (Connection conexion = ConexionBD.obtenerConexion()) {
+            System.out.println("Conexión exitosa a la base de datos.");
+        } catch (SQLException e) {
+            System.out.println("Error de conexión: " + e.getMessage());
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="tip"><p class="componente-label">Resultado esperado</p><p>La consola debe mostrar <em>Conexión exitosa a la base de datos.</em> No avances al CRUD hasta conseguir esta salida.</p></div>
+        </section>
+
+        <section class="seccion" id="modelo-dao">
+          <div class="seccion-meta"><span>04</span><span>DISEÑO</span></div>
+          <h2>🗂️ Modelo y patrón DAO</h2>
+
+          <div class="apertura">
+            <p class="apertura-label">Decisión de diseño</p>
+            <p class="apertura-pregunta">¿Qué pasaría si el SQL de clientes quedara mezclado con menús, validaciones y mensajes de consola?</p>
+          </div>
+
+          <p>El código tendría varias responsabilidades y cambiar la persistencia obligaría a revisar toda la aplicación. El patrón <em>DAO</em> concentra el acceso a datos de una entidad en un componente dedicado.</p>
+
+          <div class="definicion">
+            <div class="definicion-bloque"><p class="componente-label">Definición técnica</p><p class="tecnica"><em>Data Access Object</em> separa la lógica de persistencia de la lógica que usa los datos.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">En palabras sencillas</p><p class="sencilla">El resto del programa pide insertar, listar, actualizar o eliminar; el DAO decide qué SQL ejecutar.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">Ejemplo real</p><p class="real">Es como un cajero: tú solicitas una operación, pero solo él conoce el procedimiento para acceder a la bóveda.</p></div>
+          </div>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Crear el modelo Java que representa una fila de la tabla <em>cliente</em>.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>JDBC entrega valores por columnas; la aplicación necesita convertirlos en objetos de dominio.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A diferenciar un cliente nuevo, sin id, de un cliente recuperado de la base, con id.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">src/model/Cliente.java</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-java">package model;
+
+public class Cliente {
+    private int id;
+    private String nombre;
+    private String email;
+    private String ciudad;
+
+    public Cliente(int id, String nombre, String email, String ciudad) {
+        this.id = id;
+        this.nombre = nombre;
+        this.email = email;
+        this.ciudad = ciudad;
+    }
+
+    public Cliente(String nombre, String email, String ciudad) {
+        this.nombre = nombre;
+        this.email = email;
+        this.ciudad = ciudad;
+    }
+
+    public int getId() { return id; }
+    public String getNombre() { return nombre; }
+    public String getEmail() { return email; }
+    public String getCiudad() { return ciudad; }
+
+    @Override
+    public String toString() {
+        return "Cliente{id=" + id + ", nombre='" + nombre
+                + "', email='" + email + "', ciudad='" + ciudad + "'}";
+    }
+}</code></pre>
+          </div>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Definir el contrato de acceso a datos para clientes.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>La interfaz separa las operaciones disponibles de su implementación JDBC.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A expresar el CRUD como un contrato estable que otra clase deberá cumplir.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">src/dao/ClienteDAO.java</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-java">package dao;
+
+import java.util.List;
+import model.Cliente;
+
+public interface ClienteDAO {
+    void insertar(Cliente cliente);
+    List&lt;Cliente&gt; listar();
+    void actualizar(Cliente cliente);
+    void eliminar(int id);
+}</code></pre>
+          </div>
+
+          <div class="tip"><p class="componente-label">Responsabilidad única</p><p><em>Cliente</em> representa datos. <em>ClienteDAO</em> declara operaciones. La implementación JDBC contendrá el SQL. Cada pieza tiene un motivo claro para cambiar.</p></div>
+        </section>
+
+        <section class="seccion" id="insertar-seguro">
+          <div class="seccion-meta"><span>05</span><span>CREATE Y SEGURIDAD</span></div>
+          <h2>➕ Insertar sin abrir una vulnerabilidad</h2>
+
+          <p>Concatenar datos del usuario dentro del SQL permite que una entrada altere la consulta. Ese problema se conoce como <em>inyección SQL</em>.</p>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a observar</p><p>Una forma insegura de construir SQL.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>Reconocer el error permite entender por qué <em>PreparedStatement</em> es obligatorio.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A identificar concatenación de datos externos como una vulnerabilidad, no como una simple decisión de estilo.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">EJECUTAR</span><span class="code-file">Ejemplo inseguro</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-java">String sql = "INSERT INTO cliente (nombre, email, ciudad) VALUES ('"
+        + cliente.getNombre() + "', '"
+        + cliente.getEmail() + "', '"
+        + cliente.getCiudad() + "')";</code></pre>
+          </div>
+
+          <div class="advertencia">
+            <p class="componente-label">Inyección SQL</p>
+            <p><strong>Qué ocurre:</strong> una entrada como <em>x' OR '1'='1</em> puede convertirse en parte de la instrucción y hacer verdadera una condición para todas las filas.</p>
+            <p><strong>Cómo leerlo:</strong> los datos y el código SQL quedaron mezclados en una misma cadena.</p>
+            <p><strong>Cómo resolverlo:</strong> usa parámetros <em>?</em> y asigna cada valor mediante métodos como <em>setString</em> o <em>setInt</em>.</p>
+          </div>
+
+          <div class="modelo-mental">
+            <p class="componente-label">PreparedStatement</p>
+            <p>La estructura SQL se prepara primero y los valores se incorporan después como datos. Un texto malicioso permanece como texto y no puede reescribir la sentencia.</p>
+          </div>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Crear la implementación del DAO y programar la operación de inserción.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>El SQL debe vivir en la capa de acceso a datos y utilizar parámetros seguros.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A preparar una sentencia, completar parámetros desde la posición 1 y ejecutar una modificación con <em>executeUpdate</em>.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">src/dao/ClienteDAOImpl.java</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-java">package dao;
+
+import config.ConexionBD;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+import model.Cliente;
+
+public class ClienteDAOImpl implements ClienteDAO {
+
+    @Override
+    public void insertar(Cliente cliente) {
+        String sql = "INSERT INTO cliente (nombre, email, ciudad) VALUES (?, ?, ?)";
+
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, cliente.getNombre());
+            ps.setString(2, cliente.getEmail());
+            ps.setString(3, cliente.getCiudad());
+
+            int filas = ps.executeUpdate();
+            System.out.println("Filas insertadas: " + filas);
+        } catch (SQLException e) {
+            System.out.println("Error al insertar: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List&lt;Cliente&gt; listar() {
+        throw new UnsupportedOperationException("Pendiente de implementar");
+    }
+
+    @Override
+    public void actualizar(Cliente cliente) {
+        throw new UnsupportedOperationException("Pendiente de implementar");
+    }
+
+    @Override
+    public void eliminar(int id) {
+        throw new UnsupportedOperationException("Pendiente de implementar");
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="seccion" id="consultar-resultados">
+          <div class="seccion-meta"><span>06</span><span>READ</span></div>
+          <h2>🔍 Convertir filas en objetos</h2>
+
+          <div class="definicion">
+            <div class="definicion-bloque"><p class="componente-label">Definición técnica</p><p class="tecnica"><em>ResultSet</em> representa las filas devueltas por una consulta <em>SELECT</em>.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">En palabras sencillas</p><p class="sencilla">Es una tabla temporal que Java recorre una fila a la vez con <em>next()</em>.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">Transformación</p><p class="real">Cada fila se lee por nombre de columna y se convierte en un objeto <em>Cliente</em> que se agrega a una lista.</p></div>
+          </div>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Reemplazar el método temporal <em>listar</em> por una consulta real.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>El resto del programa debe recibir objetos Java y no conocer detalles de JDBC.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A diferenciar <em>executeQuery</em> de <em>executeUpdate</em> y a mapear columnas hacia objetos.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">REEMPLAZAR</span><span class="code-file">src/dao/ClienteDAOImpl.java · método listar</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-java">@Override
+public List&lt;Cliente&gt; listar() {
+    List&lt;Cliente&gt; clientes = new ArrayList&lt;&gt;();
+    String sql = "SELECT id, nombre, email, ciudad FROM cliente";
+
+    try (Connection con = ConexionBD.obtenerConexion();
+         PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            Cliente cliente = new Cliente(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getString("email"),
+                    rs.getString("ciudad")
+            );
+            clientes.add(cliente);
+        }
+    } catch (SQLException e) {
+        System.out.println("Error al listar: " + e.getMessage());
+    }
+
+    return clientes;
+}</code></pre>
+          </div>
+
+          <div class="tip"><p class="componente-label">Importaciones necesarias</p><p>Agrega <em>java.sql.ResultSet</em> y <em>java.util.ArrayList</em> en la implementación. El IDE puede incorporarlas automáticamente.</p></div>
+
+          <div class="reflexion">
+            <p class="reflexion-label">Comprueba la diferencia</p>
+            <div class="reflexion-pregunta">¿Por qué un SELECT usa executeQuery y no executeUpdate?</div>
+            <button class="ver-explicacion" type="button" aria-expanded="false">Mostrar explicación</button>
+            <div class="explicacion" aria-hidden="true"><div class="explicacion-inner"><em>executeQuery</em> devuelve un <em>ResultSet</em> con filas. <em>executeUpdate</em> se usa cuando una sentencia modifica datos y devuelve la cantidad de filas afectadas.</div></div>
+          </div>
+        </section>
+
+        <section class="seccion" id="actualizar-eliminar">
+          <div class="seccion-meta"><span>07</span><span>UPDATE Y DELETE</span></div>
+          <h2>✏️ Modificar datos con precisión</h2>
+
+          <div class="apertura">
+            <p class="apertura-label">Regla crítica</p>
+            <p class="apertura-pregunta">¿Qué filas modificaría un UPDATE o DELETE que no incluyera una condición WHERE?</p>
+          </div>
+
+          <p>Sin <em>WHERE</em>, la operación afecta todas las filas. El identificador permite apuntar a un registro concreto, y el número devuelto por <em>executeUpdate</em> confirma cuántas filas cambiaron.</p>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Implementar la actualización de un cliente identificado por su id.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>Los datos cambian y la operación debe limitarse a la fila correcta.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A respetar el orden de los parámetros y ubicar el id en la condición <em>WHERE id = ?</em>.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">REEMPLAZAR</span><span class="code-file">src/dao/ClienteDAOImpl.java · método actualizar</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-java">@Override
+public void actualizar(Cliente cliente) {
+    String sql = "UPDATE cliente SET nombre = ?, email = ?, ciudad = ? WHERE id = ?";
+
+    try (Connection con = ConexionBD.obtenerConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setString(1, cliente.getNombre());
+        ps.setString(2, cliente.getEmail());
+        ps.setString(3, cliente.getCiudad());
+        ps.setInt(4, cliente.getId());
+
+        int filas = ps.executeUpdate();
+        System.out.println("Filas actualizadas: " + filas);
+    } catch (SQLException e) {
+        System.out.println("Error al actualizar: " + e.getMessage());
+    }
+}</code></pre>
+          </div>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Implementar la eliminación de un cliente por id.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>La eliminación necesita una condición inequívoca para no afectar toda la tabla.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A ejecutar un DELETE parametrizado y verificar si la fila existía.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">REEMPLAZAR</span><span class="code-file">src/dao/ClienteDAOImpl.java · método eliminar</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-java">@Override
+public void eliminar(int id) {
+    String sql = "DELETE FROM cliente WHERE id = ?";
+
+    try (Connection con = ConexionBD.obtenerConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, id);
+        int filas = ps.executeUpdate();
+        System.out.println("Filas eliminadas: " + filas);
+    } catch (SQLException e) {
+        System.out.println("Error al eliminar: " + e.getMessage());
+    }
+}</code></pre>
+          </div>
+
+          <div class="advertencia"><p class="componente-label">Operaciones destructivas</p><p><strong>Antes de ejecutar:</strong> revisa siempre que <em>UPDATE</em> y <em>DELETE</em> incluyan la condición correcta. En producción, una sentencia sin filtro puede causar pérdida masiva de datos.</p></div>
+        </section>
+
+        <section class="seccion" id="errores-sql">
+          <div class="seccion-meta"><span>08</span><span>DIAGNÓSTICO</span></div>
+          <h2>🛡️ Leer errores SQL</h2>
+
+          <p>La base de datos es un recurso externo: puede estar apagada, rechazar credenciales o proteger restricciones. Por eso JDBC usa <em>SQLException</em>, una excepción que debes manejar o declarar.</p>
+
+          <div class="practica">
+            <p class="componente-label">Mapa de diagnóstico</p>
+            <h3>Busca la frase que revela la causa</h3>
+            <ol class="pasos">
+              <li><span>01</span><p><strong>No suitable driver found:</strong> el driver no está disponible en el classpath.</p></li>
+              <li><span>02</span><p><strong>Access denied for user:</strong> el usuario o la contraseña no coinciden.</p></li>
+              <li><span>03</span><p><strong>Unknown database:</strong> la base indicada en la URL no existe o está mal escrita.</p></li>
+              <li><span>04</span><p><strong>Duplicate entry:</strong> el valor viola una restricción <em>UNIQUE</em>, como un correo repetido.</p></li>
+              <li><span>05</span><p><strong>Foreign key constraint fails:</strong> se intenta relacionar una fila con un registro padre inexistente.</p></li>
+            </ol>
+          </div>
+
+          <div class="modelo-mental">
+            <p class="componente-label">La base también protege el sistema</p>
+            <p>Las restricciones modeladas en MySQL siguen funcionando cuando el acceso ocurre desde Java. <em>UNIQUE</em> evita duplicados y una llave foránea evita datos huérfanos, incluso cuando el código comete un error.</p>
+          </div>
+
+          <div class="tip"><p class="componente-label">Cómo depurar</p><p>No memorices mensajes completos. Identifica la frase principal, ubica la capa que falló —driver, conexión, esquema o datos— y corrige una causa a la vez.</p></div>
+        </section>
+
+        <section class="seccion" id="arquitectura-final">
+          <div class="seccion-meta"><span>09</span><span>ARQUITECTURA</span></div>
+          <h2>🏛️ Organización profesional</h2>
+
+          <p>Cuando aparecen más entidades, mantener todas las clases en una misma carpeta deja de ser sostenible. Los paquetes agrupan piezas por responsabilidad y hacen visible la arquitectura.</p>
+
+          <div class="definicion">
+            <div class="definicion-bloque"><p class="componente-label">model</p><p class="tecnica">Contiene objetos que representan los datos del dominio.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">config y dao</p><p class="sencilla"><em>config</em> centraliza infraestructura; <em>dao</em> encapsula las operaciones de persistencia.</p></div>
+            <div class="definicion-bloque"><p class="componente-label">app</p><p class="real">Contiene el punto de entrada que coordina el caso de uso sin escribir SQL.</p></div>
+          </div>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Verificar la estructura completa del proyecto.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>La ubicación de cada clase debe comunicar su responsabilidad.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A reconocer una primera arquitectura por capas y su relación con la estructura que utilizará Spring Boot.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">MODIFICAR</span><span class="code-file">crud-tienda/</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-treeview">crud-tienda/
+├── lib/
+│   └── mysql-connector-j-9.x.x.jar
+└── src/
+    ├── app/
+    │   └── App.java
+    ├── config/
+    │   └── ConexionBD.java
+    ├── dao/
+    │   ├── ClienteDAO.java
+    │   └── ClienteDAOImpl.java
+    └── model/
+        └── Cliente.java</code></pre>
+          </div>
+
+          <div class="caso-negocio"><p class="componente-label">Puente hacia Spring Boot</p><h3>La misma idea, con más automatización</h3><p>Spring Boot conservará la separación entre modelos, repositorios, servicios y controladores. Maven descargará dependencias y Spring administrará gran parte de la conexión, pero las responsabilidades seguirán existiendo.</p></div>
+        </section>
+
+        <section class="seccion" id="crud-completo">
+          <div class="seccion-meta"><span>10</span><span>INTEGRACIÓN</span></div>
+          <h2>🚀 Ejecutar el CRUD completo</h2>
+
+          <p>El cierre consiste en integrar las cuatro operaciones. El <em>main</em> trabaja con la interfaz <em>ClienteDAO</em>, crea objetos y coordina el flujo. No conoce consultas SQL ni detalles de conexión.</p>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Consolidar la implementación final del DAO con las cuatro operaciones.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>El archivo debe quedar funcional, sin métodos temporales ni fragmentos pendientes.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A reconocer el patrón repetido: conexión, sentencia preparada, parámetros, ejecución, cierre y manejo del error.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">REEMPLAZAR</span><span class="code-file">src/dao/ClienteDAOImpl.java</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-java">package dao;
+
+import config.ConexionBD;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import model.Cliente;
+
+public class ClienteDAOImpl implements ClienteDAO {
+
+    @Override
+    public void insertar(Cliente cliente) {
+        String sql = "INSERT INTO cliente (nombre, email, ciudad) VALUES (?, ?, ?)";
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, cliente.getNombre());
+            ps.setString(2, cliente.getEmail());
+            ps.setString(3, cliente.getCiudad());
+            System.out.println("Filas insertadas: " + ps.executeUpdate());
+        } catch (SQLException e) {
+            System.out.println("Error al insertar: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List&lt;Cliente&gt; listar() {
+        List&lt;Cliente&gt; clientes = new ArrayList&lt;&gt;();
+        String sql = "SELECT id, nombre, email, ciudad FROM cliente";
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                clientes.add(new Cliente(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("email"),
+                        rs.getString("ciudad")
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al listar: " + e.getMessage());
+        }
+        return clientes;
+    }
+
+    @Override
+    public void actualizar(Cliente cliente) {
+        String sql = "UPDATE cliente SET nombre = ?, email = ?, ciudad = ? WHERE id = ?";
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, cliente.getNombre());
+            ps.setString(2, cliente.getEmail());
+            ps.setString(3, cliente.getCiudad());
+            ps.setInt(4, cliente.getId());
+            System.out.println("Filas actualizadas: " + ps.executeUpdate());
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void eliminar(int id) {
+        String sql = "DELETE FROM cliente WHERE id = ?";
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            System.out.println("Filas eliminadas: " + ps.executeUpdate());
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar: " + e.getMessage());
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="antes-codigo">
+            <p class="componente-label">Qué vamos a hacer</p><p>Reemplazar la prueba de conexión por el flujo completo de negocio.</p>
+            <p class="componente-label">Por qué lo hacemos</p><p>Necesitamos comprobar que cada operación persiste cambios reales y que el DAO oculta los detalles de JDBC.</p>
+            <p class="componente-label">Qué aprenderás</p><p>A orquestar el CRUD desde la aplicación usando objetos y una abstracción de acceso a datos.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">REEMPLAZAR</span><span class="code-file">src/app/App.java</span></div><button class="copy-btn" type="button">Copiar código</button></div>
+            <pre class="line-numbers"><code class="language-java">package app;
+
+import dao.ClienteDAO;
+import dao.ClienteDAOImpl;
+import model.Cliente;
+
+public class App {
+    public static void main(String[] args) {
+        ClienteDAO clienteDAO = new ClienteDAOImpl();
+
+        System.out.println("=== INSERTAR ===");
+        clienteDAO.insertar(new Cliente("Laura Gomez", "laura@mail.com", "Bogota"));
+        clienteDAO.insertar(new Cliente("Pedro Diaz", "pedro@mail.com", "Medellin"));
+
+        System.out.println("\n=== LISTAR ===");
+        clienteDAO.listar().forEach(System.out::println);
+
+        System.out.println("\n=== ACTUALIZAR ===");
+        clienteDAO.actualizar(
+                new Cliente(1, "Laura Gomez Ruiz", "laura.ruiz@mail.com", "Cali")
+        );
+
+        System.out.println("\n=== LISTAR TRAS ACTUALIZAR ===");
+        clienteDAO.listar().forEach(System.out::println);
+
+        System.out.println("\n=== ELIMINAR ===");
+        clienteDAO.eliminar(2);
+
+        System.out.println("\n=== LISTAR FINAL ===");
+        clienteDAO.listar().forEach(System.out::println);
+    }
+}</code></pre>
+          </div>
+
+          <div class="advertencia"><p class="componente-label">Ejecuciones repetidas</p><p><strong>Qué ocurre:</strong> si <em>email</em> es UNIQUE, ejecutar varias veces el programa intentará insertar los mismos correos.</p><p><strong>Cómo leerlo:</strong> aparecerá <em>Duplicate entry</em>.</p><p><strong>Cómo resolverlo:</strong> limpia los registros de prueba, cambia los correos o comenta temporalmente las inserciones después de verificarlas.</p></div>
+
+          <div class="practica">
+            <p class="componente-label">Reto integrador</p>
+            <h3>Extiende el acceso a datos</h3>
+            <p>Agrega una búsqueda segura por correo sin romper la separación de responsabilidades.</p>
+            <ol class="pasos">
+              <li><span>01</span><p>Declara en <em>ClienteDAO</em> un método <em>buscarPorEmail(String email)</em>.</p></li>
+              <li><span>02</span><p>Implementa un SELECT con <em>WHERE email = ?</em> y <em>PreparedStatement</em>.</p></li>
+              <li><span>03</span><p>Devuelve el cliente encontrado o una ausencia explícita, y prueba una entrada como <em>x' OR '1'='1</em>.</p></li>
+            </ol>
+          </div>
+
+          <div class="reflexion">
+            <p class="reflexion-label">Cierre técnico</p>
+            <div class="reflexion-pregunta">¿Qué automatizará Spring Boot y qué responsabilidad seguirá siendo tuya?</div>
+            <button class="ver-explicacion" type="button" aria-expanded="false">Mostrar explicación</button>
+            <div class="explicacion" aria-hidden="true"><div class="explicacion-inner">Spring simplificará dependencias, conexiones y acceso repetitivo. Tú seguirás diseñando el modelo, las responsabilidades, las reglas de negocio, las consultas especiales y las decisiones de seguridad.</div></div>
+          </div>
+        </section>
+
+        <footer class="footer">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack</footer>
+      </article>
+    </main>
+  </div>
+
+  <div class="watermark" aria-hidden="true">© 2026 ANA ALVARADO</div>
+  <div class="slide-status" id="slideStatus" aria-live="polite"></div>
+  <div class="slide-hint">← → navegar · Esc salir · espacio avanzar</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="ana-clase.js"></script>
+</body>
+</html>
