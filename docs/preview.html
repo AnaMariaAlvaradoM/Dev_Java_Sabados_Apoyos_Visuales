@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es" data-empresa="dev-senior">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Ana Alvarado">
+  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <title>Clase 9 · Spring Boot, Maven y primeras REST APIs · Ana Alvarado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="ana-estilos.css">
+</head>
+<body>
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+<div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+<div class="controls" aria-label="Controles de lectura">
+  <button class="ctrl-btn" id="temaBtn" type="button" aria-label="Activar tema claro" title="Cambiar tema"><span aria-hidden="true">☀</span></button>
+  <button class="ctrl-btn" id="presentBtn" type="button" aria-label="Iniciar modo presentación" title="Presentación (P)"><span aria-hidden="true">▣</span></button>
+</div>
+<div class="layout">
+<aside class="sidebar" aria-label="Índice de la clase">
+  <div class="sidebar-eyebrow">Java AI Backend Developer</div>
+  <div class="sidebar-brand">Backend profesional con Spring Boot</div>
+  <div class="sidebar-sub">Clase 09 · Módulo 03</div>
+  <div class="sidebar-rule"></div>
+  <nav id="nav">
+    <a class="nav-item active" href="#sec-1"><span class="nav-index">01</span><span class="nav-label">El reto del negocio</span></a>
+    <a class="nav-item" href="#sec-2"><span class="nav-index">02</span><span class="nav-label">Spring Boot</span></a>
+    <a class="nav-item" href="#sec-3"><span class="nav-index">03</span><span class="nav-label">Maven</span></a>
+    <a class="nav-item" href="#sec-4"><span class="nav-index">04</span><span class="nav-label">Spring Initializr</span></a>
+    <a class="nav-item" href="#sec-5"><span class="nav-index">05</span><span class="nav-label">Anatomía del proyecto</span></a>
+    <a class="nav-item" href="#sec-6"><span class="nav-index">06</span><span class="nav-label">Arquitectura por capas</span></a>
+    <a class="nav-item" href="#sec-7"><span class="nav-index">07</span><span class="nav-label">Modelo Producto</span></a>
+    <a class="nav-item" href="#sec-8"><span class="nav-index">08</span><span class="nav-label">Servicio en memoria</span></a>
+    <a class="nav-item" href="#sec-9"><span class="nav-index">09</span><span class="nav-label">Endpoint GET</span></a>
+    <a class="nav-item" href="#sec-10"><span class="nav-index">10</span><span class="nav-label">Endpoint POST</span></a>
+    <a class="nav-item" href="#sec-11"><span class="nav-index">11</span><span class="nav-label">Diagnóstico @RequestBody</span></a>
+    <a class="nav-item" href="#sec-12"><span class="nav-index">12</span><span class="nav-label">Mapa final y siguiente paso</span></a>
+  </nav>
+  <div class="sidebar-footer"><span>ANA ALVARADO</span><span>EDUCACIÓN TECH</span></div>
+</aside>
+<main class="content-area" id="contenido"><article class="content-column">
+<header class="clase-header">
+  <div class="clase-kicker">Dev Senior · Módulo 3 · Clase 9</div>
+  <h1 class="clase-titulo">Spring Boot: de una necesidad de negocio a una API REST viva</h1>
+  <p class="clase-bajada">Construiremos <strong>gestor-productos</strong>: un backend Java capaz de listar y crear productos mediante HTTP, entendiendo qué resuelve Spring Boot, cómo Maven organiza el proyecto y por qué una arquitectura por capas hace que el código pueda crecer.</p>
+  <div class="hero-chips"><span>Java 17</span><span>Spring Boot</span><span>Maven</span><span>REST</span><span>GET + POST</span></div>
+</header>
+<div class="aviso-copyright" role="note"><div class="aviso-titulo">Material exclusivo de clase</div><p>Recurso de <strong>autoría de Ana Alvarado</strong>, destinado a estudiantes de la cohorte. No se autoriza su reproducción o redistribución fuera del contexto formativo.</p></div>
+
+<section class="seccion slide-activa" id="sec-1">
+<div class="seccion-meta"><span>01</span><span>PROBLEMA REAL</span></div><h2>Una aplicación móvil necesita hablar con nuestro código Java</h2>
+<div class="apertura"><p class="apertura-label">Punto de partida</p><p class="apertura-pregunta">¿Quién abre el servidor, escucha peticiones, interpreta la URL, convierte JSON en objetos Java y construye la respuesta?</p></div>
+<p>Una tienda online necesita dos capacidades mínimas: consultar su catálogo y registrar nuevos productos. El problema no es solamente escribir una clase <code>Producto</code>. Debemos exponer esa lógica para que una app móvil, una página web o cualquier otro cliente pueda usarla por internet.</p>
+<div class="flujo-negocio" aria-label="Flujo de la API"><div class="flujo-nodo"><span>CLIENTE</span><strong>App móvil</strong><small>Solicita o envía datos</small></div><div class="flujo-flecha">HTTP →</div><div class="flujo-nodo destacado"><span>BACKEND</span><strong>Spring Boot</strong><small>Recibe, procesa y responde</small></div><div class="flujo-flecha">→ JSON</div><div class="flujo-nodo"><span>RESPUESTA</span><strong>Productos</strong><small>Lista o confirmación</small></div></div>
+<div class="caso-negocio"><p class="componente-label">Objetivo del producto</p><h3>API de Productos</h3><p><strong>GET /api/productos</strong> devolverá el catálogo. <strong>POST /api/productos</strong> recibirá un producto nuevo y lo guardará temporalmente en memoria.</p></div>
+<div class="reflexion"><p class="reflexion-label">Decisión técnica</p><div class="reflexion-pregunta">¿Tiene sentido programar desde cero el servidor y toda la infraestructura HTTP en cada proyecto?</div><button class="ver-explicacion" type="button" aria-expanded="false">Mostrar explicación</button><div class="explicacion" aria-hidden="true"><div class="explicacion-inner">No. Es trabajo repetitivo, complejo y propenso a errores. Un framework resuelve esa infraestructura común para que el equipo se concentre en las reglas específicas del negocio.</div></div></div>
+</section>
+
+<section class="seccion" id="sec-2"><div class="seccion-meta"><span>02</span><span>FRAMEWORK</span></div><h2>Spring Boot elimina la “plomería” del backend</h2>
+<div class="definicion"><div class="definicion-bloque"><p class="componente-label">Definición técnica</p><p class="tecnica"><strong>Spring Boot</strong> es un framework de Java para construir aplicaciones backend, especialmente APIs REST, con servidor integrado y autoconfiguración.</p></div><div class="definicion-bloque"><p class="componente-label">En palabras sencillas</p><p class="sencilla">Nos entrega una base profesional ya preparada. Nosotros escribimos las reglas de nuestro negocio; Spring se encarga de gran parte de la infraestructura.</p></div><div class="definicion-bloque"><p class="componente-label">Analogía</p><p class="real">Es como alquilar un restaurante con cocina, gas, agua y electricidad instalados. El equipo llega a cocinar su menú, no a construir el edificio.</p></div></div>
+<div class="comparador"><div><p class="componente-label">Sin framework</p><ul><li>Configurar servidor manualmente</li><li>Interpretar HTTP</li><li>Convertir formatos</li><li>Resolver integración entre piezas</li></ul></div><div class="comparador-mejor"><p class="componente-label">Con Spring Boot</p><ul><li>Servidor embebido</li><li>Rutas mediante anotaciones</li><li>Conversión automática JSON ↔ Java</li><li>Convenciones profesionales</li></ul></div></div>
+<div class="tip"><p class="componente-label">Criterio profesional</p><p>“Escribir menos código” no es el objetivo principal. El valor real es dejar de reimplementar infraestructura repetitiva y concentrarnos en el código que diferencia al negocio.</p></div></section>
+
+<section class="seccion" id="sec-3"><div class="seccion-meta"><span>03</span><span>DEPENDENCIAS</span></div><h2>Maven trae, conecta y construye las herramientas del proyecto</h2>
+<div class="modelo-mental"><p class="componente-label">Cómo imaginarlo</p><p>Maven funciona como una lista de mercado inteligente: pedimos <em>Spring Web</em> y Maven descarga esa dependencia junto con todo lo que necesita internamente.</p></div>
+<div class="definicion"><div class="definicion-bloque"><p class="componente-label">Herramienta</p><p class="tecnica"><strong>Maven</strong> gestiona dependencias y automatiza la construcción de proyectos Java.</p></div><div class="definicion-bloque"><p class="componente-label">Archivo central</p><p class="sencilla"><code>pom.xml</code> declara identidad del proyecto, versión de Java y librerías requeridas.</p></div><div class="definicion-bloque"><p class="componente-label">Resultado</p><p class="real">El equipo puede clonar el repositorio y reconstruir el mismo entorno sin compartir archivos <code>.jar</code> manualmente.</p></div></div>
+<div class="code-block"><div class="code-head"><div><span class="code-context">DEPENDENCIA</span><span class="code-file">pom.xml</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre></div>
+<div class="reflexion"><p class="reflexion-label">Antes de agregar librerías</p><div class="reflexion-pregunta">¿Por qué hoy no agregamos una dependencia de base de datos?</div><button class="ver-explicacion" type="button" aria-expanded="false">Mostrar explicación</button><div class="explicacion" aria-hidden="true"><div class="explicacion-inner">La clase trabaja con datos en memoria. Agregar dependencias sin usarlas aumenta complejidad, ensucia el proyecto y puede activar configuraciones que todavía no existen. La regla es: incluir solamente lo que el sistema necesita ahora.</div></div></div></section>
+
+<section class="seccion" id="sec-4"><div class="seccion-meta"><span>04</span><span>SETUP</span></div><h2>Spring Initializr genera el esqueleto correcto</h2>
+<div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Crear el proyecto <code>gestor-productos</code> desde la herramienta oficial.</p><p class="componente-label">Por qué lo hacemos</p><p>Evitar una configuración manual inconsistente y comenzar con una estructura estándar.</p><p class="componente-label">Qué aprenderás</p><p>Qué decisiones iniciales definen un proyecto Spring Boot y qué dependencia habilita las APIs REST.</p></div>
+<div class="config-grid"><div><span>PROJECT</span><strong>Maven</strong></div><div><span>LANGUAGE</span><strong>Java</strong></div><div><span>SPRING BOOT</span><strong>Versión estable</strong></div><div><span>GROUP</span><strong>com.devsenior</strong></div><div><span>ARTIFACT</span><strong>gestor-productos</strong></div><div><span>PACKAGING</span><strong>Jar</strong></div><div><span>JAVA</span><strong>17</strong></div><div class="config-acento"><span>DEPENDENCY</span><strong>Spring Web</strong></div></div>
+<ol class="pasos"><li><span>01</span><p>Ingresa a <strong>start.spring.io</strong> y selecciona Maven + Java.</p></li><li><span>02</span><p>Configura <code>com.devsenior</code> y <code>gestor-productos</code>.</p></li><li><span>03</span><p>Agrega únicamente <strong>Spring Web</strong>.</p></li><li><span>04</span><p>Genera el ZIP, descomprímelo y abre la carpeta raíz en IntelliJ IDEA.</p></li></ol>
+<div class="tip"><p class="componente-label">Señal correcta</p><p>IntelliJ identifica el archivo <code>pom.xml</code> y comienza a descargar las dependencias. Espera a que Maven termine antes de interpretar errores del editor.</p></div></section>
+
+<section class="seccion" id="sec-5"><div class="seccion-meta"><span>05</span><span>ANATOMÍA</span></div><h2>El proyecto ya contiene un punto de arranque y un servidor</h2>
+<div class="tree-card"><p class="componente-label">Estructura inicial</p><pre><code>gestor-productos/
+├── pom.xml
+└── src/main/java/com/devsenior/gestorproductos/
+    └── GestorProductosApplication.java</code></pre></div>
+<div class="code-block"><div class="code-head"><div><span class="code-context">GENERADO</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/GestorProductosApplication.java</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class GestorProductosApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(GestorProductosApplication.class, args);
+    }
+}</code></pre></div>
+<div class="anotacion-map"><div><code>@SpringBootApplication</code><p>Marca la aplicación principal y activa la autoconfiguración.</p></div><div><code>SpringApplication.run(...)</code><p>Inicia el contexto de Spring y levanta el servidor web.</p></div><div><code>8080</code><p>Puerto predeterminado donde el servidor queda escuchando.</p></div></div>
+<div class="advertencia"><p class="componente-label">Whitelabel Error Page</p><p><strong>Qué ocurre:</strong> el servidor está activo, pero todavía no existe una ruta para <code>/</code>.</p><p><strong>Cómo leerlo:</strong> una respuesta 404 indica que el recurso solicitado no fue encontrado, no que la aplicación esté apagada.</p><p><strong>Cómo resolverlo:</strong> crear un endpoint y consultar su URL exacta.</p></div></section>
+
+<section class="seccion" id="sec-6"><div class="seccion-meta"><span>06</span><span>DISEÑO</span></div><h2>Separar responsabilidades permite que el backend crezca</h2>
+<p>Antes de escribir las clases, definimos dónde vive cada responsabilidad. El objetivo no es crear carpetas por estética, sino reducir acoplamiento y hacer que cada cambio tenga un lugar predecible.</p>
+<div class="capas-diagrama"><div class="capa controller"><span>ENTRADA HTTP</span><strong>controller</strong><p>Recibe GET y POST, valida la ruta y construye la respuesta.</p></div><div class="capa-arrow">↓ delega</div><div class="capa service"><span>NEGOCIO</span><strong>service</strong><p>Decide cómo listar, guardar o buscar productos.</p></div><div class="capa-arrow">↓ usa</div><div class="capa model"><span>DATOS</span><strong>model</strong><p>Define qué es un producto y qué información contiene.</p></div></div>
+<div class="caso-negocio"><p class="componente-label">Analogía del restaurante</p><h3>Cada rol tiene un trabajo</h3><p>El <strong>controller</strong> es el mesero que recibe el pedido; el <strong>service</strong> es la cocina que ejecuta la operación; el <strong>model</strong> representa los ingredientes y platos con los que se trabaja.</p></div>
+<div class="reflexion"><p class="reflexion-label">Responsabilidad única</p><div class="reflexion-pregunta">Si todo podría funcionar dentro de una sola clase, ¿por qué dividirlo?</div><button class="ver-explicacion" type="button" aria-expanded="false">Mostrar explicación</button><div class="explicacion" aria-hidden="true"><div class="explicacion-inner">Porque un sistema profesional cambia constantemente. Separar capas permite modificar la lógica sin alterar las rutas HTTP, probar cada parte de forma aislada y localizar errores con mayor rapidez. Es una aplicación práctica del principio de responsabilidad única.</div></div></div></section>
+
+<section class="seccion" id="sec-7"><div class="seccion-meta"><span>07</span><span>MODEL</span></div><h2>Producto representa los datos que viajarán por la API</h2>
+<div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Crear una clase Java que represente un producto.</p><p class="componente-label">Por qué lo hacemos</p><p>Spring necesita una estructura concreta para convertir el JSON recibido y producir el JSON de respuesta.</p><p class="componente-label">Qué aprenderás</p><p>Cómo el modelo conecta los datos externos con objetos Java.</p></div>
+<div class="code-block"><div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/model/Producto.java</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.model;
+
+public class Producto {
+    private int id;
+    private String nombre;
+    private double precio;
+
+    public Producto() {
+    }
+
+    public Producto(int id, String nombre, double precio) {
+        this.id = id;
+        this.nombre = nombre;
+        this.precio = precio;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+}</code></pre></div>
+<div class="data-transform"><div><span>JSON</span><pre><code>{ "id": 1,
+  "nombre": "Teclado",
+  "precio": 120000 }</code></pre></div><div class="transform-arrow">⇄</div><div><span>OBJETO JAVA</span><pre><code>Producto
+id = 1
+nombre = "Teclado"
+precio = 120000</code></pre></div></div>
+<div class="tip"><p class="componente-label">Constructor vacío</p><p>Spring lo utiliza durante la deserialización para crear el objeto y luego asignar sus propiedades. Sin él, la conversión del cuerpo JSON puede fallar.</p></div></section>
+
+<section class="seccion" id="sec-8"><div class="seccion-meta"><span>08</span><span>SERVICE</span></div><h2>El servicio contiene las operaciones del negocio</h2>
+<div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Crear una lista en memoria y dos operaciones: listar y agregar.</p><p class="componente-label">Por qué lo hacemos</p><p>El controller no debe contener reglas de negocio ni administrar directamente los datos.</p><p class="componente-label">Qué aprenderás</p><p>Cómo Spring administra un servicio y cómo una capa delega trabajo a otra.</p></div>
+<div class="code-block"><div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/service/ProductoService.java</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.service;
+
+import com.devsenior.gestorproductos.model.Producto;
+import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class ProductoService {
+
+    private List&lt;Producto&gt; productos = new ArrayList&lt;&gt;();
+
+    public List&lt;Producto&gt; listarProductos() {
+        return productos;
+    }
+
+    public Producto agregarProducto(Producto producto) {
+        productos.add(producto);
+        return producto;
+    }
+}</code></pre></div>
+<div class="anotacion-map"><div><code>@Service</code><p>Registra la clase como componente administrado por Spring.</p></div><div><code>List&lt;Producto&gt;</code><p>Almacena temporalmente los productos mientras el servidor esté encendido.</p></div><div><code>listar / agregar</code><p>Expone operaciones claras sin revelar cómo se guardan internamente los datos.</p></div></div>
+<div class="advertencia"><p class="componente-label">Persistencia temporal</p><p><strong>Qué ocurre:</strong> al apagar o reiniciar la aplicación, la lista vuelve a estar vacía.</p><p><strong>Cómo leerlo:</strong> no es un error de Spring; es una consecuencia de guardar información únicamente en memoria RAM.</p><p><strong>Cómo se resolverá:</strong> en la siguiente clase se reemplazará la lista por una base de datos con JPA, Hibernate y una capa repository.</p></div></section>
+
+<section class="seccion" id="sec-9"><div class="seccion-meta"><span>09</span><span>GET</span></div><h2>El controller abre la primera puerta pública de la API</h2>
+<div class="antes-codigo"><p class="componente-label">Qué vamos a hacer</p><p>Crear el endpoint <code>GET /api/productos</code>.</p><p class="componente-label">Por qué lo hacemos</p><p>La aplicación cliente necesita una dirección estable para consultar el catálogo.</p><p class="componente-label">Qué aprenderás</p><p>Cómo las anotaciones conectan una petición HTTP con un método Java y cómo funciona la inyección de dependencias.</p></div>
+<div class="code-block"><div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/controller/ProductoController.java</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.controller;
+
+import com.devsenior.gestorproductos.model.Producto;
+import com.devsenior.gestorproductos.service.ProductoService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/productos")
+public class ProductoController {
+
+    private final ProductoService productoService;
+
+    public ProductoController(ProductoService productoService) {
+        this.productoService = productoService;
+    }
+
+    @GetMapping
+    public List&lt;Producto&gt; obtenerProductos() {
+        return productoService.listarProductos();
+    }
+}</code></pre></div>
+<div class="request-demo"><div class="request-line"><span class="http-method get">GET</span><code>http://localhost:8080/api/productos</code></div><div class="request-arrow">↓</div><div class="response-box"><span>200 OK · application/json</span><pre><code>[]</code></pre></div></div>
+<div class="definicion"><div class="definicion-bloque"><p class="componente-label">Endpoint</p><p class="tecnica">Combinación de un método HTTP y una ruta que expone una operación concreta de la API.</p></div><div class="definicion-bloque"><p class="componente-label">Inyección</p><p class="sencilla">El controller no crea el service con <code>new</code>; Spring entrega la instancia por el constructor.</p></div><div class="definicion-bloque"><p class="componente-label">Resultado inicial</p><p class="real"><code>[]</code> significa “lista válida sin elementos”. La ruta funciona aunque todavía no existan productos.</p></div></div></section>
+
+<section class="seccion" id="sec-10"><div class="seccion-meta"><span>10</span><span>POST</span></div><h2>POST recibe un JSON y lo convierte en un Producto</h2>
+<p>GET entrega información. POST recibe información nueva. Ambos usan la misma ruta base, pero representan operaciones distintas porque emplean métodos HTTP diferentes.</p>
+<div class="code-block"><div class="code-head"><div><span class="code-context">AGREGAR</span><span class="code-file">ProductoController.java · imports</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-java">import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;</code></pre></div>
+<div class="code-block"><div class="code-head"><div><span class="code-context">AGREGAR</span><span class="code-file">ProductoController.java · debajo de obtenerProductos()</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-java">@PostMapping
+public Producto crearProducto(@RequestBody Producto producto) {
+    return productoService.agregarProducto(producto);
+}</code></pre></div>
+<div class="request-demo"><div class="request-line"><span class="http-method post">POST</span><code>http://localhost:8080/api/productos</code></div><div class="json-card"><span>BODY · JSON</span><pre><code>{
+  "id": 1,
+  "nombre": "Teclado mecánico",
+  "precio": 120000
+}</code></pre></div><div class="request-arrow">↓ @RequestBody</div><div class="response-box"><span>Producto Java → service → lista</span><pre><code>{
+  "id": 1,
+  "nombre": "Teclado mecánico",
+  "precio": 120000
+}</code></pre></div></div>
+<div class="tip"><p class="componente-label">Prueba completa</p><p>Después del POST, repite el GET. La lista debe contener el producto recién creado. Esa secuencia confirma que las capas están conectadas de extremo a extremo.</p></div></section>
+
+<section class="seccion" id="sec-11"><div class="seccion-meta"><span>11</span><span>DIAGNÓSTICO</span></div><h2>Una anotación ausente puede producir datos silenciosamente incorrectos</h2>
+<div class="apertura"><p class="apertura-label">Experimento controlado</p><p class="apertura-pregunta">¿Qué sucede si quitamos <code>@RequestBody</code>, aunque el JSON enviado sea correcto?</p></div>
+<div class="code-block"><div class="code-head"><div><span class="code-context">PROVOCAR ERROR</span><span class="code-file">ProductoController.java</span></div><button class="copy-btn" type="button">Copiar código</button></div><pre class="line-numbers"><code class="language-java">@PostMapping
+public Producto crearProducto(Producto producto) {
+    return productoService.agregarProducto(producto);
+}</code></pre></div>
+<div class="error-flow"><div><span>1</span><strong>El cliente envía JSON</strong><p>Los datos sí viajan en el cuerpo HTTP.</p></div><div><span>2</span><strong>Falta la instrucción</strong><p>Spring no sabe que debe leer ese cuerpo como Producto.</p></div><div><span>3</span><strong>Objeto vacío</strong><p>Se crea con valores predeterminados: <code>null</code>, <code>0</code>.</p></div></div>
+<div class="advertencia"><p class="componente-label">Cómo diagnosticarlo</p><p><strong>Síntoma:</strong> la petición responde, pero el objeto guardado tiene campos vacíos.</p><p><strong>Causa:</strong> el parámetro no está vinculado al cuerpo de la petición.</p><p><strong>Corrección:</strong> restaurar <code>@RequestBody Producto producto</code>.</p></div>
+<div class="modelo-mental"><p class="componente-label">Lección clave</p><p>Las anotaciones no son decoración. Son metadatos ejecutables que le indican a Spring cómo debe tratar clases, métodos y parámetros.</p></div></section>
+
+<section class="seccion" id="sec-12"><div class="seccion-meta"><span>12</span><span>INTEGRACIÓN</span></div><h2>El flujo completo de la API ya tiene sentido</h2>
+<div class="full-flow"><div><span>1</span><strong>Cliente</strong><p>Envía GET o POST.</p></div><div class="full-arrow">→</div><div><span>2</span><strong>Controller</strong><p>Interpreta ruta y cuerpo.</p></div><div class="full-arrow">→</div><div><span>3</span><strong>Service</strong><p>Ejecuta la operación.</p></div><div class="full-arrow">→</div><div><span>4</span><strong>Lista en memoria</strong><p>Guarda temporalmente.</p></div><div class="full-arrow">→</div><div><span>5</span><strong>JSON</strong><p>Spring construye la respuesta.</p></div></div>
+<div class="practica"><p class="componente-label">Verificación integradora</p><h3>Comprueba que tu API está viva</h3><ol class="pasos"><li><span>01</span><p>Ejecuta <code>GestorProductosApplication</code> y confirma el puerto 8080.</p></li><li><span>02</span><p>Haz GET a <code>/api/productos</code> y verifica que responde <code>[]</code>.</p></li><li><span>03</span><p>Envía un producto mediante POST con cuerpo JSON.</p></li><li><span>04</span><p>Repite el GET y confirma que el producto aparece en la lista.</p></li><li><span>05</span><p>Reinicia la aplicación y explica por qué el producto desaparece.</p></li></ol></div>
+<div class="ai-note"><div><span>IA COMO COPILOTO</span><h3>Primero comprender, después acelerar</h3><p>Una herramienta como Cursor AI puede proponer un endpoint para buscar por id, pero el desarrollador debe reconocer la capa correcta, validar las anotaciones, revisar el flujo y detectar si el código rompe la arquitectura.</p></div><div class="ai-rule">La IA acelera a quien entiende.<br><strong>No reemplaza el criterio técnico.</strong></div></div>
+<div class="next-card"><p class="componente-label">Puente a la Clase 10</p><h3>¿Cómo hacemos que los productos sobrevivan al reinicio?</h3><p>La lista en memoria será reemplazada por persistencia real. Aparecerán <strong>JPA</strong>, <strong>Hibernate</strong> y una cuarta capa: <strong>repository</strong>.</p><div class="next-tech"><span>LISTA EN MEMORIA</span><b>→</b><span>BASE DE DATOS</span></div></div>
+<div class="reflexion"><p class="reflexion-label">Pregunta final</p><div class="reflexion-pregunta">¿Qué tendría que cambiar en el service para que los productos no se pierdan al apagar el servidor?</div><button class="ver-explicacion" type="button" aria-expanded="false">Mostrar pista</button><div class="explicacion" aria-hidden="true"><div class="explicacion-inner">La lógica ya no puede depender de una lista local. Necesita delegar el almacenamiento a una capa especializada que se comunique con una base de datos. Esa capa será el repository.</div></div></div></section>
+
+<footer class="footer">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack</footer>
+</article></main></div>
+<div class="watermark" aria-hidden="true">© 2026 ANA ALVARADO</div><div class="slide-status" id="slideStatus" aria-live="polite"></div><div class="slide-hint">← → navegar · Esc salir · espacio avanzar</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script><script src="ana-clase.js"></script>
+</body></html>
