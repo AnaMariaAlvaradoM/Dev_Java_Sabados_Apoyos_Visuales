@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<!--
+  CLASE 10 · JPA E HIBERNATE
+  Formato: SPA · Modo: build · Dirección: tech-lab
+  Sistema Ana Learning Experience v3.0
+-->
+<html lang="es" data-empresa="dev-senior" data-formato="spa" data-modo="build" data-direccion="tech-lab" data-tema-base="claro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Ana Alvarado">
+  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <title>Clase 10 · JPA, Hibernate y relaciones · Ana Alvarado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="anaCSS.css">
+</head>
+<body data-formato="spa">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+  <div class="controls" aria-label="Controles">
+    <button class="ctrl-btn" id="temaBtn" type="button" aria-label="Cambiar tema">☾</button>
+    <button class="ctrl-btn" id="fullscreenBtn" type="button" aria-label="Pantalla completa">⛶</button>
+  </div>
+
+  <div class="spa-shell">
+    <aside class="spa-sidebar" aria-label="Navegación de la clase">
+      <div class="spa-brand-row">
+        <span class="brand-mark">A</span>
+        <div class="spa-brand"><h2>Backend profesional</h2><p>Módulo 3 · Clase 10</p></div>
+      </div>
+      <nav class="spa-nav" aria-label="Secciones">
+        <a class="nav-item active" href="#sec-1"><span class="nav-index">01</span><span class="nav-label">El salto a persistencia</span></a>
+        <a class="nav-item" href="#sec-2"><span class="nav-index">02</span><span class="nav-label">Conexión y dependencias</span></a>
+        <a class="nav-item" href="#sec-3"><span class="nav-index">03</span><span class="nav-label">Entidades y relaciones</span></a>
+        <a class="nav-item" href="#sec-4"><span class="nav-index">04</span><span class="nav-label">Repositorios</span></a>
+        <a class="nav-item" href="#sec-5"><span class="nav-index">05</span><span class="nav-label">Service y controllers</span></a>
+        <a class="nav-item" href="#sec-6"><span class="nav-index">06</span><span class="nav-label">Persistencia verificable</span></a>
+        <a class="nav-item" href="#sec-7"><span class="nav-index">07</span><span class="nav-label">Recursión JSON</span></a>
+        <a class="nav-item" href="#sec-8"><span class="nav-index">08</span><span class="nav-label">DTO al rescate</span></a>
+        <a class="nav-item" href="#sec-9"><span class="nav-index">09</span><span class="nav-label">Arquitectura final</span></a>
+      </nav>
+      <p class="footer">© 2026 Ana Alvarado<br>Educadora Tech &amp; Desarrolladora Full Stack</p>
+    </aside>
+
+    <main class="spa-main" id="contenido">
+      <header class="spa-hero">
+        <div class="spa-hero-inner">
+          <div class="spa-hero-copy">
+            <span class="eyebrow">Dev Senior · Módulo 3 · Clase 10</span>
+            <h1 class="spa-title">Del objeto Java al dato que permanece</h1>
+            <p class="spa-subtitle">Convierte <code>gestor-productos</code> en un catálogo real: entidades conectadas, repositorios sin SQL repetitivo, relaciones seguras y respuestas API diseñadas con DTOs.</p>
+            <div class="spa-meta">
+              <span class="meta-pill">SPA · Build</span>
+              <span class="meta-pill">JPA + Hibernate</span>
+              <span class="meta-pill">MySQL</span>
+              <span class="meta-pill">Proyecto guiado</span>
+            </div>
+          </div>
+          <div class="spa-hero-visual">
+            <div class="visual-panel" aria-label="Traducción entre objetos Java y tablas MySQL">
+              <div class="diagram">
+                <div class="diagram-row"><div class="diagram-node">Objetos Java</div><div class="diagram-arrow">→</div><div class="diagram-node" data-emphasis="true">JPA</div></div>
+                <div class="diagram-arrow">↓ implementa</div>
+                <div class="diagram-row"><div class="diagram-node" data-emphasis="true">Hibernate</div><div class="diagram-arrow">→</div><div class="diagram-node">Tablas MySQL</div></div>
+                <div class="diagram-arrow">↓</div>
+                <div class="diagram-row"><div class="diagram-node">Datos que sobreviven al reinicio</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <article class="spa-content">
+        <section class="spa-section" id="sec-1">
+          <header class="section-head">
+            <span class="section-number">01</span>
+            <div><span class="section-kicker">Modelo mental</span><h2 class="section-title">Persistir cambia las reglas del catálogo</h2><p class="section-summary">La aplicación deja de depender de una lista temporal. Java describe el modelo; Hibernate traduce ese modelo a SQL y MySQL conserva los datos.</p></div>
+          </header>
+          <div class="section-body">
+            <div class="question-card"><span class="component-label">Problema de negocio</span><p class="question">Si el dueño cargó 200 productos ayer, ¿por qué tendría que volver a crearlos después de reiniciar el servidor?</p></div>
+            <div class="definition-grid">
+              <article class="definition-card"><span class="component-label">Estándar</span><h3>JPA</h3><p>Define cómo una clase Java se corresponde con una tabla. Es el contrato que usamos al programar.</p></article>
+              <article class="definition-card"><span class="component-label">Motor</span><h3>Hibernate</h3><p>Implementa ese contrato: genera SQL, lo ejecuta y reconstruye objetos con los resultados.</p></article>
+              <article class="definition-card"><span class="component-label">Destino</span><h3>MySQL</h3><p>Guarda filas, relaciones y llaves para que la información permanezca entre ejecuciones.</p></article>
+            </div>
+            <div class="compare">
+              <article class="compare-card" data-negative="true"><h3>Antes: memoria</h3><ul><li><code>List&lt;Producto&gt;</code> vive dentro del proceso.</li><li>Reiniciar borra el catálogo.</li><li>El service administra datos temporales.</li></ul></article>
+              <article class="compare-card" data-positive="true"><h3>Ahora: persistencia</h3><ul><li><code>JpaRepository</code> habla con MySQL.</li><li>Reiniciar no elimina las filas.</li><li>El modelo Java guía la estructura.</li></ul></article>
+            </div>
+            <div class="callout" data-tone="info"><span class="component-label">Criterio profesional</span><h3>Programa contra JPA, no contra detalles del motor</h3><p>JPA es el estándar estable; Hibernate es una implementación. Esa separación reduce el acoplamiento y mantiene abierta la posibilidad de cambiar de proveedor.</p></div>
+          </div>
+        </section>
+
+        <section class="spa-section" id="sec-2">
+          <header class="section-head">
+            <span class="section-number">02</span>
+            <div><span class="section-kicker">Checkpoint de infraestructura</span><h2 class="section-title">Conecta Spring Boot con una base vacía</h2><p class="section-summary">Primero llegan las librerías, luego la base y por último la configuración. La evidencia es una conexión válida; todavía no deben existir tablas.</p></div>
+          </header>
+          <div class="section-body">
+            <div class="timeline">
+              <div class="timeline-item"><strong>1. Dependencias</strong><p>JPA trae persistencia y repositorios; el driver permite hablar con MySQL.</p></div>
+              <div class="timeline-item"><strong>2. Base</strong><p>Crea solamente <code>tienda</code>. Hibernate se encargará de las tablas.</p></div>
+              <div class="timeline-item"><strong>3. Propiedades</strong><p>Declara URL, credenciales y estrategia de creación.</p></div>
+              <div class="timeline-item"><strong>4. Observabilidad</strong><p>Muestra y formatea el SQL generado para aprender de él.</p></div>
+            </div>
+
+            <div class="checkpoint"><span class="component-label">Checkpoint 01</span><h3>Agregar persistencia al proyecto existente</h3><p><strong>Edita:</strong> <code>pom.xml</code>, dentro de <code>&lt;dependencies&gt;</code>. Maven resolverá las librerías y sus dependencias transitivas.</p></div>
+            <div class="code-block">
+              <div class="code-head"><div><span class="code-context">EDITAR</span><span class="code-file">pom.xml · sección &lt;dependencies&gt;</span></div><button class="copy-btn" type="button">Copiar</button></div>
+              <pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+            </div>
+
+            <div class="bento-grid">
+              <div class="code-block bento-5">
+                <div class="code-head"><div><span class="code-context">EJECUTAR</span><span class="code-file">MySQL Workbench</span></div><button class="copy-btn" type="button">Copiar</button></div>
+                <pre class="line-numbers"><code class="language-sql">CREATE DATABASE tienda;</code></pre>
+              </div>
+              <div class="panel prose bento-7"><span class="component-label">Estado esperado</span><h3>La base existe y está vacía</h3><p>Actualiza el panel <strong>SCHEMAS</strong>. Debe aparecer <code>tienda</code> sin tablas: no es un error, es el punto de partida.</p></div>
+            </div>
+
+            <div class="checkpoint"><span class="component-label">Checkpoint 02</span><h3>Declarar la conexión</h3><p><strong>Edita:</strong> <code>src/main/resources/application.properties</code>. Sustituye el marcador por tu contraseña local de MySQL.</p></div>
+            <div class="code-block">
+              <div class="code-head"><div><span class="code-context">EDITAR</span><span class="code-file">src/main/resources/application.properties</span></div><button class="copy-btn" type="button">Copiar</button></div>
+              <pre class="line-numbers"><code class="language-properties">spring.application.name=gestor-productos
+
+spring.datasource.url=jdbc:mysql://localhost:3306/tienda
+spring.datasource.username=root
+spring.datasource.password=TU_PASSWORD_DE_MYSQL
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true</code></pre>
+            </div>
+            <div class="callout" data-tone="warning"><span class="component-label">Uso responsable</span><h3><code>ddl-auto=update</code> es ideal para esta práctica</h3><p>Hibernate mantendrá las tablas alineadas con las entidades durante el desarrollo. En entornos productivos, los cambios de esquema suelen controlarse con migraciones versionadas.</p></div>
+            <ul class="checklist"><li>Maven reconoce las dos dependencias nuevas.</li><li>MySQL está activo y la base <code>tienda</code> existe.</li><li>La URL usa el puerto correcto y las credenciales corresponden a tu instalación.</li></ul>
+          </div>
+        </section>
+
+        <section class="spa-section" id="sec-3">
+          <header class="section-head">
+            <span class="section-number">03</span>
+            <div><span class="section-kicker">Modelo persistente</span><h2 class="section-title">Tres entidades, dos decisiones de relación</h2><p class="section-summary"><code>Producto</code> pertenece a una categoría y a una marca. La categoría se modela en ambos sentidos; la marca solo desde el producto porque no necesitamos navegar de regreso.</p></div>
+          </header>
+          <div class="section-body">
+            <div class="visual-panel" aria-label="Modelo de relaciones entre Producto, Categoria y Marca">
+              <div class="diagram">
+                <div class="diagram-row"><div class="diagram-node">Categoria · 1</div><div class="diagram-arrow">← bidireccional →</div><div class="diagram-node" data-emphasis="true">Producto · N</div><div class="diagram-arrow">→ unidireccional →</div><div class="diagram-node">Marca · 1</div></div>
+                <div class="diagram-arrow">↓</div>
+                <div class="diagram-row"><div class="diagram-node">producto.categoria_id</div><div class="diagram-node">producto.marca_id</div></div>
+              </div>
+            </div>
+
+            <div class="checkpoint"><span class="component-label">Checkpoint 03</span><h3>Convertir <code>Producto</code> en entidad y ubicar las llaves foráneas</h3><p><strong>Edita:</strong> <code>src/main/java/com/devsenior/gestorproductos/model/Producto.java</code>. Conserva los getters y setters de todos los campos.</p></div>
+            <div class="code-block">
+              <div class="code-head"><div><span class="code-context">EDITAR</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/model/Producto.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+              <pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+@Entity
+public class Producto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+    private String descripcion;
+    private double precio;
+    private int stock;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
+
+    @ManyToOne
+    @JoinColumn(name = "marca_id")
+    private Marca marca;
+
+    public Producto() {}
+
+    // getters y setters de todos los campos
+}</code></pre>
+            </div>
+            <div class="bento-grid">
+              <div class="panel prose bento-4"><span class="component-label">@Entity</span><h3>Clase → tabla</h3><p>Incluye la clase en el modelo persistente que Hibernate inspeccionará al iniciar.</p></div>
+              <div class="panel prose bento-4"><span class="component-label">@Id + IDENTITY</span><h3>Llave autogenerada</h3><p>MySQL asigna el identificador como un <code>AUTO_INCREMENT</code>.</p></div>
+              <div class="panel prose bento-4"><span class="component-label">@JoinColumn</span><h3>FK con nombre explícito</h3><p>La llave foránea vive en <code>producto</code>, el lado dueño de la relación.</p></div>
+            </div>
+
+            <div class="checkpoint"><span class="component-label">Checkpoint 04</span><h3>Crear <code>Categoria</code> y <code>Marca</code></h3><p><strong>Crea:</strong> ambos archivos dentro del paquete <code>model</code>. La lista solo existe en <code>Categoria</code>.</p></div>
+            <div class="slide-layout-split" data-ratio="equal">
+              <div class="code-block">
+                <div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">model/Categoria.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+                <pre class="line-numbers"><code class="language-java">@Entity
+public class Categoria {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+
+    @OneToMany(mappedBy = "categoria")
+    private List&lt;Producto&gt; productos = new ArrayList&lt;&gt;();
+
+    public Categoria() {}
+    // getters y setters
+}</code></pre>
+              </div>
+              <div class="code-block">
+                <div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">model/Marca.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+                <pre class="line-numbers"><code class="language-java">@Entity
+public class Marca {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+
+    public Marca() {}
+    // getters y setters
+}</code></pre>
+              </div>
+            </div>
+            <div class="callout" data-tone="info"><span class="component-label">Decisión de diseño</span><h3><code>mappedBy = "categoria"</code> señala al dueño real</h3><p>El texto debe coincidir exactamente con el campo <code>categoria</code> de <code>Producto</code>. No modeles ambos sentidos por simetría: hazlo solo cuando la navegación inversa aporte valor.</p></div>
+            <ul class="checklist"><li>Las tres clases tienen constructor vacío y acceso a sus campos.</li><li><code>Producto</code> usa <code>Long</code> como id.</li><li><code>Categoria</code> conoce sus productos; <code>Marca</code> no mantiene una lista innecesaria.</li></ul>
+          </div>
+        </section>
+
+        <section class="spa-section" id="sec-4">
+          <header class="section-head">
+            <span class="section-number">04</span>
+            <div><span class="section-kicker">Capa de datos</span><h2 class="section-title">El repository sustituye el SQL repetitivo</h2><p class="section-summary">Una interfaz describe la entidad y el tipo de su llave. Spring genera la implementación, ofrece operaciones CRUD y convierte nombres de método en consultas.</p></div>
+          </header>
+          <div class="section-body">
+            <div class="flow">
+              <div class="flow-step"><strong>Controller</strong><p>Recibe HTTP y delega.</p></div>
+              <div class="flow-step"><strong>Service</strong><p>Aplica decisiones de negocio.</p></div>
+              <div class="flow-step"><strong>Repository</strong><p>Expresa operaciones de persistencia.</p></div>
+              <div class="flow-step"><strong>MySQL</strong><p>Guarda y consulta filas.</p></div>
+            </div>
+            <div class="checkpoint"><span class="component-label">Checkpoint 05</span><h3>Crear el paquete <code>repository</code></h3><p><strong>Crea:</strong> <code>ProductoRepository.java</code>, <code>CategoriaRepository.java</code> y <code>MarcaRepository.java</code> en <code>src/main/java/com/devsenior/gestorproductos/repository</code>.</p></div>
+            <div class="code-block">
+              <div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">repository/ProductoRepository.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+              <pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.repository;
+
+import com.devsenior.gestorproductos.model.Producto;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface ProductoRepository
+        extends JpaRepository&lt;Producto, Long&gt; {
+
+    List&lt;Producto&gt; findByCategoriaId(Long categoriaId);
+
+    List&lt;Producto&gt; findByNombreContainingIgnoreCase(String texto);
+}</code></pre>
+            </div>
+            <div class="bento-grid">
+              <div class="metric-card bento-5"><span class="metric-label">Implementaciones escritas</span><div class="metric-value">0</div><p class="metric-note">Spring construye el repository durante el arranque.</p></div>
+              <div class="panel prose bento-7"><span class="component-label">Consultas derivadas</span><h3>El nombre también es código</h3><p><code>findByCategoriaId</code> se traduce a un filtro por <code>categoria_id</code>. <code>ContainingIgnoreCase</code> expresa una búsqueda parcial sin distinguir mayúsculas.</p><p>La propiedad mencionada debe existir en el modelo; un nombre incorrecto falla al iniciar.</p></div>
+              <div class="code-block bento-12">
+                <div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">repository/CategoriaRepository.java y repository/MarcaRepository.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+                <pre class="line-numbers"><code class="language-java">public interface CategoriaRepository
+        extends JpaRepository&lt;Categoria, Long&gt; {
+}
+
+public interface MarcaRepository
+        extends JpaRepository&lt;Marca, Long&gt; {
+}</code></pre>
+              </div>
+            </div>
+            <ul class="checklist"><li>Las tres piezas son interfaces, no clases.</li><li>El segundo genérico coincide con <code>Long</code>, el tipo del id.</li><li>La consulta por categoría atraviesa la relación <code>Producto.categoria.id</code>.</li></ul>
+          </div>
+        </section>
+
+        <section class="spa-section" id="sec-5">
+          <header class="section-head">
+            <span class="section-number">05</span>
+            <div><span class="section-kicker">Orquestación</span><h2 class="section-title">El service conecta objetos reales; el controller abre la puerta</h2><p class="section-summary">El cliente envía ids. El service recupera las entidades asociadas antes de guardar y el controller mantiene una API pequeña y predecible.</p></div>
+          </header>
+          <div class="section-body">
+            <div class="visual-panel" aria-label="Flujo para crear un producto con categoría y marca existentes">
+              <div class="diagram">
+                <div class="diagram-row"><div class="diagram-node">JSON con ids</div><div class="diagram-arrow">→</div><div class="diagram-node">Controller</div><div class="diagram-arrow">→</div><div class="diagram-node" data-emphasis="true">Service</div></div>
+                <div class="diagram-arrow">↓ busca categoria + marca</div>
+                <div class="diagram-row"><div class="diagram-node">Repositories</div><div class="diagram-arrow">→</div><div class="diagram-node">Entidades gestionadas</div><div class="diagram-arrow">→</div><div class="diagram-node">save(producto)</div></div>
+              </div>
+            </div>
+            <div class="checkpoint"><span class="component-label">Checkpoint 06</span><h3>Reemplazar la lista en memoria</h3><p><strong>Edita:</strong> <code>src/main/java/com/devsenior/gestorproductos/service/ProductoService.java</code>. La inyección por constructor entrega los tres repositorios.</p></div>
+            <div class="code-block">
+              <div class="code-head"><div><span class="code-context">EDITAR</span><span class="code-file">service/ProductoService.java · núcleo de persistencia</span></div><button class="copy-btn" type="button">Copiar</button></div>
+              <pre class="line-numbers"><code class="language-java">@Service
+public class ProductoService {
+    private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
+    private final MarcaRepository marcaRepository;
+
+    public ProductoService(ProductoRepository productoRepository,
+                           CategoriaRepository categoriaRepository,
+                           MarcaRepository marcaRepository) {
+        this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
+        this.marcaRepository = marcaRepository;
+    }
+
+    public List&lt;Producto&gt; listarProductos() {
+        return productoRepository.findAll();
+    }
+
+    public List&lt;Producto&gt; listarPorCategoria(Long categoriaId) {
+        return productoRepository.findByCategoriaId(categoriaId);
+    }
+
+    public Producto agregarProducto(Producto producto) {
+        resolverCategoria(producto);
+        resolverMarca(producto);
+        return productoRepository.save(producto);
+    }
+}</code></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-head"><div><span class="code-context">AÑADIR</span><span class="code-file">service/ProductoService.java · métodos privados</span></div><button class="copy-btn" type="button">Copiar</button></div>
+              <pre class="line-numbers"><code class="language-java">private void resolverCategoria(Producto producto) {
+    if (producto.getCategoria() != null
+            &amp;&amp; producto.getCategoria().getId() != null) {
+        Categoria categoria = categoriaRepository
+                .findById(producto.getCategoria().getId())
+                .orElse(null);
+        producto.setCategoria(categoria);
+    }
+}
+
+private void resolverMarca(Producto producto) {
+    if (producto.getMarca() != null
+            &amp;&amp; producto.getMarca().getId() != null) {
+        Marca marca = marcaRepository
+                .findById(producto.getMarca().getId())
+                .orElse(null);
+        producto.setMarca(marca);
+    }
+}</code></pre>
+            </div>
+            <div class="callout" data-tone="warning"><span class="component-label">Observa la decisión</span><h3>El JSON trae referencias, no entidades completas</h3><p>Antes de guardar, el service convierte cada id en una entidad recuperada de la base. Así Hibernate puede construir llaves foráneas válidas.</p></div>
+
+            <div class="checkpoint"><span class="component-label">Checkpoint 07</span><h3>Exponer las operaciones HTTP</h3><p><strong>Edita:</strong> <code>controller/ProductoController.java</code>. <strong>Crea:</strong> controllers equivalentes para categorías y marcas con <code>GET</code> y <code>POST</code>.</p></div>
+            <div class="code-block">
+              <div class="code-head"><div><span class="code-context">EDITAR</span><span class="code-file">controller/ProductoController.java · versión inicial</span></div><button class="copy-btn" type="button">Copiar</button></div>
+              <pre class="line-numbers"><code class="language-java">@RestController
+@RequestMapping("/api/productos")
+public class ProductoController {
+    private final ProductoService productoService;
+
+    public ProductoController(ProductoService productoService) {
+        this.productoService = productoService;
+    }
+
+    @GetMapping
+    public List&lt;Producto&gt; obtenerProductos() {
+        return productoService.listarProductos();
+    }
+
+    @GetMapping("/categoria/{categoriaId}")
+    public List&lt;Producto&gt; obtenerPorCategoria(
+            @PathVariable Long categoriaId) {
+        return productoService.listarPorCategoria(categoriaId);
+    }
+
+    @PostMapping
+    public Producto crearProducto(@RequestBody Producto producto) {
+        return productoService.agregarProducto(producto);
+    }
+}</code></pre>
+            </div>
+            <div class="bento-grid">
+              <div class="info-card bento-6"><span class="component-label">CategoriaController</span><h3><code>/api/categorias</code></h3><p><code>GET</code> lista y <code>POST</code> crea una categoría antes de asociarla.</p></div>
+              <div class="info-card bento-6"><span class="component-label">MarcaController</span><h3><code>/api/marcas</code></h3><p><code>GET</code> lista y <code>POST</code> crea una marca antes de asociarla.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="spa-section" id="sec-6">
+          <header class="section-head">
+            <span class="section-number">06</span>
+            <div><span class="section-kicker">Evidencia</span><h2 class="section-title">Comprueba que la persistencia es real</h2><p class="section-summary">Arranca la aplicación, observa el SQL, refresca el esquema y crea los datos en un orden que respete las llaves foráneas.</p></div>
+          </header>
+          <div class="section-body">
+            <div class="flow">
+              <div class="flow-step"><strong>1. Inicia Spring</strong><p>Hibernate inspecciona las entidades.</p></div>
+              <div class="flow-step"><strong>2. Mira la consola</strong><p>Aparecen <code>create table</code> y restricciones.</p></div>
+              <div class="flow-step"><strong>3. Refresca Workbench</strong><p>Confirma tablas y llaves foráneas.</p></div>
+              <div class="flow-step"><strong>4. Crea datos</strong><p>Categoría → marca → producto.</p></div>
+              <div class="flow-step"><strong>5. Reinicia</strong><p>La fila debe seguir en MySQL.</p></div>
+            </div>
+            <div class="bento-grid">
+              <div class="code-block bento-4">
+                <div class="code-head"><div><span class="code-context">POST 1</span><span class="code-file">/api/categorias</span></div><button class="copy-btn" type="button">Copiar</button></div>
+                <pre class="line-numbers"><code class="language-json">{
+  "nombre": "Perifericos"
+}</code></pre>
+              </div>
+              <div class="code-block bento-4">
+                <div class="code-head"><div><span class="code-context">POST 2</span><span class="code-file">/api/marcas</span></div><button class="copy-btn" type="button">Copiar</button></div>
+                <pre class="line-numbers"><code class="language-json">{
+  "nombre": "Logitech"
+}</code></pre>
+              </div>
+              <div class="panel prose bento-4"><span class="component-label">Orden obligatorio</span><h3>Primero existen las referencias</h3><p>Conserva los ids devueltos; el producto los necesita para crear sus llaves foráneas.</p></div>
+              <div class="code-block bento-12">
+                <div class="code-head"><div><span class="code-context">POST 3</span><span class="code-file">http://localhost:8080/api/productos</span></div><button class="copy-btn" type="button">Copiar</button></div>
+                <pre class="line-numbers"><code class="language-json">{
+  "nombre": "Teclado mecanico",
+  "descripcion": "Switch azul",
+  "precio": 120000,
+  "stock": 15,
+  "categoria": { "id": 1 },
+  "marca": { "id": 1 }
+}</code></pre>
+              </div>
+            </div>
+            <div class="code-block">
+              <div class="code-head"><div><span class="code-context">VALIDAR</span><span class="code-file">MySQL Workbench</span></div><button class="copy-btn" type="button">Copiar</button></div>
+              <pre class="line-numbers"><code class="language-sql">SELECT * FROM producto;</code></pre>
+            </div>
+            <div class="callout" data-tone="success"><span class="component-label">Resultado observable</span><h3>El producto sobrevive al apagón</h3><p>Detén el servidor, vuelve a iniciarlo y repite la consulta. La fila, <code>categoria_id</code> y <code>marca_id</code> deben permanecer.</p></div>
+            <ul class="checklist"><li>Existen las tablas <code>producto</code>, <code>categoria</code> y <code>marca</code>.</li><li><code>producto</code> contiene las dos columnas de llave foránea.</li><li>La consola muestra SQL generado por Hibernate.</li><li>El registro sigue presente después de reiniciar.</li></ul>
+          </div>
+        </section>
+
+        <section class="spa-section" id="sec-7">
+          <header class="section-head">
+            <span class="section-number">07</span>
+            <div><span class="section-kicker">Debugging intencional</span><h2 class="section-title">El dato está bien; la respuesta está mal diseñada</h2><p class="section-summary">Una relación bidireccional puede convertirse en un espejo infinito cuando Jackson intenta serializar entidades completas.</p></div>
+          </header>
+          <div class="section-body">
+            <div class="question-card"><span class="component-label">Experimento</span><p class="question">Abre <code>GET /api/productos</code>. ¿Por qué <code>categoria</code> vuelve a contener <code>productos</code> una y otra vez?</p></div>
+            <div class="visual-panel" aria-label="Ciclo de serialización entre Producto y Categoria">
+              <div class="diagram">
+                <div class="diagram-row"><div class="diagram-node" data-emphasis="true">Producto</div><div class="diagram-arrow">incluye →</div><div class="diagram-node">Categoria</div></div>
+                <div class="diagram-arrow">↑ cada producto vuelve a incluirla</div>
+                <div class="diagram-row"><div class="diagram-node">Lista de productos</div><div class="diagram-arrow">← incluye</div><div class="diagram-node">Categoria</div></div>
+              </div>
+            </div>
+            <div class="callout" data-tone="danger"><span class="component-label">Síntoma</span><h3><code>HttpMessageNotWritableException</code></h3><p>El mensaje sobre profundidad de anidamiento no acusa a MySQL. Indica que la conversión a JSON siguió el ciclo <code>Producto → Categoria → productos → Categoria…</code> hasta alcanzar el límite.</p></div>
+            <div class="compare">
+              <article class="compare-card" data-negative="true"><h3>Entidad expuesta</h3><ul><li>Refleja relaciones internas.</li><li>Puede recorrer ciclos.</li><li>Acopla la API a la base.</li><li>Expone campos sin intención.</li></ul></article>
+              <article class="compare-card" data-positive="true"><h3>Respuesta diseñada</h3><ul><li>Contiene solo datos útiles.</li><li>Usa valores planos.</li><li>No revela la estructura interna.</li><li>Puede evolucionar con el cliente.</li></ul></article>
+            </div>
+            <div class="checkpoint"><span class="component-label">Diagnóstico</span><h3>Separa persistencia de representación</h3><p>Las entidades modelan la conversación con la base. La API necesita su propio contrato de salida: un DTO.</p></div>
+          </div>
+        </section>
+
+        <section class="spa-section" id="sec-8">
+          <header class="section-head">
+            <span class="section-number">08</span>
+            <div><span class="section-kicker">Contrato de salida</span><h2 class="section-title">El DTO corta el ciclo y decide qué se expone</h2><p class="section-summary">En lugar de anidar entidades, el DTO transforma categoría y marca en textos. El controller recibe una entidad para guardar, pero devuelve una representación segura.</p></div>
+          </header>
+          <div class="section-body">
+            <div class="checkpoint"><span class="component-label">Checkpoint 08</span><h3>Crear <code>ProductoDTO</code></h3><p><strong>Crea:</strong> <code>src/main/java/com/devsenior/gestorproductos/dto/ProductoDTO.java</code>. Genera getters para todos sus campos.</p></div>
+            <div class="code-block">
+              <div class="code-head"><div><span class="code-context">CREAR</span><span class="code-file">dto/ProductoDTO.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+              <pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.dto;
+
+import com.devsenior.gestorproductos.model.Producto;
+
+public class ProductoDTO {
+    private Long id;
+    private String nombre;
+    private double precio;
+    private int stock;
+    private String categoria;
+    private String marca;
+
+    public ProductoDTO(Producto producto) {
+        this.id = producto.getId();
+        this.nombre = producto.getNombre();
+        this.precio = producto.getPrecio();
+        this.stock = producto.getStock();
+        this.categoria = producto.getCategoria() != null
+                ? producto.getCategoria().getNombre() : null;
+        this.marca = producto.getMarca() != null
+                ? producto.getMarca().getNombre() : null;
+    }
+
+    // getters de todos los campos
+}</code></pre>
+            </div>
+            <div class="checkpoint"><span class="component-label">Checkpoint 09</span><h3>Transformar antes de responder</h3><p><strong>Edita:</strong> <code>controller/ProductoController.java</code> e importa <code>ProductoDTO</code>. Los tres endpoints devuelven DTOs.</p></div>
+            <div class="code-block">
+              <div class="code-head"><div><span class="code-context">EDITAR</span><span class="code-file">controller/ProductoController.java · respuestas</span></div><button class="copy-btn" type="button">Copiar</button></div>
+              <pre class="line-numbers"><code class="language-java">@GetMapping
+public List&lt;ProductoDTO&gt; obtenerProductos() {
+    return productoService.listarProductos()
+            .stream()
+            .map(ProductoDTO::new)
+            .toList();
+}
+
+@GetMapping("/categoria/{categoriaId}")
+public List&lt;ProductoDTO&gt; obtenerPorCategoria(
+        @PathVariable Long categoriaId) {
+    return productoService.listarPorCategoria(categoriaId)
+            .stream()
+            .map(ProductoDTO::new)
+            .toList();
+}
+
+@PostMapping
+public ProductoDTO crearProducto(@RequestBody Producto producto) {
+    Producto guardado = productoService.agregarProducto(producto);
+    return new ProductoDTO(guardado);
+}</code></pre>
+            </div>
+            <div class="bento-grid">
+              <div class="code-block bento-7">
+                <div class="code-head"><div><span class="code-context">RESULTADO</span><span class="code-file">GET /api/productos</span></div><button class="copy-btn" type="button">Copiar</button></div>
+                <pre class="line-numbers"><code class="language-json">[
+  {
+    "id": 1,
+    "nombre": "Teclado mecanico",
+    "precio": 120000.0,
+    "stock": 15,
+    "categoria": "Perifericos",
+    "marca": "Logitech"
+  }
+]</code></pre>
+              </div>
+              <div class="panel prose bento-5"><span class="component-label">Regla de la API</span><h3>Entrada y salida pueden ser distintas</h3><p>El POST recibe <code>Producto</code> porque necesita las referencias para guardar. Devuelve <code>ProductoDTO</code> porque el cliente necesita una respuesta plana y estable.</p></div>
+            </div>
+            <div class="callout" data-tone="info"><span class="component-label">Siguiente aplicación</span><h3><code>CategoriaDTO</code> usa la misma estrategia</h3><p>Crea un DTO con <code>id</code> y <code>nombre</code>. En <code>CategoriaController</code>, transforma el GET con <code>.stream().map(CategoriaDTO::new).toList()</code> y el POST con <code>new CategoriaDTO(...)</code>.</p></div>
+            <div class="compare">
+              <article class="compare-card" data-negative="true"><h3><code>@JsonIgnore</code></h3><ul><li>Corta la serialización.</li><li>Resuelve el síntoma rápido.</li><li>No diseña un contrato de salida.</li></ul></article>
+              <article class="compare-card" data-positive="true"><h3>DTO</h3><ul><li>Elige campos deliberadamente.</li><li>Oculta detalles internos.</li><li>Evita ciclos y protege la evolución de la API.</li></ul></article>
+            </div>
+            <ul class="checklist"><li><code>GET /api/productos</code> devuelve una lista finita.</li><li>Categoría y marca aparecen como texto.</li><li>Ningún endpoint de producto devuelve la entidad directamente.</li><li><code>GET /api/categorias</code> también usa su DTO.</li></ul>
+          </div>
+        </section>
+
+        <section class="spa-section" id="sec-9">
+          <header class="section-head">
+            <span class="section-number">09</span>
+            <div><span class="section-kicker">Mapa final</span><h2 class="section-title">Cinco capas, una responsabilidad por capa</h2><p class="section-summary">El proyecto queda preparado para crecer sin mezclar HTTP, reglas de negocio, persistencia y representación.</p></div>
+          </header>
+          <div class="section-body">
+            <div class="flow">
+              <div class="flow-step"><strong>controller</strong><p>Traduce HTTP y devuelve DTOs.</p></div>
+              <div class="flow-step"><strong>dto</strong><p>Define el contrato visible de la API.</p></div>
+              <div class="flow-step"><strong>service</strong><p>Orquesta reglas y asociaciones.</p></div>
+              <div class="flow-step"><strong>repository</strong><p>Expresa consultas y CRUD.</p></div>
+              <div class="flow-step"><strong>model</strong><p>Describe entidades y relaciones.</p></div>
+            </div>
+            <div class="bento-grid">
+              <div class="business-case bento-7"><span class="component-label">Lo que ya funciona</span><h3>Un catálogo persistente y navegable</h3><p>Hibernate crea el esquema desde las entidades, Spring Data consulta sin implementaciones manuales y los DTOs entregan JSON útil sin exponer relaciones internas.</p></div>
+              <div class="metric-card bento-5"><span class="metric-label">Capas con un trabajo claro</span><div class="metric-value">5</div><p class="metric-note">model · repository · service · controller · dto</p></div>
+              <div class="callout bento-6" data-tone="success"><span class="component-label">IA con criterio</span><h3>Automatiza después de comprender</h3><p>Pide a Cursor AI un <code>MarcaDTO</code> equivalente y valida tres cosas: datos planos, getters completos y ninguna entidad expuesta.</p></div>
+              <div class="callout bento-6" data-tone="warning"><span class="component-label">Próxima frontera</span><h3>Persistir no es autorizar</h3><p>Hoy cualquier cliente puede crear productos. La siguiente decisión será identificar usuarios y limitar operaciones con JWT y roles.</p></div>
+            </div>
+            <div class="question-card"><span class="component-label">Puente a la Clase 11</span><p class="question">¿Qué debe ocurrir entre una petición <code>POST /api/productos</code> y el controller para permitirla solo a un administrador autenticado?</p></div>
+            <ul class="checklist"><li>Los datos sobreviven al reinicio.</li><li>Las relaciones generan llaves foráneas coherentes.</li><li>Las consultas derivadas funcionan por nombre.</li><li>La API responde con DTOs planos.</li><li>La arquitectura está lista para añadir seguridad.</li></ul>
+          </div>
+        </section>
+
+        <footer class="footer">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack</footer>
+      </article>
+    </main>
+  </div>
+
+  <div class="watermark" aria-hidden="true">© 2026 ANA ALVARADO</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="anaJS.js"></script>
+</body>
+</html>
