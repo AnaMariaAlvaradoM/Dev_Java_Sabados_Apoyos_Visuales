@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es" data-tema="claro" data-tema-base="claro" data-empresa="dev-senior" data-paleta="tropical" data-atmosfera="organica">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Ana Alvarado">
+  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <title>Clase 12 · Swagger, validaciones, errores y Docker · Ana Alvarado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+  <link rel="stylesheet" href="ana-estilos.css">
+</head>
+<body>
+  <a class="skip-link" href="#s1">Saltar al contenido</a>
+  <div class="topline" id="topline" aria-hidden="true"></div>
+  <div class="controls" aria-label="Controles">
+    <button class="ctrl" id="temaBtn" type="button" aria-label="Cambiar tema">☀</button>
+    <button class="ctrl" id="fullscreenBtn" type="button" aria-label="Pantalla completa">⛶</button>
+  </div>
+
+  <div class="shell" id="shell" data-collapsed="false">
+    <aside class="sidebar" aria-label="Índice de la clase">
+      <div class="sb-top">
+        <span class="brand-mark">A</span>
+        <div class="sb-title"><b>Java AI Engineer</b><span>Módulo 3 · Clase 12</span></div>
+      </div>
+      <button class="sb-toggle" id="collapseBtn" type="button" aria-label="Colapsar menú">‹</button>
+      <nav class="sb-nav" id="nav" aria-label="Secciones">
+        <a class="nav-item active" href="#s1"><span class="nav-index">01</span><span class="nav-label">El contrato vivo</span></a>
+        <a class="nav-item" href="#s2"><span class="nav-index">02</span><span class="nav-label">El problema real</span></a>
+        <a class="nav-item" href="#s3"><span class="nav-index">03</span><span class="nav-label">Caso de negocio</span></a>
+        <a class="nav-item" href="#s4"><span class="nav-index">04</span><span class="nav-label">Modelo mental</span></a>
+        <a class="nav-item" href="#s5"><span class="nav-index">05</span><span class="nav-label">Swagger / OpenAPI</span></a>
+        <a class="nav-item" href="#s6"><span class="nav-index">06</span><span class="nav-label">Validaciones</span></a>
+        <a class="nav-item" href="#s7"><span class="nav-index">07</span><span class="nav-label">Errores globales</span></a>
+        <a class="nav-item" href="#s8"><span class="nav-index">08</span><span class="nav-label">REST profesional</span></a>
+        <a class="nav-item" href="#s9"><span class="nav-index">09</span><span class="nav-label">Docker</span></a>
+        <a class="nav-item" href="#s10"><span class="nav-index">10</span><span class="nav-label">Dockerfile</span></a>
+        <a class="nav-item" href="#s11"><span class="nav-index">11</span><span class="nav-label">Variables de entorno</span></a>
+        <a class="nav-item" href="#s12"><span class="nav-index">12</span><span class="nav-label">Lista para deploy</span></a>
+        <a class="nav-item" href="#s13"><span class="nav-index">13</span><span class="nav-label">IA como copiloto</span></a>
+        <a class="nav-item" href="#s14"><span class="nav-index">14</span><span class="nav-label">Cierre del módulo</span></a>
+        <a class="nav-item" href="#s15"><span class="nav-index">15</span><span class="nav-label">Mapa de archivos</span></a>
+      </nav>
+      <div class="sb-prog">
+        <div class="lbl"><span>Progreso</span><span id="progPct">0%</span></div>
+        <div class="track"><div class="fill" id="progFill"></div></div>
+      </div>
+      <p class="sb-foot">© 2026 Ana Alvarado<br>Educadora Tech &amp; Desarrolladora Full Stack</p>
+    </aside>
+
+    <main class="main">
+      <header class="hero" data-variant="stat">
+        <div class="hero-inner">
+          <div>
+            <span class="eyebrow">De funcional a entregable · Clase 12</span>
+            <h1 class="hero-title">Una API lista para <em>salir al mundo</em></h1>
+            <p class="hero-lead">Documenta el contrato, valida cada entrada, responde errores de forma consistente y empaca el backend para que viaje igual a cualquier servidor.</p>
+            <div class="meta">
+              <span class="pill" data-hot>Spring Boot 4.1</span>
+              <span class="pill">Java 17</span>
+              <span class="pill">JWT + MySQL</span>
+              <span class="pill">Docker base</span>
+            </div>
+          </div>
+          <div class="hero-bignum">4<small>capas de entrega</small></div>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="section" id="s1"><div class="sec-head"><span class="sec-n">01 · Punto de partida</span><h2 class="sec-t">El contrato vivo</h2><p class="sec-s">Una URL debe bastar para que otro equipo entienda cómo consumir la API.</p></div><div class="body">
+          <div class="socratica">
+            <span class="component-label">Para pensar</span>
+            <p class="socratica-q">Mañana entra un equipo de frontend a consumir tu API. No tiene acceso a tu código, solo a la URL. ¿Cómo sabe qué endpoints existen, qué datos enviar y qué recibe de vuelta?</p>
+            <p class="socratica-hint">Pista: una colección o una reunión dependen de que alguien las mantenga y las comparta.</p>
+            <details class="reveal">
+              <summary>Ver respuesta</summary>
+              <div class="reveal-body">
+                <p class="lead-answer">Una API profesional se documenta a sí misma mediante un contrato vivo y siempre actualizado.</p>
+                <p>La primera reacción suele ser pasar la colección de Postman, explicar por chat o agendar una reunión. Eso no escala ni queda como fuente oficial. El estándar <strong>OpenAPI</strong> expresa el contrato y <strong>Swagger</strong> lo convierte en una interfaz que cualquier equipo puede consultar sin tocar el código ni preguntarte.</p>
+              </div>
+            </details>
+          </div>
+          <div class="panel">
+            <h3>La promesa de hoy</h3>
+            <p>Convertirás una API que <strong>funciona</strong> en una API que se puede <strong>entregar</strong>. Primero elevarás su calidad profesional: documentación automática, validación de entradas y respuestas de error consistentes. Después la empacarás dentro de un contenedor listo para llevar a cualquier servidor.</p>
+            <p>El punto de partida es <strong>gestor-productos</strong>: Spring Boot 4.1, Java 17, MySQL y seguridad JWT construida en la Clase 11. El resultado será el estado exacto que pide el integrador del Módulo 3.</p>
+          </div>
+        </div></section>
+        <section class="section" id="s2"><div class="sec-head"><span class="sec-n">02 · Parte 1</span><h2 class="sec-t">El problema real</h2><p class="sec-s">Funcionar no basta cuando la API todavía depende de quien la construyó.</p></div><div class="body">
+          <div class="compare">
+            <div class="compare-card" data-side="negative">
+              <h3>La API de hoy</h3>
+              <ul>
+                <li>Solo sabemos qué hace porque nosotros la conocemos.</li>
+                <li>Postman sirve para probar, pero no es el contrato público.</li>
+                <li>Una persona nueva no puede descubrir rutas ni datos esperados.</li>
+                <li>La API confía en todo lo que recibe.</li>
+              </ul>
+            </div>
+            <div class="compare-card" data-side="positive">
+              <h3>La API que podemos entregar</h3>
+              <ul>
+                <li>Publica un contrato que otros equipos pueden explorar.</li>
+                <li>Rechaza datos que rompen reglas de negocio.</li>
+                <li>Explica los errores con una forma predecible.</li>
+                <li>Se empaca con el entorno que necesita para arrancar.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout" data-tone="danger"><span class="callout-icon">!</span><div><h3>El riesgo escondido</h3><p>Hoy nadie comprueba que el precio sea positivo ni que un correo tenga formato real. Un dato inválido puede entrar y contaminar el catálogo.</p></div></div>
+        </div></section>
+        <section class="section" id="s3"><div class="sec-head"><span class="sec-n">03 · Caso de negocio</span><h2 class="sec-t">La escala obliga a profesionalizar</h2><p class="sec-s">Documentar, validar y responder bien separa una práctica de una API de producción.</p></div><div class="body">
+          <div class="panel">
+            <h3>Piensa en Mercado Libre</h3>
+            <p>Decenas de equipos —web, móvil y aliados externos— consumen las mismas APIs. Ninguno lee el código fuente del backend para averiguar cómo usarlas.</p>
+          </div>
+          <div class="cards">
+            <div class="card" data-accent="1"><span class="orb" data-accent="1" role="img" aria-label="Manual">📖</span><b>Leen documentación</b><p>El contrato muestra qué rutas existen, qué reciben y qué devuelven.</p></div>
+            <div class="card" data-accent="2"><span class="orb" data-accent="2" role="img" aria-label="Control de acceso">🛂</span><b>Pasan validaciones</b><p>Los datos entran solo cuando cumplen reglas estrictas.</p></div>
+            <div class="card" data-accent="3"><span class="orb" data-accent="3" role="img" aria-label="Respuesta consistente">🧾</span><b>Reciben errores previsibles</b><p>Cuando algo falla, la forma de la respuesta no cambia.</p></div>
+          </div>
+          <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>La diferencia profesional</h3><p>Documentar, validar y responder bien son las tres capacidades que separan una API de práctica de una API de producción.</p></div></div>
+        </div></section>
+        <section class="section" id="s4"><div class="sec-head"><span class="sec-n">04 · Modelo mental</span><h2 class="sec-t">Menú, portero y recepción</h2><p class="sec-s">Tres cualidades que vuelven predecible el producto antes de empacarlo.</p></div><div class="body">
+          <div class="mindmap">
+            <div class="mindmap-core"><strong>API profesional</strong><span>un producto que otros pueden usar</span></div>
+            <div class="mindmap-branches">
+              <div class="mindmap-node" data-accent="1"><strong>Menú</strong><p>Swagger documenta qué ofrece la API.</p></div>
+              <div class="mindmap-node" data-accent="2"><strong>Portero</strong><p>Las validaciones revisan que los datos entren correctos.</p></div>
+              <div class="mindmap-node" data-accent="3"><strong>Recepción única</strong><p>El manejo global responde las quejas siempre igual.</p></div>
+            </div>
+          </div>
+          <div class="visual-panel">
+            <div class="chart-title">La ruta completa de la clase</div>
+            <div class="flow">
+              <div class="flow-step"><span class="fs-index">01</span><strong>Documentar</strong><span>Contrato visible</span></div>
+              <span class="flow-arrow" aria-hidden="true">→</span>
+              <div class="flow-step"><span class="fs-index">02</span><strong>Validar</strong><span>Entrada confiable</span></div>
+              <span class="flow-arrow" aria-hidden="true">→</span>
+              <div class="flow-step"><span class="fs-index">03</span><strong>Responder</strong><span>Errores uniformes</span></div>
+              <span class="flow-arrow" aria-hidden="true">→</span>
+              <div class="flow-step" data-emphasis><span class="fs-index">04</span><strong>Empacar</strong><span>Lista para viajar</span></div>
+            </div>
+          </div>
+        </div></section>
+        <section class="section" id="s5"><div class="sec-head"><span class="sec-n">05 · Documentar</span><h2 class="sec-t">Swagger y OpenAPI</h2><p class="sec-s">El contrato se genera desde controllers y DTOs, se publica y aprende a usar JWT.</p></div><div class="body">
+          <div class="cards">
+            <div class="card" data-accent="1"><span class="orb" data-accent="1" role="img" aria-label="Contrato">📜</span><b>OpenAPI</b><p><strong>Técnicamente:</strong> estándar para describir rutas, métodos, parámetros y respuestas de una API REST en un formato que las máquinas entienden.</p></div>
+            <div class="card" data-accent="2"><span class="orb" data-accent="2" role="img" aria-label="Vitrina">🪟</span><b>Swagger UI</b><p><strong>En sencillo:</strong> una página web que lee el contrato y lo vuelve una interfaz visual navegable para probar endpoints.</p></div>
+            <div class="card" data-accent="3"><span class="orb" data-accent="3" role="img" aria-label="Manual">📘</span><b>En la vida real</b><p>Es el manual de un electrodoméstico: no necesitas abrir el aparato para saber qué botones tiene y qué hace cada uno.</p></div>
+          </div>
+          <div class="callout" data-tone="info"><span class="callout-icon">i</span><div><h3>Contrato y vitrina</h3><p>OpenAPI es el contrato escrito; Swagger UI es la vitrina que lo muestra y permite probarlo.</p></div></div>
+          <div class="panel"><h3>La clave: no lo escribimos a mano</h3><p><strong>springdoc-openapi</strong> inspecciona controllers y DTOs y genera el documento OpenAPI automáticamente. Solo agregamos la librería; no redactamos ruta por ruta.</p></div>
+          <div class="compare">
+            <div class="compare-card" data-side="negative"><h3>Línea 2.x</h3><ul><li>Corresponde a Spring Boot 3.</li><li>Un tutorial o la IA puede sugerirla por ser la más común.</li><li>Con Spring Boot 4 no funcionará bien.</li></ul></div>
+            <div class="compare-card" data-side="positive"><h3>Línea 3.x</h3><ul><li>Es la línea para Spring Boot 4.</li><li>En esta clase usamos <strong>3.1.0</strong>.</li><li>Verificar compatibilidad evita un error clásico.</li></ul></div>
+          </div>
+
+          <div class="checkpoint"><span class="component-label">Paso 01 · Editar</span><h3>Agregar springdoc dentro de &lt;dependencies&gt;</h3></div>
+          <p><strong>Archivo:</strong> <code>pom.xml</code> · <strong>Ubicación:</strong> raíz del proyecto. Esta dependencia basta para que Swagger empiece a funcionar.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Editar</span><span class="code-file">pom.xml · dentro de &lt;dependencies&gt;</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springdoc&lt;/groupId&gt;
+    &lt;artifactId&gt;springdoc-openapi-starter-webmvc-ui&lt;/artifactId&gt;
+    &lt;version&gt;3.1.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+          </div>
+          <p>Con esta dependencia, springdoc inspecciona los controllers y arma el contrato.</p>
+
+          <div class="checkpoint"><span class="component-label">Paso 02 · Reiniciar</span><h3>Arrancar la aplicación con la nueva dependencia</h3></div>
+          <p><strong>Carpeta:</strong> raíz de <code>gestor-productos</code>.</p>
+          <div class="code-block" data-tipo="terminal">
+            <div class="code-head"><div><span class="code-context">Terminal</span><span class="code-file">gestor-productos/</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre><code class="language-bash">./mvnw spring-boot:run</code></pre>
+          </div>
+          <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Resultado esperado</h3><p>La aplicación arranca en el puerto 8080, como siempre.</p></div></div>
+          <p>Abre la interfaz de Swagger en el navegador:</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Abrir</span><span class="code-file">Navegador</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre><code class="language-plaintext">http://localhost:8080/swagger-ui.html</code></pre>
+          </div>
+
+          <div class="callout" data-tone="danger"><span class="callout-icon">403</span><div><h3>Error en vivo: Swagger bloqueado</h3><p>La documentación no aparece. <strong>403 Forbidden</strong> significa: estés identificado o no, no tienes permiso para acceder. No es un error de código; la seguridad está haciendo su trabajo.</p></div></div>
+          <div class="socratica">
+            <span class="component-label">Para pensar</span>
+            <p class="socratica-q">¿Por qué Swagger, que acabamos de instalar, responde 403?</p>
+            <p class="socratica-hint">Pista: recuerda la regla final que cerró la API en la Clase 11.</p>
+            <details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Swagger no está roto: quedó protegido por la seguridad existente.</p><p>La primera intuición puede culpar a la dependencia o a una configuración faltante. En realidad, <code>anyRequest().authenticated()</code> protege todo lo que no se declaró público, incluidas las rutas nuevas de Swagger. Debemos permitirlas explícitamente.</p></div></details>
+          </div>
+
+          <div class="checkpoint"><span class="component-label">Paso 03 · Editar</span><h3>Abrir públicamente las rutas de Swagger</h3></div>
+          <p><strong>Archivo:</strong> <code>SecurityConfig.java</code> · <strong>Ubicación:</strong> <code>src/main/java/com/devsenior/gestorproductos/security/</code>. Esta es la versión final consolidada del método: permite la interfaz <code>/swagger-ui/**</code> y el documento <code>/v3/api-docs/**</code>.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Editar · consolidado</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/security/SecurityConfig.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-java">@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+        .csrf(csrf -&gt; csrf.disable())
+        .authorizeHttpRequests(auth -&gt; auth
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/v3/api-docs").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/productos/**").hasRole("ADMIN")
+            .anyRequest().authenticated()
+        )
+        .sessionManagement(sm -&gt; sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    return http.build();
+}</code></pre>
+          </div>
+          <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Así va la aplicación</h3><p>Reinicia y abre de nuevo <code>http://localhost:8080/swagger-ui.html</code>. Ahora aparecen los endpoints de <code>/api/productos</code>, <code>/api/auth/...</code>, <code>/api/categorias</code> y <code>/api/marcas</code>, con sus métodos y datos, generados automáticamente. La documentación se apoya en la seguridad de la clase pasada: una cosa lleva a la otra.</p></div></div>
+
+          <div class="checkpoint"><span class="component-label">Paso 04 · Crear</span><h3>Enseñar a Swagger a usar JWT Bearer</h3></div>
+          <p>Los endpoints protegidos todavía fallan si Swagger no envía el token. Creamos la carpeta <code>config</code> y declaramos el esquema para que aparezca el botón <strong>Authorize</strong>.</p>
+          <p><strong>Archivo:</strong> <code>OpenApiConfig.java</code> · <strong>Ubicación:</strong> <code>src/main/java/com/devsenior/gestorproductos/config/</code>.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/config/OpenApiConfig.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.config;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@OpenAPIDefinition(
+    info = @Info(
+        title = "API Gestor de Productos",
+        version = "1.0",
+        description = "API REST del catálogo de la tienda, con seguridad JWT."
+    ),
+    security = @SecurityRequirement(name = "bearerAuth")
+)
+@SecurityScheme(
+    name = "bearerAuth",
+    type = SecuritySchemeType.HTTP,
+    scheme = "bearer",
+    bearerFormat = "JWT"
+)
+public class OpenApiConfig {}</code></pre>
+          </div>
+          <p>El estudiante pega una vez el token del login en <strong>Authorize</strong> y puede probar desde el navegador los endpoints protegidos, sin Postman.</p>
+          <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>Buena práctica de producción</h3><p>Muchas empresas desactivan Swagger en producción para no exponer el mapa de la API. La propiedad existe, pero no la activamos hoy.</p></div></div>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Referencia</span><span class="code-file">application.properties</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre><code class="language-properties">springdoc.swagger-ui.enabled=false</code></pre>
+          </div>
+        </div></section>
+        <section class="section" id="s6"><div class="sec-head"><span class="sec-n">06 · Validar</span><h2 class="sec-t">Nunca confíes en la entrada</h2><p class="sec-s">Bean Validation convierte las reglas de negocio en anotaciones junto a cada campo.</p></div><div class="body">
+          <div class="socratica">
+            <span class="component-label">Para pensar</span>
+            <p class="socratica-q">Alguien envía un producto con nombre vacío, precio <code>-5</code> y stock <code>-1</code>. Hoy, ¿qué hace nuestra API?</p>
+            <p class="socratica-hint">Pista: revisa si existe algo que inspeccione el cuerpo antes de guardarlo.</p>
+            <details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Hoy lo guarda tal cual.</p><p>Se suele suponer que Spring lo rechazará o producirá un error, pero nadie está revisando esos datos. Un precio negativo entra a la base y contamina el catálogo. Confiar ciegamente en el cliente es una falla de diseño: <strong>nunca se confía en la entrada</strong>.</p></div></details>
+          </div>
+          <div class="cards">
+            <div class="card" data-accent="1"><span class="orb" data-accent="1" role="img" aria-label="Etiqueta">🏷️</span><b>Definición técnica</b><p><strong>Bean Validation</strong>, del paquete <code>jakarta.validation</code>, es un estándar de Java para declarar reglas sobre campos mediante anotaciones.</p></div>
+            <div class="card" data-accent="2"><span class="orb" data-accent="2" role="img" aria-label="Regla">📏</span><b>Explicación sencilla</b><p>En lugar de dispersar <code>if</code> por el código, etiquetas cada campo con la regla que debe cumplir y Spring la revisa.</p></div>
+            <div class="card" data-accent="3"><span class="orb" data-accent="3" role="img" aria-label="Formulario">📝</span><b>En la vida real</b><p>Es el formulario que no te deja enviar hasta que el correo tiene <code>@</code> y la contraseña es suficientemente larga. La regla vive pegada al campo.</p></div>
+          </div>
+
+          <div class="checkpoint"><span class="component-label">Antes del proyecto</span><h3>Leer las reglas junto al campo</h3></div>
+          <p>En una reserva de hotel, <code>@NotBlank</code> exige texto no vacío y <code>@Min</code> exige un valor mínimo. Este ejemplo aislado muestra la sintaxis sin mezclarla todavía con <code>gestor-productos</code>.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Ejemplo aislado</span><span class="code-file">ReservaRequest.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-java">public class ReservaRequest {
+    @NotBlank(message = "El nombre del huésped es obligatorio")
+    private String huesped;
+
+    @Min(value = 1, message = "Debe reservar al menos 1 noche")
+    private int noches;
+}</code></pre>
+          </div>
+
+          <div class="checkpoint"><span class="component-label">Paso 01 · Editar</span><h3>Activar el motor de validación</h3></div>
+          <p><strong>Archivo:</strong> <code>pom.xml</code> · <strong>Ubicación:</strong> raíz del proyecto · <strong>Acción:</strong> agregar dentro de <code>&lt;dependencies&gt;</code>. No indicamos versión porque Spring Boot la administra.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Editar</span><span class="code-file">pom.xml · dentro de &lt;dependencies&gt;</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-validation&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+          </div>
+
+          <div class="checkpoint"><span class="component-label">Paso 02 · Crear</span><h3>Separar la entrada con ProductoRequest</h3></div>
+          <p>Recibir directamente la entidad <code>Producto</code> mezcla la tabla de la base con lo que llega desde afuera. Un DTO de entrada representa <strong>solo</strong> lo que el cliente puede enviar y concentra reglas limpias.</p>
+          <p><strong>Archivo:</strong> <code>ProductoRequest.java</code> · <strong>Ubicación:</strong> <code>src/main/java/com/devsenior/gestorproductos/dto/</code>.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/dto/ProductoRequest.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.dto;
+
+import jakarta.validation.constraints.*;
+
+public class ProductoRequest {
+
+    @NotBlank(message = "El nombre es obligatorio")
+    private String nombre;
+
+    private String descripcion;
+
+    @NotNull(message = "El precio es obligatorio")
+    @Positive(message = "El precio debe ser mayor a cero")
+    private Double precio;
+
+    @NotNull(message = "El stock es obligatorio")
+    @PositiveOrZero(message = "El stock no puede ser negativo")
+    private Integer stock;
+
+    @NotNull(message = "La categoría es obligatoria")
+    private Long categoriaId;
+
+    @NotNull(message = "La marca es obligatoria")
+    private Long marcaId;
+
+    // getters y setters de todos los campos
+}</code></pre>
+          </div>
+          <div class="twin">
+            <div class="cell a"><span class="tag">Tipos primitivos</span><p>Con <code>int</code>, un campo ausente llega como <code>0</code>; por eso <code>@NotNull</code> nunca podría detectar la ausencia.</p></div>
+            <div class="cell b"><span class="tag">Tipos objeto</span><p>Con <code>Integer</code>, un campo ausente llega como <code>null</code> y <code>@NotNull</code> sí lo detecta. Es una decisión de diseño.</p></div>
+          </div>
+          <div class="callout" data-tone="info"><span class="callout-icon">i</span><div><h3>Getters y setters</h3><p>Los comentarios marcador se conservan. En IntelliJ se generan con <strong>clic derecho → Generate → Getter and Setter</strong>; no se escriben uno por uno.</p></div></div>
+
+          <div class="checkpoint"><span class="component-label">Paso 03 · Editar</span><h3>Activar la revisión con @Valid</h3></div>
+          <p>Las anotaciones no se ejecutan solas: <code>@Valid</code> es el interruptor. El controller recibe <code>ProductoRequest</code>, arma la entidad y responde <strong>201 Created</strong>. Esta es la versión final consolidada.</p>
+          <p><strong>Archivo:</strong> <code>ProductoController.java</code> · <strong>Ubicación:</strong> <code>src/main/java/com/devsenior/gestorproductos/controller/</code>.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Editar · consolidado</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/controller/ProductoController.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.controller;
+
+import com.devsenior.gestorproductos.dto.ProductoDTO;
+import com.devsenior.gestorproductos.dto.ProductoRequest;
+import com.devsenior.gestorproductos.model.*;
+import com.devsenior.gestorproductos.service.ProductoService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/productos")
+public class ProductoController {
+
+    private final ProductoService productoService;
+
+    public ProductoController(ProductoService s){ this.productoService = s; }
+
+    @GetMapping
+    public List&lt;ProductoDTO&gt; obtenerProductos(){
+        return productoService.listarProductos().stream().map(ProductoDTO::new).toList();
+    }
+
+    @GetMapping("/categoria/{categoriaId}")
+    public List&lt;ProductoDTO&gt; obtenerPorCategoria(@PathVariable Long categoriaId){
+        return productoService.listarPorCategoria(categoriaId).stream().map(ProductoDTO::new).toList();
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;ProductoDTO&gt; crearProducto(@Valid @RequestBody ProductoRequest req){
+        Producto p = new Producto();
+        p.setNombre(req.getNombre());
+        p.setDescripcion(req.getDescripcion());
+        p.setPrecio(req.getPrecio());
+        p.setStock(req.getStock());
+        Categoria c = new Categoria(); c.setId(req.getCategoriaId()); p.setCategoria(c);
+        Marca m = new Marca(); m.setId(req.getMarcaId()); p.setMarca(m);
+        Producto guardado = productoService.agregarProducto(p);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ProductoDTO(guardado));
+    }
+}</code></pre>
+          </div>
+
+          <div class="checkpoint"><span class="component-label">Paso 04 · Editar</span><h3>Validar también el registro</h3></div>
+          <p>El registro de la Clase 11 aceptaba cualquier correo y contraseña. Ahora exige correo presente y válido, y una contraseña de al menos seis caracteres.</p>
+          <p><strong>Archivo:</strong> <code>RegistroRequest.java</code> · <strong>Ubicación:</strong> <code>src/main/java/com/devsenior/gestorproductos/dto/</code> · <strong>Acción:</strong> reemplazar por esta versión final.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Editar · final</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/dto/RegistroRequest.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public class RegistroRequest {
+
+    @NotBlank(message = "El correo es obligatorio")
+    @Email(message = "El correo no tiene un formato válido")
+    private String email;
+
+    @NotBlank(message = "La contraseña es obligatoria")
+    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+    private String password;
+
+    // getters y setters
+}</code></pre>
+          </div>
+          <p>También activamos la revisión en el controller de autenticación.</p>
+          <p><strong>Archivo:</strong> <code>AuthController.java</code> · <strong>Ubicación:</strong> <code>src/main/java/com/devsenior/gestorproductos/controller/</code> · <strong>Acción:</strong> reemplazar por esta versión final.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Editar · final</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/controller/AuthController.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.controller;
+
+import com.devsenior.gestorproductos.dto.*;
+import com.devsenior.gestorproductos.service.AuthService;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    private final AuthService authService;
+
+    public AuthController(AuthService s){ this.authService = s; }
+
+    @PostMapping("/register")
+    public AuthResponse register(@Valid @RequestBody RegistroRequest req){
+        return authService.registrar(req);
+    }
+
+    @PostMapping("/login")
+    public AuthResponse login(@RequestBody LoginRequest req){
+        return authService.login(req);
+    }
+}</code></pre>
+          </div>
+          <div class="callout" data-tone="warning"><span class="callout-icon">400</span><div><h3>Qué error sale ahora</h3><p>Ante datos inválidos, Spring lanza internamente <code>MethodArgumentNotValidException</code> y responde <strong>400 Bad Request</strong>: la petición del cliente está mal formada, no el servidor. El cuerpo predeterminado es enorme y difícil de leer; el siguiente tema le dará una forma limpia.</p></div></div>
+        </div></section>
+        <section class="section" id="s7"><div class="sec-head"><span class="sec-n">07 · Responder</span><h2 class="sec-t">Manejo global de errores</h2><p class="sec-s">Un solo especialista intercepta excepciones y mantiene el mismo formato.</p></div><div class="body">
+          <div class="socratica">
+            <span class="component-label">Para pensar</span>
+            <p class="socratica-q">Si cada controller arma su propia respuesta de error, ¿qué pasa cuando la API crece a 40 endpoints?</p>
+            <p class="socratica-hint">Pista: piensa en la forma que espera el frontend.</p>
+            <details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Aparecen errores inconsistentes, código repetido y clientes que no pueden anticipar la respuesta.</p><p>Cada controller terminaría respondiendo de manera distinta. La solución profesional es centralizar: un solo lugar atrapa los errores de toda la API y los devuelve siempre con el mismo formato.</p></div></details>
+          </div>
+          <div class="cards">
+            <div class="card" data-accent="1"><span class="orb" data-accent="1" role="img" aria-label="Centralización">🎛️</span><b>@RestControllerAdvice</b><p>Componente que intercepta excepciones de todos los controllers y produce una respuesta unificada.</p></div>
+            <div class="card" data-accent="2"><span class="orb" data-accent="2" role="img" aria-label="Recepción">🏢</span><b>En la vida real</b><p>Es la recepción única de quejas: no importa dónde ocurrió el problema, el mismo mostrador responde con el mismo formato.</p></div>
+            <div class="card" data-accent="3"><span class="orb" data-accent="3" role="img" aria-label="Buenas prácticas">🧭</span><b>DRY + SOLID</b><p>Los controllers cumplen su tarea; un especialista maneja errores sin repetir lógica.</p></div>
+          </div>
+
+          <div class="checkpoint"><span class="component-label">Paso 01 · Crear</span><h3>Definir la forma de un error</h3></div>
+          <p>El cuerpo JSON tendrá un estado, un mensaje, un mapa de errores por campo y una marca de tiempo. El mapa <code>campo → mensaje</code> le dice al cliente exactamente qué falló y por qué.</p>
+          <p><strong>Archivo:</strong> <code>ApiError.java</code> · <strong>Ubicación:</strong> <code>src/main/java/com/devsenior/gestorproductos/exception/</code> · <strong>Acción:</strong> crear; la carpeta <code>exception</code> es nueva.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/exception/ApiError.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.exception;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+public class ApiError {
+
+    private int status;
+    private String mensaje;
+    private Map&lt;String, String&gt; errores;
+    private String timestamp;
+
+    public ApiError(int status, String mensaje, Map&lt;String, String&gt; errores) {
+        this.status = status;
+        this.mensaje = mensaje;
+        this.errores = errores;
+        this.timestamp = LocalDateTime.now().toString();
+    }
+
+    public int getStatus(){ return status; }
+    public String getMensaje(){ return mensaje; }
+    public Map&lt;String, String&gt; getErrores(){ return errores; }
+    public String getTimestamp(){ return timestamp; }
+}</code></pre>
+          </div>
+
+          <div class="checkpoint"><span class="component-label">Paso 02 · Crear</span><h3>Construir el interceptor central</h3></div>
+          <p>El primer manejador toma <code>MethodArgumentNotValidException</code>, arma el mapa campo por campo y responde 400. El segundo captura cualquier excepción no prevista y responde 500 con un mensaje genérico.</p>
+          <p><strong>Archivo:</strong> <code>GlobalExceptionHandler.java</code> · <strong>Ubicación:</strong> <code>src/main/java/com/devsenior/gestorproductos/exception/</code>.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/gestorproductos/exception/GlobalExceptionHandler.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-java">package com.devsenior.gestorproductos.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;ApiError&gt; manejarValidacion(MethodArgumentNotValidException ex) {
+        Map&lt;String, String&gt; errores = new HashMap&lt;&gt;();
+        for (FieldError fe : ex.getBindingResult().getFieldErrors()) {
+            errores.put(fe.getField(), fe.getDefaultMessage());
+        }
+        ApiError cuerpo = new ApiError(HttpStatus.BAD_REQUEST.value(),
+                "Los datos enviados no son válidos", errores);
+        return ResponseEntity.badRequest().body(cuerpo);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;ApiError&gt; manejarGeneral(Exception ex) {
+        ApiError cuerpo = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Ocurrió un error inesperado en el servidor", null);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(cuerpo);
+    }
+}</code></pre>
+          </div>
+          <div class="callout" data-tone="warning"><span class="callout-icon">🔒</span><div><h3>Detalle de seguridad</h3><p>El mensaje del error 500 es vago a propósito. Nunca se exponen nombres de clases, líneas ni detalles internos: esa información podría ayudar a un atacante.</p></div></div>
+          <div class="callout" data-tone="info"><span class="callout-icon">403</span><div><h3>Una frontera importante</h3><p>Los 403 de la Clase 11 no pasan por este manejador. La capa de seguridad los resuelve antes de llegar a los controllers; <code>GlobalExceptionHandler</code> se ocupa de excepciones de la aplicación, no de permisos.</p></div></div>
+
+          <div class="checkpoint"><span class="component-label">Evidencia observable</span><h3>Un cuerpo limpio y predecible</h3></div>
+          <p>Al registrar un correo mal escrito y una contraseña corta, la API responde 400 con este JSON. El frontend puede leer <code>errores</code> y mostrar exactamente qué debe corregir la persona.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Respuesta 400</span><span class="code-file">application/json</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-json">{
+  "status": 400,
+  "mensaje": "Los datos enviados no son válidos",
+  "errores": {
+    "email": "El correo no tiene un formato válido",
+    "password": "La contraseña debe tener al menos 6 caracteres"
+  },
+  "timestamp": "2026-08-22T15:27:07.445"
+}</code></pre>
+          </div>
+        </div></section>
+        <section class="section" id="s8"><div class="sec-head"><span class="sec-n">08 · Semántica REST</span><h2 class="sec-t">El estado también cuenta la historia</h2><p class="sec-s">200, 201, 400, 403 y 500 comunican el resultado antes de leer el cuerpo.</p></div><div class="body">
+          <div class="twin">
+            <div class="cell a"><span class="tag">Antes</span><p>Hasta la Clase 11, crear un producto devolvía <strong>200 OK</strong>, el mismo código usado para una consulta exitosa.</p></div>
+            <div class="cell b"><span class="tag">Ahora</span><p>Crear un recurso responde <strong>201 Created</strong>. La semántica distingue creación de consulta.</p></div>
+          </div>
+          <p><code>ResponseEntity</code> permite controlar el código de estado y el cuerpo, en lugar de dejar que Spring elija. Ya está aplicado en <code>ProductoController</code>.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Aplicado</span><span class="code-file">ProductoController.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre><code class="language-java">return ResponseEntity.status(HttpStatus.CREATED).body(new ProductoDTO(guardado));</code></pre>
+          </div>
+          <div class="callout" data-tone="info"><span class="callout-icon">i</span><div><h3>Diseño REST maduro</h3><p>Un código correcto le dice al cliente qué ocurrió sin obligarlo a leer el cuerpo.</p></div></div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <caption>Buenas prácticas REST que ya aplica gestor-productos</caption>
+              <thead><tr><th>Práctica</th><th>Qué significa</th><th>En nuestro proyecto</th></tr></thead>
+              <tbody>
+                <tr><td data-emphasis>Sustantivos en plural</td><td>La ruta nombra el recurso, no la acción</td><td><code>/api/productos</code>, no <code>/api/getProductos</code></td></tr>
+                <tr><td data-emphasis>El verbo lo da el método HTTP</td><td>GET consulta, POST crea</td><td><code>GET</code> lista, <code>POST</code> crea</td></tr>
+                <tr><td data-emphasis>Código de estado correcto</td><td>El número comunica el resultado</td><td><code>200</code>, <code>201</code>, <code>400</code>, <code>403</code>, <code>500</code></td></tr>
+                <tr><td data-emphasis>DTOs, no entidades</td><td>No exponer la tabla directamente</td><td><code>ProductoDTO</code> de salida, <code>ProductoRequest</code> de entrada</td></tr>
+                <tr><td data-emphasis>Validar la entrada</td><td>No confiar en el cliente</td><td>anotaciones + <code>@Valid</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="socratica">
+            <span class="component-label">Pregunta de criterio</span>
+            <p class="socratica-q">¿Por qué es mejor devolver <code>201</code> al crear en vez de <code>200</code>, si el cliente igual recibe el producto?</p>
+            <details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Porque el código de estado forma parte del contrato.</p><p>Un cliente automatizado puede reaccionar de forma distinta ante <code>201</code> —recurso creado— y <code>200</code> —consulta exitosa— sin interpretar el cuerpo. La semántica correcta vuelve la API predecible.</p></div></details>
+          </div>
+        </div></section>
+        <section class="section" id="s9"><div class="sec-head"><span class="sec-n">09 · Parte 2</span><h2 class="sec-t">Docker: la caja que viaja</h2><p class="sec-s">La aplicación y su entorno exacto se mueven como una sola unidad portable.</p></div><div class="body">
+          <div class="socratica">
+            <span class="component-label">Nuevo problema de negocio</span>
+            <p class="socratica-q">Tu API funciona perfecto en tu computador. La subes al servidor del cliente y no arranca: otra versión de Java, otra configuración. ¿Por qué pasa y cómo se evita?</p>
+            <p class="socratica-hint">Pista: instalar a mano no garantiza que dos ambientes queden iguales.</p>
+            <details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Empaquetamos la aplicación junto con su entorno exacto para que corra igual en cualquier lado.</p><p>La primera idea suele ser instalar correctamente Java y dependencias en el servidor. Ese proceso es frágil y difícil de repetir: es el clásico «en mi máquina sí funciona». Docker resuelve el problema con un contenedor portable.</p></div></details>
+          </div>
+          <div class="cards">
+            <div class="card" data-accent="1"><span class="orb" data-accent="1" role="img" aria-label="Contenedor de software">📦</span><b>Definición técnica</b><p><strong>Docker</strong> empaqueta una aplicación y todo lo necesario para ejecutarla —runtime, librerías y configuración— en una unidad aislada y portable: el contenedor.</p></div>
+            <div class="card" data-accent="2"><span class="orb" data-accent="2" role="img" aria-label="Caja sellada">🧰</span><b>Explicación sencilla</b><p>Un contenedor es una caja sellada con la app y su entorno. Da igual el servidor: adentro siempre está lo mismo.</p></div>
+            <div class="card" data-accent="3"><span class="orb" data-accent="3" role="img" aria-label="Contenedor de barco">🚢</span><b>En la vida real</b><p>El contenedor de barco estandarizó el transporte: encaja en grúas y camiones sin importar qué lleva o a qué puerto llega. Docker hizo eso con el software.</p></div>
+          </div>
+          <div class="stepper">
+            <div class="step-item"><span class="step-num">1</span><h4>Dockerfile</h4><p>El archivo de texto con las instrucciones: la receta.</p></div>
+            <div class="step-item"><span class="step-num">2</span><h4>Imagen</h4><p>La plantilla congelada y lista para ejecutar: el plato cocinado y empacado. No cambia.</p></div>
+            <div class="step-item"><span class="step-num">3</span><h4>Contenedor</h4><p>Una instancia viva de la imagen: el plato servido y caliente. Puedes ejecutar varias desde la misma imagen.</p></div>
+          </div>
+        </div></section>
+        <section class="section" id="s10"><div class="sec-head"><span class="sec-n">10 · Empaquetar</span><h2 class="sec-t">El Dockerfile del backend</h2><p class="sec-s">Del .jar a una imagen, y de la imagen a un contenedor en ejecución.</p></div><div class="body">
+          <div class="checkpoint"><span class="component-label">Paso 01 · Empaquetar</span><h3>Construir el archivo ejecutable .jar</h3></div>
+          <p>Spring Boot puede empacar toda la aplicación en un único archivo ejecutable. Docker tomará ese <code>.jar</code> y lo envolverá con Java adentro. Para agilizar la práctica, el comando omite los tests.</p>
+          <p><strong>Carpeta:</strong> raíz de <code>gestor-productos</code>.</p>
+          <div class="code-block" data-tipo="terminal">
+            <div class="code-head"><div><span class="code-context">Terminal</span><span class="code-file">gestor-productos/</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre><code class="language-bash">./mvnw clean package -DskipTests</code></pre>
+          </div>
+          <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Resultado esperado</h3><p>Aparece <code>target/gestor-productos-0.0.1-SNAPSHOT.jar</code>.</p></div></div>
+
+          <div class="checkpoint"><span class="component-label">Paso 02 · Crear</span><h3>Escribir la receta de la imagen</h3></div>
+          <p>El archivo va en la raíz del proyecto, sin extensión, con el nombre exacto <code>Dockerfile</code>.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">Dockerfile · raíz del proyecto</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-docker"># Imagen base con Java 17 (solo el entorno de ejecución, más liviana)
+FROM eclipse-temurin:17-jre
+
+# Carpeta de trabajo dentro del contenedor
+WORKDIR /app
+
+# Copiamos el .jar ya empaquetado
+COPY target/gestor-productos-0.0.1-SNAPSHOT.jar app.jar
+
+# La app escucha en el puerto 8080
+EXPOSE 8080
+
+# Comando que arranca la aplicación
+ENTRYPOINT ["java", "-jar", "app.jar"]</code></pre>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <caption>Cómo se lee cada instrucción del Dockerfile</caption>
+              <thead><tr><th>Instrucción</th><th>Qué hace</th></tr></thead>
+              <tbody>
+                <tr><td data-emphasis><code>FROM</code></td><td>Parte de una imagen oficial con Java 17. La variante <code>-jre</code>, solo ejecución, es más liviana que <code>-jdk</code>.</td></tr>
+                <tr><td data-emphasis><code>WORKDIR</code></td><td>Define la carpeta interna donde trabajará la aplicación.</td></tr>
+                <tr><td data-emphasis><code>COPY</code></td><td>Mete el <code>.jar</code> dentro de la imagen y lo renombra <code>app.jar</code>.</td></tr>
+                <tr><td data-emphasis><code>EXPOSE</code></td><td>Documenta que la aplicación usa el puerto 8080.</td></tr>
+                <tr><td data-emphasis><code>ENTRYPOINT</code></td><td>Indica el comando que se ejecuta cuando arranca el contenedor.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="checkpoint"><span class="component-label">Paso 03 · Crear</span><h3>Excluir lo que no debe entrar</h3></div>
+          <p><code>.dockerignore</code> evita copiar código fuente, configuración del IDE y Git. La segunda línea es una excepción: de toda la carpeta <code>target</code>, sí necesitamos el <code>.jar</code>.</p>
+          <p><strong>Archivo:</strong> <code>.dockerignore</code> · <strong>Ubicación:</strong> raíz del proyecto.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">.dockerignore · raíz del proyecto</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-plaintext">target/*
+!target/gestor-productos-0.0.1-SNAPSHOT.jar
+.git
+.idea
+*.iml</code></pre>
+          </div>
+
+          <div class="checkpoint"><span class="component-label">Paso 04 · Construir</span><h3>Crear la imagen gestor-productos</h3></div>
+          <p><strong>Carpeta:</strong> raíz del proyecto. <code>-t</code> asigna el nombre o tag; el punto final indica que Docker debe usar el archivo de esta carpeta.</p>
+          <div class="code-block" data-tipo="terminal">
+            <div class="code-head"><div><span class="code-context">Terminal</span><span class="code-file">gestor-productos/</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre><code class="language-bash">docker build -t gestor-productos .</code></pre>
+          </div>
+          <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Resultado esperado</h3><p>Los pasos terminan en <code>Successfully tagged gestor-productos:latest</code>.</p></div></div>
+
+          <div class="checkpoint"><span class="component-label">Paso 05 · Ejecutar</span><h3>Levantar un contenedor</h3></div>
+          <p><strong>Carpeta:</strong> cualquiera. <code>-p 8080:8080</code> conecta el puerto de tu computador con el puerto del contenedor.</p>
+          <div class="code-block" data-tipo="terminal">
+            <div class="code-head"><div><span class="code-context">Terminal</span><span class="code-file">Cualquier carpeta</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre><code class="language-bash">docker run -p 8080:8080 gestor-productos</code></pre>
+          </div>
+          <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Resultado esperado</h3><p>Ves los mismos logs de Spring Boot, pero ahora la aplicación está corriendo dentro del contenedor.</p></div></div>
+        </div></section>
+        <section class="section" id="s11"><div class="sec-head"><span class="sec-n">11 · Configurar</span><h2 class="sec-t">Variables de entorno</h2><p class="sec-s">La configuración cambia por ambiente; el código y los secretos no deben ir pegados.</p></div><div class="body">
+          <div class="socratica">
+            <span class="component-label">Para pensar</span>
+            <p class="socratica-q">¿Debería la contraseña de la base de datos ir escrita fija dentro del <code>.jar</code> que entregas al cliente?</p>
+            <p class="socratica-hint">Pista: compara tu computador, el servidor de pruebas y producción.</p>
+            <details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Nunca: los secretos y la configuración que cambia por ambiente se inyectan desde afuera.</p><p>La URL y la contraseña no son iguales en desarrollo, pruebas y producción. Quemarlas en el código además crea una fuga de seguridad. Las variables de entorno permiten cambiar valores sin recompilar.</p></div></details>
+          </div>
+
+          <div class="checkpoint"><span class="component-label">Paso 01 · Editar</span><h3>Externalizar la conexión</h3></div>
+          <p><strong>Archivo:</strong> <code>application.properties</code> · <strong>Ubicación:</strong> <code>src/main/resources/</code> · <strong>Acción:</strong> reemplazar por esta versión final. Cada variable incluye un valor por defecto para desarrollo local.</p>
+          <div class="code-block">
+            <div class="code-head"><div><span class="code-context">Editar · final</span><span class="code-file">src/main/resources/application.properties</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre class="line-numbers"><code class="language-properties">spring.application.name=gestor-productos
+
+# Datos de conexión: se leen de variables de entorno, con un valor por defecto para desarrollo
+spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/tienda}
+spring.datasource.username=${DB_USER:devsenior}
+spring.datasource.password=${DB_PASSWORD:devsenior123}
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true</code></pre>
+          </div>
+          <div class="callout" data-tone="info"><span class="callout-icon">${ }</span><div><h3>Cómo se lee <code>${VAR:valor}</code></h3><p>«Usa la variable de entorno <code>VAR</code>; si no existe, usa el valor que aparece después de los dos puntos». Así local funciona sin preparación adicional y el servidor manda sus propios datos sin recompilar.</p></div></div>
+
+          <div class="checkpoint"><span class="component-label">Paso 02 · Inyectar</span><h3>Pasar valores al contenedor</h3></div>
+          <p><strong>Carpeta:</strong> cualquiera. La opción <code>-e</code> entrega los valores cuando el contenedor arranca.</p>
+          <div class="code-block" data-tipo="terminal">
+            <div class="code-head"><div><span class="code-context">Terminal</span><span class="code-file">Cualquier carpeta</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre><code class="language-bash">docker run -p 8080:8080 -e DB_USER=devsenior -e DB_PASSWORD=devsenior123 gestor-productos</code></pre>
+          </div>
+          <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Resultado esperado</h3><p>La aplicación arranca usando esas credenciales sin que queden escritas en el código.</p></div></div>
+
+          <div class="callout" data-tone="danger"><span class="callout-icon">!</span><div><h3>Gotcha: localhost cambia de significado</h3><p>Dentro de un contenedor, <code>localhost</code> es el propio contenedor, no tu computador. Si MySQL está en tu máquina y fuera de Docker, la aplicación no lo encontrará allí.</p></div></div>
+          <p>Docker ofrece el nombre especial <code>host.docker.internal</code> para apuntar al computador anfitrión. Es el error más común al contenedorizar por primera vez: la app «no conecta a la base» porque se dejó <code>localhost</code>.</p>
+          <div class="code-block" data-tipo="terminal">
+            <div class="code-head"><div><span class="code-context">Terminal</span><span class="code-file">MySQL ejecutándose en el host</span></div><button class="copy-btn" type="button">Copiar</button></div>
+            <pre><code class="language-bash">docker run -p 8080:8080 \
+  -e DB_URL="jdbc:mysql://host.docker.internal:3306/tienda" \
+  -e DB_USER=devsenior -e DB_PASSWORD=devsenior123 \
+  gestor-productos</code></pre>
+          </div>
+          <div class="callout" data-tone="warning"><span class="callout-icon">🔒</span><div><h3>Buena práctica pendiente</h3><p>El secreto JWT todavía está escrito fijo en <code>JwtService</code>. En un proyecto real también se externaliza como variable de entorno, igual que la contraseña de la base.</p></div></div>
+        </div></section>
+        <section class="section" id="s12"><div class="sec-head"><span class="sec-n">12 · Preparar</span><h2 class="sec-t">Lista para desplegar</h2><p class="sec-s">Artefacto único, contenedor estándar y configuración sensible desde afuera.</p></div><div class="body">
+          <div class="shape-board">
+            <div class="shape-card" data-accent="1"><span class="emoji" role="img" aria-label="Archivo empaquetado">🫙</span><strong>Artefacto único</strong><p>La aplicación se empaqueta en un <code>.jar</code> ejecutable.</p></div>
+            <div class="shape-card" data-accent="2"><span class="emoji" role="img" aria-label="Contenedor estándar">📦</span><strong>Contenedor estándar</strong><p>Un <code>Dockerfile</code> describe un entorno repetible.</p></div>
+            <div class="shape-card" data-accent="3"><span class="emoji" role="img" aria-label="Configuración externa">🔐</span><strong>Configuración externa</strong><p>Los valores sensibles viven afuera, en variables de entorno.</p></div>
+          </div>
+          <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Qué significa «lista para desplegar»</h3><p>La app ya cumple las tres condiciones: artefacto ejecutable, contenedor estándar y configuración sensible externa.</p></div></div>
+          <div class="panel"><h3>La frontera de esta clase</h3><p>El despliegue real en la nube —subir el contenedor a <strong>Railway</strong> o <strong>Render</strong>, configurar dominio y monitoreo— pertenece al Módulo 4. Hoy dejamos la aplicación preparada; allí se publicará al mundo.</p></div>
+        </div></section>
+        <section class="section" id="s13"><div class="sec-head"><span class="sec-n">13 · Criterio senior</span><h2 class="sec-t">La IA como copiloto</h2><p class="sec-s">Acelera lo mecánico; las decisiones de negocio y seguridad siguen siendo humanas.</p></div><div class="body">
+          <div class="compare">
+            <div class="compare-card" data-side="positive"><h3>Dónde sí acelera</h3><ul><li>Generar getters y setters.</li><li>Redactar el primer borrador de anotaciones de validación.</li><li>Explicar una instrucción del Dockerfile.</li><li>Resolver trabajo mecánico y repetitivo.</li></ul></div>
+            <div class="compare-card" data-side="negative"><h3>Dónde no delegar</h3><ul><li>Decidir qué datos deben validarse.</li><li>Definir qué rutas necesitan protección.</li><li>Reemplazar el criterio de negocio.</li><li>Aceptar una versión sin contrastarla.</li></ul></div>
+          </div>
+          <div class="callout" data-tone="warning"><span class="callout-icon">AI</span><div><h3>Una alucinación muy probable</h3><p>Si pides la dependencia de Swagger para Spring Boot, la IA puede sugerir <strong>springdoc 2.x</strong> porque es la línea más común en internet. Con <strong>Spring Boot 4</strong> falla: necesitas la línea <strong>3.x</strong>.</p></div></div>
+          <div class="panel"><h3>La regla de validación</h3><p>Contrasta siempre la versión sugerida con la documentación oficial y con la versión de Spring Boot del proyecto. <strong>La IA propone; el ingeniero verifica.</strong></p></div>
+        </div></section>
+        <section class="section" id="s14"><div class="sec-head"><span class="sec-n">14 · Cierre</span><h2 class="sec-t">Del Postman local al producto entregable</h2><p class="sec-s">El Módulo 3 termina con una API profesional lista para su integrador.</p></div><div class="body">
+          <div class="stat-panel"><span class="stat-value">Lista</span><span class="stat-label">Transformación de la Clase 12</span><p class="stat-note">La API se documenta sola, valida su entrada, devuelve errores profesionales y viaja dentro de un contenedor.</p></div>
+          <div class="timeline">
+            <div class="timeline-item"><h3>Clase 9 · API REST por capas</h3><p>Controller, service y repository con Spring Boot.</p></div>
+            <div class="timeline-item"><h3>Clase 10 · Persistencia</h3><p>JPA/Hibernate, relaciones y MySQL.</p></div>
+            <div class="timeline-item"><h3>Clase 11 · Seguridad</h3><p>JWT, registro, login y roles.</p></div>
+            <div class="timeline-item"><h3>Clase 12 · Calidad + empaque</h3><p>Swagger, validaciones, manejo de errores y Docker base.</p></div>
+          </div>
+          <div class="panel"><h3>El componente integrador</h3><p>El entregable del módulo es una <strong>API backend profesional con Spring Boot + JWT + MySQL, publicada en GitHub</strong>. Con el trabajo de hoy, además llega documentada y validada.</p></div>
+          <ul class="checklist">
+            <li>Repositorio en GitHub con el proyecto completo y un <code>README</code>.</li>
+            <li>API REST por capas, con DTOs de entrada y salida.</li>
+            <li>Persistencia en MySQL con las relaciones del catálogo.</li>
+            <li>Seguridad JWT: registro, login y rutas protegidas por rol.</li>
+            <li>Swagger accesible y con botón <strong>Authorize</strong>.</li>
+            <li>Validaciones en las entradas y manejo global de errores.</li>
+            <li><code>Dockerfile</code> y configuración por variables de entorno.</li>
+          </ul>
+          <div class="panel"><h3>Puente al Módulo 4</h3><p>Esta base evoluciona hacia productos SaaS reales: pagos con Stripe, suscripciones, webhooks y despliegue en la nube. La <code>Usuario</code> construida en la Clase 11 será la base del cliente real que paga.</p></div>
+          <div class="question-card"><span class="component-label">Reflexión para el integrador</span><p class="question">Tu API ya valida, documenta y se empaqueta. Si mañana esta tienda tuviera que atender diez mil peticiones por minuto, ¿qué parte crees que fallaría primero y por qué?</p></div>
+          <div class="callout" data-tone="info"><span class="callout-icon">∞</span><div><h3>No hay que resolverlo hoy</h3><p>Hay que empezar a pensarlo como ingeniero. Para armar el integrador, <strong>Cursor AI</strong> ayuda a generar código repetitivo, entender un archivo ajeno o refactorizar. El criterio no cambia: la IA propone; tú verificas.</p></div></div>
+        </div></section>
+        <section class="section" id="s15"><div class="sec-head"><span class="sec-n">15 · Mapa de entrega</span><h2 class="sec-t">Doce archivos, una sola transformación</h2><p class="sec-s">Usa este inventario para comprobar que cada pieza quedó en su lugar.</p></div><div class="body">
+          <div class="table-wrap">
+            <table class="data-table">
+              <caption>Mapa de archivos de la Clase 12</caption>
+              <thead><tr><th>Archivo</th><th>Ruta</th><th>Acción</th><th>Sección</th></tr></thead>
+              <tbody>
+                <tr><td data-emphasis><code>pom.xml</code></td><td>raíz del proyecto</td><td>Editar (springdoc + validation)</td><td>5, 6</td></tr>
+                <tr><td data-emphasis><code>SecurityConfig.java</code></td><td><code>src/main/java/.../security/</code></td><td>Editar (permitir Swagger)</td><td>5</td></tr>
+                <tr><td data-emphasis><code>OpenApiConfig.java</code></td><td><code>src/main/java/.../config/</code></td><td>Crear</td><td>5</td></tr>
+                <tr><td data-emphasis><code>ProductoRequest.java</code></td><td><code>src/main/java/.../dto/</code></td><td>Crear</td><td>6</td></tr>
+                <tr><td data-emphasis><code>RegistroRequest.java</code></td><td><code>src/main/java/.../dto/</code></td><td>Editar (validaciones)</td><td>6</td></tr>
+                <tr><td data-emphasis><code>ProductoController.java</code></td><td><code>src/main/java/.../controller/</code></td><td>Editar (@Valid + 201)</td><td>6, 8</td></tr>
+                <tr><td data-emphasis><code>AuthController.java</code></td><td><code>src/main/java/.../controller/</code></td><td>Editar (@Valid)</td><td>6</td></tr>
+                <tr><td data-emphasis><code>ApiError.java</code></td><td><code>src/main/java/.../exception/</code></td><td>Crear</td><td>7</td></tr>
+                <tr><td data-emphasis><code>GlobalExceptionHandler.java</code></td><td><code>src/main/java/.../exception/</code></td><td>Crear</td><td>7</td></tr>
+                <tr><td data-emphasis><code>application.properties</code></td><td><code>src/main/resources/</code></td><td>Editar (variables de entorno)</td><td>11</td></tr>
+                <tr><td data-emphasis><code>Dockerfile</code></td><td>raíz del proyecto</td><td>Crear</td><td>10</td></tr>
+                <tr><td data-emphasis><code>.dockerignore</code></td><td>raíz del proyecto</td><td>Crear</td><td>10</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout" data-tone="info"><span class="callout-icon">i</span><div><h3>Prefijo de paquete</h3><p>El prefijo real es <code>com.devsenior.gestorproductos</code>. En esta tabla las rutas se abrevian con <code>...</code> solo por espacio.</p></div></div>
+          <ul class="checklist">
+            <li>Swagger abre y muestra los endpoints.</li>
+            <li>El botón <strong>Authorize</strong> acepta el token JWT.</li>
+            <li>Un payload inválido produce 400 con errores por campo.</li>
+            <li>Crear un producto válido produce 201.</li>
+            <li>La imagen <code>gestor-productos:latest</code> se construye.</li>
+            <li>El contenedor arranca y recibe la configuración desde variables de entorno.</li>
+          </ul>
+        </div><p class="doc-foot">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack</p></section>
+      </div>
+    </main>
+  </div>
+
+  <div class="watermark" aria-hidden="true">© 2026 ANA ALVARADO</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="ana-clase.js"></script>
+</body>
+</html>
