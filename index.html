@@ -1,54 +1,32 @@
-<!DOCTYPE html>
-<!--
-============================================================================
-  © 2026 ANA ALVARADO — Todos los derechos reservados.
-  Educadora Tech & Desarrolladora Full Stack
-  linkedin.com/in/ana-alvarado-instructora-full-stack
-
-  Este material educativo es de autoría exclusiva de Ana Alvarado.
-  Queda PROHIBIDA su reproducción, redistribución, modificación o uso
-  fuera del contexto de la clase para la que fue creado, sin autorización
-  escrita de la autora. El acceso a este recurso no otorga ningún derecho
-  sobre su contenido ni sobre su código.
-============================================================================
--->
+<!doctype html>
 <html lang="es" data-empresa="dev-senior">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal de Clases · Ana Alvarado · Dev Senior</title>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java IA Backend · Ana Alvarado</title>
   <meta name="author" content="Ana Alvarado">
-  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
-  <meta name="description" content="Guías visuales del curso Java IA Backend de Dev Senior, organizadas por módulo.">
-  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="portal-estilos.css">
-
+  <meta name="description" content="Biblioteca de guías y materiales de Java IA Backend.">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <link rel="stylesheet" href="portal.css">
 </head>
-
 
 <body>
   <header class="portal-topbar">
-    <a class="portal-brand" href="./index.html" aria-label="Inicio del portal de Dev Senior">
+    <a class="portal-brand" href="./index.html" aria-label="Inicio del portal">
       <span class="portal-brand-mark" aria-hidden="true">A</span>
       <span class="portal-brand-copy">
         <strong>Ana Alvarado</strong>
         <small>Dev Senior · Java IA Backend</small>
       </span>
     </a>
-    <nav class="portal-actions" aria-label="Preferencias del portal">
-      <button class="ctrl-btn" id="temaBtn" type="button" aria-label="Activar tema oscuro" title="Activar tema oscuro">☾</button>
-    </nav>
+    <button class="ctrl-btn" id="temaBtn" type="button" aria-label="Activar tema oscuro" title="Activar tema oscuro">☾</button>
   </header>
-<div class="wrap">
 
-    <p class="eyebrow">Dev Senior · Programa Java IA Backend</p>
+  <main class="wrap">
+    <p class="eyebrow">DEV SENIOR · PROGRAMA JAVA IA BACKEND</p>
     <h1>Java IA Backend</h1>
+    <p class="lead">Biblioteca de clases de Java y backend, organizada para consultar cada sesión con rapidez.</p>
+
     <section class="library-head" id="guias" aria-labelledby="tituloBiblioteca">
       <div class="library-heading">
         <span class="section-label">Biblioteca</span>
@@ -65,168 +43,156 @@
       <div class="search-panel" id="panelBusqueda" hidden>
         <label class="search-field">
           <span class="sr-only">Buscar por clase, tema o tecnología</span>
-          <input class="search-input" id="buscarGuia" type="search" autocomplete="off" placeholder="Escribe una clase, un tema o una tecnología…">
+          <input class="search-input" id="buscarGuia" type="search" autocomplete="off" placeholder="Escribe una clase, tema o tecnología…">
           <button class="search-clear" id="limpiarBusqueda" type="button" aria-label="Limpiar búsqueda" title="Limpiar búsqueda" hidden>×</button>
         </label>
       </div>
       <p class="sr-only" id="estadoResultados" role="status" aria-live="polite"></p>
     </section>
 
-        <div class="aviso" role="note" aria-label="Aviso de derechos de autor">
-      <span class="aviso-icono">©</span>
-      <div class="aviso-cuerpo">
-        <div class="aviso-titulo">Aviso de derechos de autor</div>
-        <p class="aviso-texto">
-          Este material es de <strong>autoría exclusiva de Ana Alvarado</strong> y su acceso está limitado a las y los
-          estudiantes de esta cohorte. Queda <strong>prohibida su reproducción, redistribución o uso fuera de
-            clase</strong> sin autorización escrita de la autora.
-        </p>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
     <div class="modulos" id="lista-guias" aria-label="Módulos y guías">
-
-      <!-- ============ MÓDULO 1 ============ -->
       <details class="modulo" open>
         <summary>
-          <span class="mod-punto"></span>
+          <span class="mod-punto" aria-hidden="true"></span>
           <span class="mod-info">
             <span class="mod-titulo">Módulo 1</span>
             <span class="mod-meta">Fundamentos modernos de programación con Java</span>
           </span>
-          <span class="mod-badge activo">Activo</span>
-          <span class="mod-chevron">▶</span>
+          <span class="mod-badge">Activo</span>
+          <span class="mod-chevron" aria-hidden="true">▶</span>
         </summary>
         <div class="clases">
-
-          <span class="clase pendiente">
+          <div class="clase clase--pendiente" aria-disabled="true">
             <span class="num">01</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 1</span>
-              <span class="clase-temas">Introducción al programa · entorno profesional · Java setup · Cursor AI
-                setup</span>
+              <span class="clase-temas">Introducción al programa, entorno profesional, Java y Cursor AI</span>
             </span>
-            <span class="flecha">&rarr;</span>
-          </span>
-
+            <span class="flecha" aria-hidden="true">Pendiente</span>
+          </div>
           <a class="clase" href="docs/clase02-operadores-logica-git.html">
             <span class="num">02</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 2</span>
-              <span class="clase-temas">Variables · tipos de datos · operadores · lógica básica</span>
+              <span class="clase-temas">Variables, tipos de datos, operadores y lógica básica</span>
             </span>
-            <span class="flecha">&rarr;</span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
-
           <a class="clase" href="docs/clase03-decisiones-ciclos-metodos.html">
             <span class="num">03</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 3</span>
-              <span class="clase-temas">Condicionales · ciclos · métodos · organización profesional del código</span>
+              <span class="clase-temas">Condicionales, ciclos, métodos y organización profesional del código</span>
             </span>
-            <span class="flecha">&rarr;</span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
-
           <a class="clase" href="docs/clase04-gestor-inventario.html">
             <span class="num">04</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 4</span>
-              <span class="clase-temas">Mini proyecto real · CLI App · GitHub · buenas prácticas</span>
+              <span class="clase-temas">Mini proyecto CLI, GitHub y buenas prácticas</span>
             </span>
-            <span class="flecha">&rarr;</span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
-
         </div>
       </details>
-
-      <!-- ============ MÓDULO 2 ============ -->
-      <details class="modulo" open>
+      <details class="modulo">
         <summary>
-          <span class="mod-punto"></span>
+          <span class="mod-punto" aria-hidden="true"></span>
           <span class="mod-info">
             <span class="mod-titulo">Módulo 2</span>
-            <span class="mod-meta">Java · Fundamentos Backend</span>
+            <span class="mod-meta">Programación orientada a objetos, SQL y persistencia</span>
           </span>
-          <span class="mod-badge activo">Activo</span>
-          <span class="mod-chevron">▶</span>
+          <span class="mod-badge">Activo</span>
+          <span class="mod-chevron" aria-hidden="true">▶</span>
         </summary>
         <div class="clases">
-
           <a class="clase" href="docs/Clase5_POO_SPA.html">
-            <span class="num">01</span>
+            <span class="num">05</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 5</span>
-              <span class="clase-temas">POO moderna · clases · objetos · encapsulación real</span>
+              <span class="clase-temas">POO moderna, clases, objetos y encapsulación</span>
             </span>
-            <span class="flecha">&rarr;</span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
-
           <a class="clase" href="docs/Clase6_SPA_estudiante.html">
-            <span class="num">02</span>
+            <span class="num">06</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 6</span>
-              <span class="clase-temas">Herencia + interfaces + abstracción + arquitectura limpia</span>
+              <span class="clase-temas">Herencia, interfaces, abstracción y arquitectura limpia</span>
             </span>
-            <span class="flecha">&rarr;</span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
-                    <a class="clase" href="docs/clase-07-mysql-workbench-sql-relaciones.html">
-            <span class="num">03</span>
+          <a class="clase" href="docs/clase-07-mysql-workbench-sql-relaciones.html">
+            <span class="num">07</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 7</span>
-              <span class="clase-temas">MySQL Workbench + SQL moderno + relaciones + modelado real</span>
+              <span class="clase-temas">MySQL Workbench, SQL, relaciones y modelado</span>
             </span>
-            <span class="flecha">&rarr;</span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
-                              <a class="clase" href="docs/Clase08.html">
-            <span class="num">04</span>
+          <a class="clase" href="docs/Clase08.html">
+            <span class="num">08</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 8</span>
-              <span class="clase-temas">Java + Base de datos + JDBC + CRUD profesional</span>
+              <span class="clase-temas">Java, JDBC y CRUD profesional</span>
             </span>
-            <span class="flecha">&rarr;</span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
-
         </div>
       </details>
-      <!-- ============ MÓDULO 2 ============ -->
-      <details class="modulo" open>
+      <details class="modulo">
         <summary>
-          <span class="mod-punto"></span>
+          <span class="mod-punto" aria-hidden="true"></span>
           <span class="mod-info">
             <span class="mod-titulo">Módulo 3</span>
             <span class="mod-meta">Backend profesional con Spring Boot</span>
           </span>
-          <span class="mod-badge activo">Activo</span>
-          <span class="mod-chevron">▶</span>
+          <span class="mod-badge">Activo</span>
+          <span class="mod-chevron" aria-hidden="true">▶</span>
         </summary>
         <div class="clases">
-
           <a class="clase" href="docs/preview.html">
-            <span class="num">01</span>
+            <span class="num">09</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 9</span>
-              <span class="clase-temas">Spring Boot setup + arquitectura backend + Maven + REST APIs</span>
+              <span class="clase-temas">Spring Boot, Maven, arquitectura backend y APIs REST</span>
             </span>
-            <span class="flecha">&rarr;</span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
           <a class="clase" href="docs/clase10-jpa-hibernate-relaciones.html">
-            <span class="num">02</span>
+            <span class="num">10</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 10</span>
-              <span class="clase-temas">Entities + JPA + Hibernate + Repository + Services</span>
+              <span class="clase-temas">JPA, Hibernate, entidades, repositorios y servicios</span>
             </span>
-            <span class="flecha">&rarr;</span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
           <a class="clase" href="docs/M3Clase3/clase11-jwt.html">
-            <span class="num">3</span>
+            <span class="num">11</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 11</span>
-              <span class="clase-temas">JWT Login + Registro + Roles + Spring Security</span>
+              <span class="clase-temas">Registro, login, roles, JWT y Spring Security</span>
             </span>
-            <span class="flecha">&rarr;</span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
+          <a class="clase" href="docs/M3Clasd4/clase12-aula-viva.html">
+            <span class="num">12</span>
+            <span class="clase-info">
+              <span class="clase-titulo">Clase 12</span>
+              <span class="clase-temas">Swagger, validaciones, manejo de errores y Docker</span>
+            </span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
+          </a>
+           <a class="clase" href="docs/M3Clasd4/clase12-aula-viva.html">
+            <span class="num">13</span>
+            <span class="clase-info">
+              <span class="clase-titulo">Clase 13</span>
+              <span class="clase-temas">SaaS</span>
+            </span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
+          </a>
+<<<<<<< HEAD
 
           <a class="clase" href="docs/M3Clasd4/clase12-aula-viva.html">
             <span class="num">3</span>
@@ -238,43 +204,25 @@
           </a>
 
           
+=======
+>>>>>>> 81e5e0c (m3c5)
         </div>
       </details>
-
     </div>
 
-    <div class="aviso" role="note" aria-label="Aviso de derechos de autor">
-      <span class="aviso-icono">©</span>
-      <div class="aviso-cuerpo">
-        <div class="aviso-titulo">Aviso de derechos de autor</div>
-        <p class="aviso-texto">
-          Este material es de <strong>autoría exclusiva de Ana Alvarado</strong> y su acceso está limitado a las y los
-          estudiantes de esta cohorte. Queda <strong>prohibida su reproducción, redistribución o uso fuera de
-            clase</strong> sin autorización escrita de la autora.
-        </p>
-      </div>
-    </div>
-
-    <p class="empty-state" id="sinResultados" hidden><strong>No encontramos esa guía.</strong>Prueba con otro tema, número de clase o tecnología.</p>
+    <p class="empty-state" id="sinResultados" hidden><strong>No encontramos esa guía.</strong> Prueba con otro tema, número de clase o tecnología.</p>
 
     <details class="legal-mini">
       <summary>© Aviso de autoría y uso del material</summary>
       <p>Este material es de <strong>autoría exclusiva de Ana Alvarado</strong> y está destinado a las y los estudiantes del curso. No se permite su reproducción o redistribución fuera de clase sin autorización escrita.</p>
     </details>
+  </main>
 
-    <footer>
-      <p class="firma">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack</p>
-      <p>Todos los derechos reservados ·
-        <a href="https://linkedin.com/in/ana-alvarado-instructora-full-stack" target="_blank"
-          rel="noopener">linkedin.com/in/ana-alvarado-instructora-full-stack</a>
-      </p>
-    </footer>
+  <footer>
+    <p>© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack</p>
+    <p>Todos los derechos reservados</p>
+  </footer>
 
-  </div>
-
-  <div class="watermark">© 2026 Ana Alvarado</div>
   <script src="portal.js" defer></script>
-
 </body>
-
 </html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<!--
+  CLASE 13 · ARQUITECTURA SAAS + MÓDULOS + SEPARACIÓN PROFESIONAL
+  ANA LEARNING EXPERIENCE SYSTEM v9.0 "ESCENAS VIVAS"
+  © 2026 Ana Alvarado
+-->
+<html lang="es" data-tema="oscuro" data-tema-base="oscuro" data-empresa="dev-senior" data-paleta="cobalto" data-atmosfera="tecnica">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Ana Alvarado">
+  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <meta name="description" content="Clase 13 del programa Java AI Engineer: arquitectura SaaS, módulos por dominio y separación profesional aplicada a CampusFlow.">
+  <title>Clase 13 · Arquitectura SaaS y módulos · Ana Alvarado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+  <link rel="stylesheet" href="anaestilos-v9.css">
+</head>
+<body>
+  <a class="skip-link" href="#s1">Saltar al contenido</a>
+  <div class="topline" id="topline" aria-hidden="true"></div>
+  <div class="controls" aria-label="Controles">
+    <button class="ctrl" id="temaBtn" type="button" aria-label="Cambiar tema">☀</button>
+    <button class="ctrl" id="fullscreenBtn" type="button" aria-label="Pantalla completa">⛶</button>
+  </div>
+
+  <div class="shell" id="shell" data-collapsed="false">
+    <aside class="sidebar" aria-label="Índice de la clase">
+      <div class="sb-top">
+        <span class="brand-mark">A</span>
+        <div class="sb-title"><b>Java AI Engineer</b><span>Módulo 4 · Clase 13</span></div>
+      </div>
+      <button class="sb-toggle" id="collapseBtn" type="button" aria-label="Colapsar menú">‹</button>
+      <nav class="sb-nav" id="nav" aria-label="Secciones">
+        <a class="nav-item active" data-icon="✦" href="#portada"><span class="nav-index">00</span><span class="nav-label">Portada</span></a>
+        <a class="nav-item" data-icon="🧭" href="#s1"><span class="nav-index">01</span><span class="nav-label">El módulo</span></a>
+        <a class="nav-item" data-icon="🏙️" href="#s2"><span class="nav-index">02</span><span class="nav-label">El crecimiento</span></a>
+        <a class="nav-item" data-icon="⚠️" href="#s3"><span class="nav-index">03</span><span class="nav-label">Problema y estrategias</span></a>
+        <a class="nav-item" data-icon="🏢" href="#s4"><span class="nav-index">04</span><span class="nav-label">Modelo mental</span></a>
+        <a class="nav-item" data-icon="☁️" href="#s5"><span class="nav-index">05</span><span class="nav-label">SaaS y multitenancy</span></a>
+        <a class="nav-item" data-icon="📈" href="#s6"><span class="nav-index">06</span><span class="nav-label">Escalar vs evolucionar</span></a>
+        <a class="nav-item" data-icon="🧩" href="#s7"><span class="nav-index">07</span><span class="nav-label">Módulos y dominios</span></a>
+        <a class="nav-item" data-icon="🏗️" href="#s8"><span class="nav-index">08</span><span class="nav-label">Capas profesionales</span></a>
+        <a class="nav-item" data-icon="📦" href="#s9"><span class="nav-index">09</span><span class="nav-label">Monolito modular</span></a>
+        <a class="nav-item" data-icon="🏷️" href="#s10"><span class="nav-index">10</span><span class="nav-label">El tenant</span></a>
+        <a class="nav-item" data-icon="🚀" href="#s11"><span class="nav-index">11</span><span class="nav-label">Implementación</span></a>
+        <a class="nav-item" data-icon="▶️" href="#s12"><span class="nav-index">12</span><span class="nav-label">Punto de entrada</span></a>
+        <a class="nav-item" data-icon="👤" href="#s13"><span class="nav-index">13</span><span class="nav-label">Usuario inicial</span></a>
+        <a class="nav-item" data-icon="🔌" href="#s14"><span class="nav-index">14</span><span class="nav-label">Repository y controller</span></a>
+        <a class="nav-item" data-icon="🔎" href="#s15"><span class="nav-index">15</span><span class="nav-label">Leer el error</span></a>
+        <a class="nav-item" data-icon="✨" href="#s16"><span class="nav-index">16</span><span class="nav-label">Refactor con IA</span></a>
+        <a class="nav-item" data-icon="📁" href="#s17"><span class="nav-index">17</span><span class="nav-label">Modelo y repository</span></a>
+        <a class="nav-item" data-icon="⚙️" href="#s18"><span class="nav-index">18</span><span class="nav-label">Service</span></a>
+        <a class="nav-item" data-icon="🌐" href="#s19"><span class="nav-index">19</span><span class="nav-label">Controller final</span></a>
+        <a class="nav-item" data-icon="🎚️" href="#s20"><span class="nav-index">20</span><span class="nav-label">Perfil activo</span></a>
+        <a class="nav-item" data-icon="🔐" href="#s21"><span class="nav-index">21</span><span class="nav-label">Dev y producción</span></a>
+        <a class="nav-item" data-icon="🛡️" href="#s22"><span class="nav-index">22</span><span class="nav-label">Errores centralizados</span></a>
+        <a class="nav-item" data-icon="📐" href="#s23"><span class="nav-index">23</span><span class="nav-label">Buenas prácticas</span></a>
+        <a class="nav-item" data-icon="🧯" href="#s24"><span class="nav-index">24</span><span class="nav-label">Errores comunes</span></a>
+        <a class="nav-item" data-icon="🧱" href="#s25"><span class="nav-index">25</span><span class="nav-label">Extensión cursos</span></a>
+        <a class="nav-item" data-icon="💭" href="#s26"><span class="nav-index">26</span><span class="nav-label">Decisiones</span></a>
+        <a class="nav-item" data-icon="🧑‍💼" href="#s27"><span class="nav-index">27</span><span class="nav-label">Producto real</span></a>
+        <a class="nav-item" data-icon="📌" href="#s28"><span class="nav-index">28</span><span class="nav-label">Definición del producto</span></a>
+        <a class="nav-item" data-icon="🗂️" href="#s29"><span class="nav-index">29</span><span class="nav-label">Mapa de archivos</span></a>
+        <a class="nav-item" data-icon="✅" href="#s30"><span class="nav-index">30</span><span class="nav-label">Cierre</span></a>
+      </nav>
+      <div class="sb-prog">
+        <div class="lbl"><span>Progreso</span><span id="progPct">0%</span></div>
+        <div class="track"><div class="fill" id="progFill"></div></div>
+      </div>
+      <p class="sb-foot">© 2026 Ana Alvarado<br>Educadora Tech &amp; Desarrolladora Full Stack</p>
+    </aside>
+
+    <main class="main">
+      <header class="hero view" id="portada" data-accent="1">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <span class="eyebrow">CampusFlow · Clase 13</span>
+            <h1 class="hero-title">De API funcional a <em>arquitectura SaaS</em></h1>
+            <p class="hero-lead">Organiza un backend Spring Boot por dominios de negocio, separa responsabilidades profesionales y deja CampusFlow listo para crecer.</p>
+            <div class="meta">
+              <span class="pill" data-hot>Java 17</span>
+              <span class="pill">Spring Boot 3</span>
+              <span class="pill">Maven + MySQL</span>
+              <span class="pill">IntelliJ + Cursor AI</span>
+              <span class="pill">Git · GitHub · Postman</span>
+            </div>
+          </div>
+          <figure class="hero-visual">
+            <svg viewBox="0 0 420 420" role="img" aria-label="Una arquitectura modular: un núcleo conectado con cuatro áreas de negocio organizadas">
+              <circle cx="210" cy="210" r="150" fill="none" stroke="var(--a2)" stroke-width="3" stroke-dasharray="10 12"/>
+              <circle cx="210" cy="210" r="104" fill="var(--surf-1)" stroke="var(--a1)" stroke-width="5"/>
+              <path d="M169 186l-34 24 34 24M251 186l34 24-34 24M225 162l-30 96" fill="none" stroke="var(--a1)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="210" cy="55" r="28" fill="var(--a2)"/>
+              <circle cx="365" cy="210" r="28" fill="var(--a3)"/>
+              <circle cx="210" cy="365" r="28" fill="var(--a4)"/>
+              <circle cx="55" cy="210" r="28" fill="var(--a1)"/>
+              <path d="M210 83v23M337 210h-23M210 337v-23M83 210h23" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            <figcaption class="hero-note">Un producto crece sumando módulos; no reescribiendo su base.</figcaption>
+          </figure>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="section view" id="s1" data-accent="1" data-layout="split" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🧭</span><div class="sec-copy"><span class="sec-n">01 · Contexto</span><h2 class="sec-t">El módulo que convierte una API en producto</h2><p class="sec-s">El punto de partida son tres módulos completos: lógica en Java, POO, JDBC y MySQL, más Spring Boot, JPA/Hibernate, JWT y Swagger.</p></div></div>
+          <div class="body">
+            <div class="timeline">
+              <div class="timeline-item"><h3>Al terminar el Módulo 4</h3><p>Tendrás un backend SaaS real: usuarios y perfiles, pagos con Stripe, suscripciones y un proyecto desplegado en internet, no solo en <code>localhost</code>. Esa es la diferencia entre “funciona en mi máquina” y un producto por el que alguien podría pagar hoy.</p></div>
+              <div class="timeline-item"><h3>Lo que cambia</h3><p>No aprenderás un framework nuevo. Aprenderás a organizar y hacer crecer lo que ya sabes construir, conectándolo con servicios externos reales como Stripe y un servidor cloud.</p></div>
+              <div class="timeline-item"><h3>Lo que sigue</h3><p>El Módulo 5 integra OpenAI y Claude API dentro del backend. El Módulo 6 es el proyecto final y la parte de empleabilidad. CampusFlow será la base.</p></div>
+            </div>
+            <div class="question-card"><span class="component-label">Conexión con tu experiencia</span><p class="question">¿Ya pensaste en construir algo propio, o usas software por suscripción —Spotify, Notion, Canva— y te has preguntado cómo funciona por dentro?</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s2" data-accent="2" data-layout="split" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🏙️</span><div class="sec-copy"><span class="sec-n">02 · Pregunta de negocio</span><h2 class="sec-t">Cuando un solo curso se convierte en veinte academias</h2><p class="sec-s">CampusFlow funciona para 40 estudiantes, un instructor y un curso. Seis meses después, Dev Senior y Generation Colombia quieren venderlo a otras 20 academias.</p></div></div>
+          <div class="body">
+            <div class="socratica"><span class="component-label">Para pensar</span><p class="socratica-q">Si todos los controllers están en una carpeta, todos los services en otra y todo está mezclado, ¿qué ocurrirá cuando cada academia tenga sus propios cursos, instructores y planes de pago?</p><p class="socratica-hint">La primera intuición suele apuntar al rendimiento. Observa también quién toca qué código.</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">El problema principal no es de rendimiento: es de organización.</p><p>Es fácil pensar “se pondrá lento” o “el servidor no aguantará”. Pero con todo mezclado por capa técnica, cambiar pagos obliga a tocar archivos que también contienen usuarios y cursos; varios desarrolladores chocan sobre los mismos archivos y un cambio puede romper un módulo ajeno. La arquitectura modular reduce ese riesgo.</p></div></details></div>
+            <div class="stat-panel"><span class="stat-value">20</span><span class="stat-label">academias nuevas</span><p class="stat-note">El mismo backend debe atender clientes distintos con seguridad, sin convertir cada cambio en una amenaza para todo el sistema.</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s3" data-accent="3" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">⚠️</span><div class="sec-copy"><span class="sec-n">03 · Problema y caso real</span><h2 class="sec-t">Crecer sin arquitectura vuelve cada cambio más lento y riesgoso</h2><p class="sec-s">Los sistemas grandes se organizan alrededor de capacidades de negocio: usuarios, facturación, catálogo y notificaciones.</p></div></div>
+          <div class="body">
+            <div class="compare">
+              <div class="compare-card" data-side="negative"><h3>Backend mezclado por capa</h3><ul><li>Cada funcionalidad tarda más en construirse.</li><li>Cada cambio amenaza zonas sin relación.</li><li>Las responsabilidades se cruzan.</li></ul></div>
+              <div class="compare-card" data-side="positive"><h3>Capacidades de negocio</h3><ul><li>Usuarios, facturación, catálogo y notificaciones viven con límites claros.</li><li>La organización puede estar dentro de un backend o repartida en servicios.</li><li>Elegir la estrategia es una decisión de arquitectura, no una regla fija.</li></ul></div>
+            </div>
+            <div class="twin"><div class="cell a"><span class="tag">Monolito modular</span><p>Módulos internos dentro de un mismo backend y un mismo despliegue.</p></div><div class="cell b"><span class="tag">Servicios independientes</span><p>Capacidades repartidas en varios servicios y despliegues. También es una estrategia válida.</p></div></div>
+            <div class="callout" data-tone="info"><span class="callout-icon">CF</span><div><h3>CampusFlow hoy</h3><p><code>usuarios</code>, <code>cursos</code> y luego <code>pagos</code> viven dentro del mismo backend: un monolito modular, no servicios separados.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s4" data-accent="4" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🏢</span><div class="sec-copy"><span class="sec-n">04 · Modelo mental</span><h2 class="sec-t">Una empresa crece creando departamentos</h2><p class="sec-s">La arquitectura por dominio traduce una decisión organizacional al código.</p></div></div>
+          <div class="body">
+            <div class="panel"><h3>La analogía</h3><p>En una empresa pequeña, una persona contesta llamadas, factura, contrata y también programa. Funciona mientras todo es pequeño.</p><p>Cuando la empresa crece, aparecen Recursos Humanos, Finanzas y Ventas. Cada departamento tiene su proceso interno, pero todos pertenecen a la misma organización.</p></div>
+            <div class="twin"><div class="cell a"><span class="tag">Por capa técnica</span><p>Todos los controllers juntos y todos los services juntos: es la empresa de una sola persona.</p></div><div class="cell b"><span class="tag">Por dominio de negocio</span><p>Cada módulo tiene sus capas adentro y puede crecer como un departamento independiente.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s5" data-accent="1" data-layout="split" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">☁️</span><div class="sec-copy"><span class="sec-n">05 · Definiciones</span><h2 class="sec-t">SaaS y multitenancy no son sinónimos</h2><p class="sec-s">Uno describe el modelo de entrega y negocio; el otro, una decisión técnica para compartir recursos con aislamiento.</p></div></div>
+          <div class="body">
+            <div class="card" data-accent="1"><span class="orb" data-accent="1"><span class="emoji" aria-hidden="true">🎧</span></span><b>SaaS moderno</b><p><strong>Técnica:</strong> el proveedor opera el software y lo ofrece por internet, generalmente bajo suscripción, sin que el cliente lo instale ni administre.</p><p><strong>En sencillo:</strong> se vende acceso continuo a una plataforma mientras se siga pagando.</p><p><strong>Ejemplo:</strong> Spotify vende acceso continuo; CampusFlow venderá acceso a la gestión de cursos.</p></div>
+            <div class="card" data-accent="2"><span class="orb" data-accent="2"><span class="emoji" aria-hidden="true">🏢</span></span><b>Multitenancy</b><p><strong>Técnica:</strong> varios clientes o tenants comparten recursos de una solución, manteniendo aislamiento lógico entre sus datos.</p><p><strong>Clave:</strong> muchos SaaS son multi-tenant y CampusFlow lo será, pero SaaS es el modelo de negocio y multitenancy es la arquitectura que lo soporta.</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s6" data-accent="2" data-layout="split" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">📈</span><div class="sec-copy"><span class="sec-n">06 · Precisión técnica</span><h2 class="sec-t">Escalabilidad no es evolucionabilidad</h2><p class="sec-s">Las dos importan, pero la arquitectura modular de hoy resuelve principalmente la facilidad de cambiar el código.</p></div></div>
+          <div class="body">
+            <div class="card" data-accent="2"><span class="orb" data-accent="2"><span class="emoji" aria-hidden="true">👥</span></span><b>Escalabilidad de carga</b><p><strong>Técnica:</strong> soportar más usuarios concurrentes, peticiones y datos adaptando recursos sin degradar el servicio de forma inaceptable.</p><p><strong>Ejemplo:</strong> pasar de 40 a 4.000 estudiantes conectados el sábado a las 3 p. m. sin que el servidor se caiga.</p></div>
+            <div class="card" data-accent="3"><span class="orb" data-accent="3"><span class="emoji" aria-hidden="true">🧬</span></span><b>Evolucionabilidad</b><p><strong>Técnica:</strong> modificar o extender el sistema cuando cambia el negocio sin provocar efectos descontrolados.</p><p><strong>Ejemplo:</strong> Mercado Libre agrega una categoría conectada a lo existente; no reescribe todo el sitio.</p><p>Hoy trabajamos evolucionabilidad. La carga vuelve con el despliegue de la Clase 16.</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s7" data-accent="3" data-layout="focus" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🧩</span><div class="sec-copy"><span class="sec-n">07 · Definiciones</span><h2 class="sec-t">Separación por módulos y dominio de negocio</h2><p class="sec-s">El eje deja de ser “qué tipo de archivo es” y pasa a ser “de qué parte del negocio se encarga”.</p></div></div>
+          <div class="body"><div class="cards">
+            <div class="card" data-accent="2"><span class="orb" data-accent="2"><span class="emoji" aria-hidden="true">📦</span></span><b>Separación por módulos</b><p>Unidades independientes por capacidad de negocio, cada una con controller, service y repository propios.</p><p>En lugar de 15 controllers mezclados, usuarios vive junto y cursos vive junto.</p></div>
+            <div class="card" data-accent="3"><span class="orb" data-accent="3"><span class="emoji" aria-hidden="true">🎯</span></span><b>Dominio de negocio</b><p>Área con lenguaje, reglas y datos propios; es la base de DDD, aterrizada sin toda su complejidad.</p><p>Usuarios tiene roles; pagos tiene estados. Cada dominio responde una pregunta distinta del negocio.</p></div>
+          </div></div>
+        </section>
+
+        <section class="section view" id="s8" data-accent="4" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🏗️</span><div class="sec-copy"><span class="sec-n">08 · Capas profesionales</span><h2 class="sec-t">Una responsabilidad por capa, una convención consistente</h2><p class="sec-s">No existe una única organización “enterprise”: hay arquitectura hexagonal, Clean Architecture, vertical slices y otras alternativas.</p></div></div>
+          <div class="body">
+            <div class="table-wrap"><table class="data-table"><caption>Responsabilidad de cada capa dentro de un dominio</caption><thead><tr><th>Capa</th><th>Responsabilidad</th><th>Nunca debe...</th></tr></thead><tbody><tr><td data-emphasis><code>controller</code></td><td>Recibir la petición HTTP y devolver la respuesta</td><td>Contener lógica de negocio ni hablar con el repository</td></tr><tr><td data-emphasis><code>service</code></td><td>Contener la lógica de negocio</td><td>Saber nada de HTTP</td></tr><tr><td data-emphasis><code>repository</code></td><td>Hablar con la base de datos</td><td>Contener lógica de negocio</td></tr><tr><td data-emphasis><code>model</code></td><td>Representar la entidad</td><td>Depender de otras capas</td></tr></tbody></table></div>
+            <div class="twin"><div class="cell a"><span class="tag">Capa técnica global</span><p><code>com.<wbr>devsenior.<wbr>campusflow.<wbr>controller</code></p></div><div class="cell b"><span class="tag">Dominio / feature</span><p><code>com.<wbr>devsenior.<wbr>campusflow.<wbr>usuarios</code></p></div></div>
+            <div class="callout" data-tone="info"><span class="callout-icon">S</span><div><h3>SOLID y Spring Modulith</h3><p>Responsabilidad única llevada al módulo: cada pieza tiene una razón para cambiar. Es la misma idea que promueve Spring Modulith para módulos dentro de un backend.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s9" data-accent="1" data-layout="focus" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">📦</span><div class="sec-copy"><span class="sec-n">09 · Arquitectura CampusFlow</span><h2 class="sec-t">Modular por dentro, único por fuera</h2><p class="sec-s">Separar paquetes no crea microservicios: todo CampusFlow sigue siendo una aplicación Spring Boot, un <code>.jar</code> y un deploy.</p></div></div>
+          <div class="body">
+            <div class="mindmap"><div class="mindmap-core"><strong>CampusFlow</strong><span>monolito modular</span></div><div class="mindmap-branches"><div class="mindmap-node" data-accent="1"><strong>usuarios</strong><p>Estudiantes, instructores y administradores.</p></div><div class="mindmap-node" data-accent="2"><strong>cursos</strong><p>Ejercicio de extensión.</p></div><div class="mindmap-node" data-accent="3"><strong>common</strong><p>Manejo centralizado de errores.</p></div><div class="mindmap-node" data-accent="4"><strong>config</strong><p>Perfiles de entorno.</p></div></div></div>
+            <div class="metrics"><div class="m"><b>1</b><span>aplicación</span></div><div class="m"><b>1</b><span>archivo .jar</span></div><div class="m"><b>1</b><span>deploy</span></div><div class="m"><b>4</b><span>límites internos hoy</span></div></div>
+            <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Nombre correcto</h3><p>Monolito modular: módulos definidos dentro de una única unidad desplegable. No estamos construyendo microservicios.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s10" data-accent="2" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🏷️</span><div class="sec-copy"><span class="sec-n">10 · La pieza SaaS pendiente</span><h2 class="sec-t">El tenant evita que las academias mezclen sus datos</h2><p class="sec-s">Cada academia es un tenant: comparte la aplicación, pero conserva sus usuarios, cursos y datos aislados.</p></div></div>
+          <div class="body">
+            <div class="socratica"><span class="component-label">Pregunta arquitectónica</span><p class="socratica-q">¿Cómo sabe CampusFlow a qué academia pertenece cada usuario y cada curso?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Necesita una asociación explícita con el tenant.</p><p>El tenant es la “etiqueta” que identifica a cada cliente. Un estudiante de Generation nunca debe ver un curso de Dev Senior aunque ambos usen el mismo backend.</p></div></details></div>
+            <div class="cards"><div class="card" data-accent="1"><b>Columna <code>tenant_id</code></b><p>Base compartida y cada fila marcada con su academia.</p></div><div class="card" data-accent="2"><b>Un esquema por tenant</b><p>Misma base de datos, esquema separado por academia.</p></div><div class="card" data-accent="3"><b>Una base por tenant</b><p>Aislamiento total con una base completa por academia.</p></div></div>
+            <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>Hoy solo reconocemos la decisión</h3><p>No se implementa hasta tener el modelo completo de usuarios en la Clase 14. CampusFlow todavía no resuelve el aislamiento.</p></div></div>
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Mapa conceptual</span><span class="code-file">SaaS → multitenancy → monolito modular</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">SaaS (modelo de negocio)
+ └─ puede requerir multitenancy (aislamiento entre clientes)
+      └─ CampusFlow = monolito modular
+           ├─ usuarios
+           ├─ cursos
+           ├─ pagos (Clase 15)
+           └─ common</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s11" data-accent="3" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🚀</span><div class="sec-copy"><span class="sec-n">11 · Implementación · Paso 1</span><h2 class="sec-t">Crear CampusFlow y revisar el pom</h2><p class="sec-s">Primero construiremos el error de saltar capas; después Cursor AI ejecutará el refactor que nosotros ya sabemos diseñar.</p></div></div>
+          <div class="body">
+            <div class="checkpoint"><span class="component-label">Spring Initializr · configuración exacta</span><h3>Maven · Java · Spring Boot rama estable 3.x · Group <code>com.devsenior</code> · Artifact <code>campusflow</code> · Jar · Java 17</h3></div>
+            <div class="shape-board"><div class="shape-card" data-accent="1"><span class="emoji" aria-hidden="true">🌐</span><strong>Spring Web</strong><p>API REST.</p></div><div class="shape-card" data-accent="2"><span class="emoji" aria-hidden="true">🗄️</span><strong>Spring Data JPA</strong><p>Persistencia.</p></div><div class="shape-card" data-accent="3"><span class="emoji" aria-hidden="true">🐬</span><strong>MySQL Driver</strong><p>Conexión.</p></div><div class="shape-card" data-accent="4"><span class="emoji" aria-hidden="true">✅</span><strong>Validation</strong><p>Novedad del módulo.</p></div></div>
+            <p>Genera el <code>.zip</code>, descomprímelo y abre CampusFlow en IntelliJ IDEA como proyecto Maven. El <code>pom.xml</code> ya viene creado; solo se revisa.</p>
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Revisar · generado</span><span class="code-file">campusflow/pom.xml</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;3.3.4&lt;/version&gt;
+        &lt;relativePath/&gt;
+    &lt;/parent&gt;
+    &lt;groupId&gt;com.devsenior&lt;/groupId&gt;
+    &lt;artifactId&gt;campusflow&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;name&gt;campusflow&lt;/name&gt;
+    &lt;description&gt;CampusFlow - Plataforma SaaS de gestion de bootcamps y cursos online&lt;/description&gt;
+    &lt;properties&gt;
+        &lt;java.version&gt;17&lt;/java.version&gt;
+    &lt;/properties&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-validation&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s12" data-accent="4" data-layout="focus" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">▶️</span><div class="sec-copy"><span class="sec-n">12 · Paso 1</span><h2 class="sec-t">Conservar el punto de entrada</h2><p class="sec-s"><code>@SpringBootApplication</code> arranca el contenedor de Spring y escanea los paquetes que están debajo de <code>com.devsenior.campusflow</code>.</p></div></div>
+          <div class="body">
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Revisar · no tocar</span><span class="code-file">src/main/java/com/devsenior/campusflow/CampusflowApplication.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class CampusflowApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(CampusflowApplication.class, args);
+    }
+}</code></pre></div>
+            <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Ubicación que protege el escaneo</h3><p>El resto de paquetes debe quedar dentro del árbol que comienza en <code>com.devsenior.campusflow</code>.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s13" data-accent="1" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">👤</span><div class="sec-copy"><span class="sec-n">13 · Paso 2</span><h2 class="sec-t">Crear Usuario sin organización por dominio</h2><p class="sec-s">Los primeros tres archivos quedan sueltos en el paquete raíz. Es un punto de partida común, no la arquitectura final.</p></div></div>
+          <div class="body">
+            <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>El error es intencional</h3><p>Ver primero un controller sin <code>service</code> hace visible el problema real y permite entender por qué la nueva capa existe.</p></div></div>
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Crear · versión inicial</span><span class="code-file">src/main/java/com/devsenior/campusflow/Usuario.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "usuarios")
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+    private String email;
+
+    // getters y setters de id, nombre y email
+}</code></pre></div>
+            <div class="callout" data-tone="info"><span class="callout-icon">i</span><div><h3>Generación mecánica en IntelliJ</h3><p>Clic derecho dentro de la clase → <code>Generate</code> → <code>Getter and Setter</code> → seleccionar los tres campos. Es código mecánico, no una decisión de diseño.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s14" data-accent="2" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🔌</span><div class="sec-copy"><span class="sec-n">14 · Paso 2</span><h2 class="sec-t">Conectar el controller directo al repository</h2><p class="sec-s">Este diseño funciona en Postman, pero mezcla HTTP y acceso a datos dentro de la misma pieza.</p></div></div>
+          <div class="body">
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Crear · versión inicial</span><span class="code-file">src/main/java/com/devsenior/campusflow/UsuarioRepository.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UsuarioRepository extends JpaRepository&lt;Usuario, Long&gt; {
+}</code></pre></div>
+            <p><code>JpaRepository</code> ofrece <code>findAll()</code>, <code>save()</code>, <code>findById()</code> y <code>deleteById()</code> sin escribirlos.</p>
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Crear · error intencional</span><span class="code-file">src/main/java/com/devsenior/campusflow/UsuarioController.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/usuarios")
+public class UsuarioController {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @GetMapping
+    public List&lt;Usuario&gt; listar() {
+        return usuarioRepository.findAll();
+    }
+}</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s15" data-accent="3" data-layout="split" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🔎</span><div class="sec-copy"><span class="sec-n">15 · Diagnóstico</span><h2 class="sec-t">Funcionar hoy no significa estar bien diseñado</h2><p class="sec-s">La señal importante aparece cuando la lógica empieza a crecer.</p></div></div>
+          <div class="body">
+            <div class="socratica"><span class="component-label">Para pensar</span><p class="socratica-q">¿Qué tiene de malo este controller, si al probarlo en Postman funciona perfecto?</p><p class="socratica-hint">Piensa en email repetido, contraseña cifrada y cálculos antes de responder.</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">La lógica de negocio no tiene un lugar propio.</p><p>“Si funciona, está bien” solo aguanta una consulta simple. Cuando llegue la validación del email, el cifrado de la contraseña o un cálculo previo, todo terminará mezclado con HTTP dentro del controller. El controller debe recibir y responder; el <code>service</code> debe gobernar el negocio.</p></div></details></div>
+            <div class="flow"><div class="flow-step"><span class="fs-index">HTTP</span><strong>Controller</strong><span>recibe y responde</span></div><div class="flow-arrow">→</div><div class="flow-step" data-emphasis><span class="fs-index">NEGOCIO</span><strong>Service</strong><span>decide y coordina</span></div><div class="flow-arrow">→</div><div class="flow-step"><span class="fs-index">DATOS</span><strong>Repository</strong><span>consulta y persiste</span></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s16" data-accent="4" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">✨</span><div class="sec-copy"><span class="sec-n">16 · Paso 3</span><h2 class="sec-t">Refactorizar con Cursor AI, con criterio humano primero</h2><p class="sec-s">La IA ejecuta la reorganización. La arquitectura ya debe estar decidida por el equipo.</p></div></div>
+          <div class="body">
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Prompt sugerido</span><span class="code-file">Cursor AI</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">Reorganiza este proyecto Spring Boot por dominios de negocio.
+Mueve Usuario, UsuarioRepository y UsuarioController al paquete
+com.devsenior.campusflow.usuarios, separados en subpaquetes
+model, repository y controller. Crea una capa service nueva
+(UsuarioService) en com.devsenior.campusflow.usuarios.service,
+y haz que el controller use el service en vez de usar el
+repository directamente. No cambies la lógica existente.</code></pre></div>
+            <ul class="checklist"><li>El proyecto compila antes de aceptar los cambios.</li><li>Cada <code>package</code> coincide con la carpeta real del archivo.</li><li>El controller ya no importa <code>UsuarioRepository</code> directamente.</li><li>Si la IA inventa un método que no existe en <code>JpaRepository</code>, se corrige a mano.</li></ul>
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Comparar estructura</span><span class="code-file">src/main/java/com/devsenior/campusflow/</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">ANTES (plano, sin organizar)
+com.devsenior.campusflow
+ ├─ Usuario.java
+ ├─ UsuarioRepository.java
+ └─ UsuarioController.java
+
+DESPUÉS (modular, por dominio de negocio)
+com.devsenior.campusflow
+ └─ usuarios
+     ├─ model
+     │   └─ Usuario.java
+     ├─ repository
+     │   └─ UsuarioRepository.java
+     ├─ service
+     │   └─ UsuarioService.java
+     └─ controller
+         └─ UsuarioController.java</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s17" data-accent="1" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">📁</span><div class="sec-copy"><span class="sec-n">17 · Paso 3</span><h2 class="sec-t">Mover el modelo y el repository</h2><p class="sec-s">En <code>Usuario</code> solo cambia el package. El repository añade el import porque el modelo ahora vive en otro paquete.</p></div></div>
+          <div class="body">
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Mover y editar · final</span><span class="code-file">src/main/java/com/devsenior/campusflow/usuarios/model/Usuario.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "usuarios")
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+    private String email;
+
+    // getters y setters de id, nombre y email
+}</code></pre></div>
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Mover y editar · final</span><span class="code-file">src/main/java/com/devsenior/campusflow/usuarios/repository/UsuarioRepository.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.repository;
+
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UsuarioRepository extends JpaRepository&lt;Usuario, Long&gt; {
+}</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s18" data-accent="2" data-layout="focus" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">⚙️</span><div class="sec-copy"><span class="sec-n">18 · Paso 3</span><h2 class="sec-t">Crear la capa que contiene el negocio</h2><p class="sec-s"><code>@Service</code> registra la clase como componente de Spring. La inyección por constructor hace explícita la dependencia y facilita las pruebas.</p></div></div>
+          <div class="body">
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Crear · nuevo</span><span class="code-file">src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.service;
+
+import java.util.List;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import com.devsenior.campusflow.usuarios.repository.UsuarioRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UsuarioService {
+
+    private final UsuarioRepository usuarioRepository;
+
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    public List&lt;Usuario&gt; listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
+}</code></pre></div>
+            <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Dependencia visible</h3><p>El constructor expresa exactamente qué necesita <code>UsuarioService</code>; no hay una inyección oculta en un campo con <code>@Autowired</code>.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s19" data-accent="3" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🌐</span><div class="sec-copy"><span class="sec-n">19 · Paso 3</span><h2 class="sec-t">Dejar al controller hablando solo con el service</h2><p class="sec-s">El controller deja de conocer el acceso a datos. Esta es la separación de capas convertida en código.</p></div></div>
+          <div class="body">
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Mover y editar · final</span><span class="code-file">src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.controller;
+
+import java.util.List;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import com.devsenior.campusflow.usuarios.service.UsuarioService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/usuarios")
+public class UsuarioController {
+
+    private final UsuarioService usuarioService;
+
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
+    @GetMapping
+    public List&lt;Usuario&gt; listar() {
+        return usuarioService.listarUsuarios();
+    }
+}</code></pre></div>
+            <div class="flow"><div class="flow-step"><span class="fs-index">GET</span><strong>/api/usuarios</strong><span>petición HTTP</span></div><div class="flow-arrow">→</div><div class="flow-step" data-emphasis><span class="fs-index">CONTROLLER</span><strong>listar()</strong><span>delega</span></div><div class="flow-arrow">→</div><div class="flow-step"><span class="fs-index">SERVICE</span><strong>listarUsuarios()</strong><span>coordina</span></div><div class="flow-arrow">→</div><div class="flow-step"><span class="fs-index">REPOSITORY</span><strong>findAll()</strong><span>consulta</span></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s20" data-accent="4" data-layout="focus" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🎚️</span><div class="sec-copy"><span class="sec-n">20 · Paso 4</span><h2 class="sec-t">El ambiente decide el perfil; el código no</h2><p class="sec-s">Un SaaS necesita credenciales distintas en desarrollo y producción, pero el repositorio no debe fijar dónde está corriendo.</p></div></div>
+          <div class="body">
+            <p>Edita el archivo que Spring Initializr ya creó. Se queda mínimo a propósito y no declara ningún perfil activo.</p>
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Editar · archivo existente</span><span class="code-file">src/main/resources/application.properties</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-properties">spring.application.name=campusflow</code></pre></div>
+            <div class="checkpoint"><span class="component-label">Activar desarrollo en IntelliJ</span><h3><code>Run</code> → <code>Edit Configurations</code> → <code>Environment variables</code> → <code>SPRING_PROFILES_ACTIVE=dev</code></h3></div>
+            <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>Nunca lo escribas en un archivo versionado</h3><p>En producción el servidor cloud define la misma variable con valor <code>prod</code>. No agregues <code>spring.profiles.active=dev</code> al repositorio.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s21" data-accent="1" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🔐</span><div class="sec-copy"><span class="sec-n">21 · Paso 4</span><h2 class="sec-t">Separar desarrollo de producción</h2><p class="sec-s">Desarrollo admite un valor local por defecto; producción exige variables del servidor y protege el esquema.</p></div></div>
+          <div class="body">
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Crear · desarrollo</span><span class="code-file">src/main/resources/application-dev.properties</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-properties">spring.datasource.url=jdbc:mysql://localhost:3306/campusflow_db
+spring.datasource.username=root
+spring.datasource.password=${DB_PASSWORD:root}
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true</code></pre></div>
+            <p><code>${DB_PASSWORD:root}</code> usa la variable <code>DB_PASSWORD</code> si existe; si no, cae en <code>root</code>. Así la contraseña real no se sube al repositorio.</p>
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Crear · producción</span><span class="code-file">src/main/resources/application-prod.properties</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-properties">spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=false</code></pre></div>
+            <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>Producción valida; no modifica</h3><p>Railway o Render entregarán las variables en la Clase 16. <code>ddl-auto=validate</code> comprueba que las tablas esperadas existan, pero no cambia el esquema.</p></div></div>
+            <div class="callout" data-tone="info"><span class="callout-icon">↗</span><div><h3>Los cambios reales usan migraciones</h3><p>Flyway o Liquibase guardan cada cambio de esquema como un script versionado. Hoy solo reconocemos para qué sirven; no se instalan todavía.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s22" data-accent="2" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🛡️</span><div class="sec-copy"><span class="sec-n">22 · Buenas prácticas</span><h2 class="sec-t">Centralizar los errores del backend</h2><p class="sec-s">Sin un manejador global, cada controller termina repitiendo su propio <code>try/catch</code>.</p></div></div>
+          <div class="body">
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Crear · nuevo</span><span class="code-file">src/main/java/com/devsenior/campusflow/common/exception/ResourceNotFoundException.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.common.exception;
+
+public class ResourceNotFoundException extends RuntimeException {
+
+    public ResourceNotFoundException(String mensaje) {
+        super(mensaje);
+    }
+}</code></pre></div>
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Crear · nuevo</span><span class="code-file">src/main/java/com/devsenior/campusflow/common/exception/GlobalExceptionHandler.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.common.exception;
+
+import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; manejarNoEncontrado(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; manejarGeneral(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Ocurrió un error interno. Intenta de nuevo."));
+    }
+}</code></pre></div>
+            <div class="callout" data-tone="info"><span class="callout-icon">→</span><div><h3>Preparado para la Clase 14</h3><p><code>ResourceNotFoundException</code> todavía no se lanza desde ningún service. Queda lista para cuando se busque un usuario por un id inexistente.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s23" data-accent="3" data-layout="focus" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">📐</span><div class="sec-copy"><span class="sec-n">23 · Criterio profesional</span><h2 class="sec-t">Tres decisiones que se preparan hoy</h2><p class="sec-s">No se implementan todavía, pero deben formar parte de la lectura arquitectónica.</p></div></div>
+          <div class="body">
+            <div class="timeline"><div class="timeline-item"><h3>DTOs antes de exponer datos sensibles</h3><p>No devuelvas directamente entidades JPA cuando contengan información sensible. Los DTOs se trabajan en la Clase 14.</p></div><div class="timeline-item"><h3>Versionar antes de tener clientes externos</h3><p>Usa rutas como <code>/api/v1/...</code> antes de que otros sistemas dependan de tu contrato.</p></div><div class="timeline-item"><h3>Paquetes en minúscula y convención estable</h3><p>CampusFlow usa plural por dominio: <code>usuarios</code>, <code>cursos</code>, <code>pagos</code>. Lo importante es no mezclar singular y plural dentro del proyecto.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s24" data-accent="4" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🧯</span><div class="sec-copy"><span class="sec-n">24 · Errores comunes</span><h2 class="sec-t">Los mensajes de error son pistas de arquitectura</h2><p class="sec-s">Lee el síntoma, ubica la capa y revisa la configuración asociada.</p></div></div>
+          <div class="body">
+            <div class="cards">
+              <div class="card" data-accent="1"><span class="orb" data-accent="1"><span class="emoji" aria-hidden="true">🔍</span></span><b>Field usuarioRepository required a bean... that could not be found</b><p>La clase existe, pero Spring no la escaneó. Al mover paquetes, revisa que todo quede dentro del árbol de <code>CampusflowApplication</code>.</p></div>
+              <div class="card" data-accent="2"><span class="orb" data-accent="2"><span class="emoji" aria-hidden="true">🗃️</span></span><b>Table 'campusflow_db.usuarios' doesn't exist</b><p>Hibernate no creó la tabla. En el perfil <code>dev</code>, revisa <code>ddl-auto=update</code> y crea antes <code>campusflow_db</code> en MySQL Workbench.</p></div>
+              <div class="card" data-accent="3"><span class="orb" data-accent="3"><span class="emoji" aria-hidden="true">🔑</span></span><b>Could not resolve placeholder 'DB_URL' in value "${DB_URL}"</b><p>Falta definir una variable de entorno. En desarrollo revisa <code>SPRING_PROFILES_ACTIVE=dev</code>; en producción, configura <code>DB_URL</code> en el servidor.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s25" data-accent="1" data-layout="split" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🧱</span><div class="sec-copy"><span class="sec-n">25 · Ejercicio de extensión</span><h2 class="sec-t">Repetir el patrón para el dominio cursos</h2><p class="sec-s">La práctica no es aislada: convierte la decisión arquitectónica en hábito antes de relacionar usuarios y cursos.</p></div></div>
+          <div class="body">
+            <div class="checkpoint"><span class="component-label">Consigna</span><h3>Crea <code>com.<wbr>devsenior.<wbr>campusflow.<wbr>cursos</code> con los subpaquetes <code>model</code>, <code>repository</code>, <code>service</code> y <code>controller</code>.</h3></div>
+            <div class="entity" data-emphasis data-accent="2"><div class="entity-name"><span class="entity-emoji" aria-hidden="true">📚</span> Curso</div><ul class="entity-fields"><li class="is-key"><span class="key pk">PK</span> id · Long</li><li>nombre · String</li></ul></div>
+            <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Evidencia observable</h3><p>El dominio <code>cursos</code> reproduce las cuatro capas de <code>usuarios</code> sin mezclar responsabilidades y deja la base para la relación de la Clase 14.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s26" data-accent="2" data-layout="focus" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">💭</span><div class="sec-copy"><span class="sec-n">26 · Reflexión técnica</span><h2 class="sec-t">Tres decisiones para comprobar comprensión</h2><p class="sec-s">No memorices carpetas: explica qué dolor evita cada límite.</p></div></div>
+          <div class="body">
+            <div class="question-card"><span class="component-label">Decisión 1</span><p class="question">Si CampusFlow agregara facturación mañana, ¿qué carpetas nuevas crearías y cuáles no tendrías que tocar?</p></div>
+            <div class="question-card"><span class="component-label">Decisión 2</span><p class="question">¿Qué pasaría si el controller siguiera llamando directo al repository? ¿En qué momento empieza a doler ese atajo?</p></div>
+            <div class="question-card"><span class="component-label">Decisión 3</span><p class="question">¿Qué haría un desarrollador junior distinto a lo que acabamos de hacer hoy?</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s27" data-accent="3" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🧑‍💼</span><div class="sec-copy"><span class="sec-n">27 · Planeación de producto</span><h2 class="sec-t">Definir CampusFlow con criterio técnico real</h2><p class="sec-s">Estas respuestas serán la base de las Clases 14, 15 y 16.</p></div></div>
+          <div class="body">
+            <div class="socratica"><span class="component-label">Usuarios</span><p class="socratica-q">¿Qué roles necesita CampusFlow, además de estudiante?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Instructor y administrador; además, hay que decidir si una persona puede tener varios roles.</p><p>Un instructor podría ser estudiante de otro curso. Esa decisión afecta directamente el modelo de datos de la Clase 14.</p></div></details></div>
+            <div class="socratica"><span class="component-label">Suscripciones</span><p class="socratica-q">¿Qué planes tendría sentido ofrecer?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Tres niveles: gratuito, individual de pago y academias o empresas.</p><p>El gratuito puede limitar cursos; el empresarial necesita varias cohortes. Esta decisión se construirá con Stripe en la Clase 15.</p></div></details></div>
+            <div class="socratica"><span class="component-label">Cohortes</span><p class="socratica-q">¿Qué pasa si una academia como Generation quiere gestionar 10 cohortes dentro de la misma cuenta?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">No basta pensar solo en diez cursos separados: aparece una relación de datos más compleja.</p><p>Es el anticipo de <code>OneToMany</code> y <code>ManyToMany</code>, relaciones que se construirán en la Clase 14.</p></div></details></div>
+            <div class="socratica"><span class="component-label">Tenant</span><p class="socratica-q">Si Generation y Dev Senior tienen un curso llamado “Java Básico”, ¿cómo evitamos que se mezclen?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Los nombres distintos no resuelven el aislamiento.</p><p>Cada curso y cada usuario deben quedar asociados a su academia —su tenant— sin depender de que los nombres sean únicos. Esa asociación comienza a modelarse en la Clase 14.</p></div></details></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s28" data-accent="4" data-layout="split" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">📌</span><div class="sec-copy"><span class="sec-n">28 · Producto de la actividad</span><h2 class="sec-t">Una definición concreta para continuar</h2><p class="sec-s">La planeación termina en decisiones que pueden convertirse en modelo y código.</p></div></div>
+          <div class="body">
+            <ul class="checklist"><li>Roles de usuario: estudiante, instructor y administrador; queda abierta la decisión de roles múltiples.</li><li>Planes de suscripción: gratuito con límite de cursos, individual de pago y academias o empresas con varias cohortes.</li><li>Dominios mínimos: <code>usuarios</code>, <code>cursos</code> y <code>pagos</code> como dominio futuro.</li><li>Cada academia —tenant— quedará asociada a sus propios usuarios y cursos.</li></ul>
+            <div class="callout" data-tone="success"><span class="callout-icon">→</span><div><h3>Punto de partida literal de la Clase 14</h3><p>Usuarios, cursos y tenant se convertirán en relaciones reales. La arquitectura definida hoy permite añadir esas reglas sin desarmar el proyecto.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s29" data-accent="1" data-layout="canvas" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">🗂️</span><div class="sec-copy"><span class="sec-n">29 · Mapa de archivos</span><h2 class="sec-t">Qué se genera, qué se mueve y qué se crea</h2><p class="sec-s">Usa este inventario para comprobar que la implementación quedó completa.</p></div></div>
+          <div class="body">
+            <div class="table-wrap"><table class="data-table"><caption>Mapa completo de archivos de la clase</caption><thead><tr><th>Archivo</th><th>Ruta</th><th>Acción</th><th>Bloque</th></tr></thead><tbody>
+              <tr><td data-emphasis><code>pom.xml</code></td><td><code>campusflow/</code></td><td>Generado por Spring Initializr; revisar</td><td>Paso 1</td></tr>
+              <tr><td data-emphasis><code>Campusflow<wbr>Application.java</code></td><td><code>src/<wbr>main/<wbr>java/<wbr>com/<wbr>devsenior/<wbr>campusflow/</code></td><td>Generado; no se toca</td><td>Paso 1</td></tr>
+              <tr><td data-emphasis><code>Usuario.java</code></td><td><code>src/<wbr>main/<wbr>java/<wbr>com/<wbr>devsenior/<wbr>campusflow/</code> → <code>usuarios/<wbr>model/</code></td><td>Crear versión inicial → editar versión final</td><td>Pasos 2 y 3</td></tr>
+              <tr><td data-emphasis><code>Usuario<wbr>Repository.java</code></td><td><code>src/<wbr>main/<wbr>java/<wbr>com/<wbr>devsenior/<wbr>campusflow/</code> → <code>usuarios/<wbr>repository/</code></td><td>Crear versión inicial → editar versión final</td><td>Pasos 2 y 3</td></tr>
+              <tr><td data-emphasis><code>Usuario<wbr>Controller.java</code></td><td><code>src/<wbr>main/<wbr>java/<wbr>com/<wbr>devsenior/<wbr>campusflow/</code> → <code>usuarios/<wbr>controller/</code></td><td>Crear versión inicial → editar versión final</td><td>Pasos 2 y 3</td></tr>
+              <tr><td data-emphasis><code>Usuario<wbr>Service.java</code></td><td><code>src/<wbr>main/<wbr>java/<wbr>com/<wbr>devsenior/<wbr>campusflow/<wbr>usuarios/<wbr>service/</code></td><td>Crear</td><td>Paso 3</td></tr>
+              <tr><td data-emphasis><code>application.properties</code></td><td><code>src/<wbr>main/<wbr>resources/</code></td><td>Editar el archivo existente</td><td>Paso 4</td></tr>
+              <tr><td data-emphasis><code>application-dev.properties</code></td><td><code>src/<wbr>main/<wbr>resources/</code></td><td>Crear</td><td>Paso 4</td></tr>
+              <tr><td data-emphasis><code>application-prod.properties</code></td><td><code>src/<wbr>main/<wbr>resources/</code></td><td>Crear</td><td>Paso 4</td></tr>
+              <tr><td data-emphasis><code>Resource<wbr>NotFound<wbr>Exception.java</code></td><td><code>src/<wbr>main/<wbr>java/<wbr>com/<wbr>devsenior/<wbr>campusflow/<wbr>common/<wbr>exception/</code></td><td>Crear</td><td>Sección 8</td></tr>
+              <tr><td data-emphasis><code>Global<wbr>Exception<wbr>Handler.java</code></td><td><code>src/<wbr>main/<wbr>java/<wbr>com/<wbr>devsenior/<wbr>campusflow/<wbr>common/<wbr>exception/</code></td><td>Crear</td><td>Sección 8</td></tr>
+              <tr><td data-emphasis><code>Curso.java</code>, <code>Curso<wbr>Repository.java</code>, <code>Curso<wbr>Service.java</code>, <code>Curso<wbr>Controller.java</code></td><td><code>src/<wbr>main/<wbr>java/<wbr>com/<wbr>devsenior/<wbr>campusflow/<wbr>cursos/<wbr>...</code></td><td>Crear como ejercicio de extensión</td><td>Sección 10</td></tr>
+            </tbody></table></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s30" data-accent="2" data-layout="split" hidden>
+          <div class="sec-head"><span class="sec-icon" aria-hidden="true">✅</span><div class="sec-copy"><span class="sec-n">30 · Cierre y puente</span><h2 class="sec-t">CampusFlow ya tiene una base capaz de crecer</h2><p class="sec-s">No solo sabes cómo organizarlo: puedes explicar por qué cada límite existe.</p></div></div>
+          <div class="body">
+            <ul class="checklist"><li>Proyecto CampusFlow nuevo con dominio <code>usuarios</code> organizado en capas profesionales.</li><li>Configuración separada por ambiente, sin credenciales reales dentro del código.</li><li>Manejo centralizado de errores preparado para los siguientes casos de uso.</li><li>Monolito modular: modular por dentro, un solo deploy por fuera.</li><li>Listo para sumar <code>cursos</code> y después <code>pagos</code>; el aislamiento por tenant todavía queda pendiente.</li></ul>
+            <div class="panel"><h3>Puente a la Clase 14</h3><p>El dominio <code>usuarios</code> recibirá perfiles, configuraciones personalizadas y relaciones <code>OneToMany</code> y <code>ManyToMany</code>. También comenzará a modelarse la asociación de cada usuario y curso con su academia —el tenant— para impedir que los datos se mezclen.</p></div>
+            <div class="question-card"><span class="component-label">Para el siguiente encuentro</span><p class="question">Si un estudiante puede estar en varios cursos y un curso puede tener varios estudiantes, ¿qué tipo de relación es esa y por qué una sola tabla no alcanza para representarla?</p></div>
+          </div>
+          <p class="doc-foot">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack</p>
+        </section>
+      </div>
+
+      <nav class="view-controls" id="viewControls" aria-label="Navegación entre secciones">
+        <button class="view-btn" id="prevView" type="button" aria-label="Sección anterior">←</button>
+        <span class="view-position" id="viewPosition" aria-live="polite">Portada</span>
+        <button class="view-btn" id="nextView" type="button" aria-label="Sección siguiente">→</button>
+      </nav>
+    </main>
+  </div>
+
+  <div class="watermark" aria-hidden="true">© 2026 ANA ALVARADO</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="anaclase-v9.js"></script>
+</body>
+</html>
