@@ -1,0 +1,1593 @@
+<!DOCTYPE html><html lang="es" data-tema="oscuro" data-tema-base="oscuro" data-empresa="dev-senior" data-paleta="oceano" data-atmosfera="tecnica"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Ana Alvarado"><meta name="robots" content="noindex, nofollow, noarchive, noimageindex"><title>Clase 14 · Usuarios, perfiles y relaciones · CampusFlow</title><meta name="description" content="Relaciones reales y DTOs: continúa CampusFlow con usuarios, preferencias, cursos y respuestas sin contraseña."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"><link rel="stylesheet" href="vendor/prism-line-numbers.min.css"><link rel="stylesheet" href="anaestilos-v11.css"></head><body><a class="skip-link" href="#ticket">Saltar al contenido</a><div class="topline" id="topline" aria-hidden="true"></div><div class="controls" aria-label="Controles"><button class="ctrl" id="temaBtn" type="button" aria-label="Cambiar tema">☀</button><button class="ctrl" id="fullscreenBtn" type="button" aria-label="Pantalla completa">⛶</button></div><div class="shell" id="shell" data-collapsed="false"><aside class="sidebar" aria-label="Índice de la clase"><div class="sb-top"><span class="brand-mark">A</span><div class="sb-title"><b>CampusFlow</b><span>Dev Senior · Módulo 4 · Clase 14</span></div></div><button class="sb-toggle" id="collapseBtn" type="button" aria-label="Colapsar menú">‹</button><nav class="sb-nav" id="nav" aria-label="Secciones"><a class="nav-item active" data-icon="✦" href="#portada"><span class="nav-index">00</span><span class="nav-label">Portada</span></a>
+<a class="nav-item" data-icon="🎫" href="#ticket"><span class="nav-index">01</span><span class="nav-label">El ticket</span></a>
+<a class="nav-item" data-icon="🔗" href="#instructor"><span class="nav-index">02</span><span class="nav-label">Instructor → cursos</span></a>
+<a class="nav-item" data-icon="👥" href="#inscripciones"><span class="nav-index">03</span><span class="nav-label">Estudiantes ↔ cursos</span></a>
+<a class="nav-item" data-icon="🧾" href="#dto"><span class="nav-index">04</span><span class="nav-label">Contratos de la API</span></a>
+<a class="nav-item" data-icon="🛠️" href="#preparar"><span class="nav-index">05</span><span class="nav-label">Preparar y modelar</span></a>
+<a class="nav-item" data-icon="🗂️" href="#entidades"><span class="nav-index">06</span><span class="nav-label">Entidades conectadas</span></a>
+<a class="nav-item" data-icon="🔐" href="#password"><span class="nav-index">07</span><span class="nav-label">Hash de contraseña</span></a>
+<a class="nav-item" data-icon="📨" href="#usuarios-dto"><span class="nav-index">08</span><span class="nav-label">DTOs de usuarios</span></a>
+<a class="nav-item" data-icon="🩺" href="#errores"><span class="nav-index">09</span><span class="nav-label">Repository y errores</span></a>
+<a class="nav-item" data-icon="🧩" href="#usuarios-service"><span class="nav-index">10</span><span class="nav-label">CRUD en el service</span></a>
+<a class="nav-item" data-icon="🌐" href="#usuarios-controller"><span class="nav-index">11</span><span class="nav-label">Endpoints de usuarios</span></a>
+<a class="nav-item" data-icon="📚" href="#cursos-dto"><span class="nav-index">12</span><span class="nav-label">DTOs de cursos</span></a>
+<a class="nav-item" data-icon="🧑‍🏫" href="#cursos-service"><span class="nav-index">13</span><span class="nav-label">Operaciones de cursos</span></a>
+<a class="nav-item" data-icon="🪪" href="#auth-contratos"><span class="nav-index">14</span><span class="nav-label">Contratos de autenticación</span></a>
+<a class="nav-item" data-icon="🔏" href="#jwt"><span class="nav-index">15</span><span class="nav-label">JWT y su clave</span></a>
+<a class="nav-item" data-icon="🔑" href="#auth-servicio"><span class="nav-index">16</span><span class="nav-label">Registro y login</span></a>
+<a class="nav-item" data-icon="🛂" href="#jwt-filtro"><span class="nav-index">17</span><span class="nav-label">Identidad y filtro</span></a>
+<a class="nav-item" data-icon="🛡️" href="#permisos"><span class="nav-index">18</span><span class="nav-label">Rutas y permisos</span></a>
+<a class="nav-item" data-icon="▶" href="#arranque"><span class="nav-index">19</span><span class="nav-label">Arrancar en Cursor</span></a>
+<a class="nav-item" data-icon="👤" href="#primer-admin"><span class="nav-index">20</span><span class="nav-label">Primer administrador</span></a>
+<a class="nav-item" data-icon="🧪" href="#pruebas-seguridad"><span class="nav-index">21</span><span class="nav-label">Pruebas de seguridad</span></a>
+<a class="nav-item" data-icon="🧪" href="#pruebas-usuarios"><span class="nav-index">22</span><span class="nav-label">Pruebas: usuarios</span></a>
+<a class="nav-item" data-icon="✅" href="#pruebas-cursos"><span class="nav-index">23</span><span class="nav-label">Pruebas: relaciones</span></a>
+<a class="nav-item" data-icon="✍️" href="#extension"><span class="nav-index">24</span><span class="nav-label">Extensión: cursos dictados</span></a>
+<a class="nav-item" data-icon="🚀" href="#cierre"><span class="nav-index">25</span><span class="nav-label">Cierre y siguiente clase</span></a>
+<a class="nav-item" data-icon="📚" href="#consulta"><span class="nav-index">26</span><span class="nav-label">Consulta: diagnóstico</span></a>
+<a class="nav-item" data-icon="📁" href="#archivos"><span class="nav-index">27</span><span class="nav-label">Consulta: archivos</span></a></nav><div class="sb-prog"><div class="lbl"><span>Progreso</span><span id="progPct">0%</span></div><div class="track"><div class="fill" id="progFill"></div></div></div></aside><main class="main"><header class="hero view" id="portada" data-accent="1" data-layout="focus"><div class="hero-inner"><div class="hero-copy"><span class="eyebrow">Java AI Engineer · Clase 14</span><h1 class="hero-title">Conectar usuarios.<br><em>Elegir qué mostrar.</em></h1><p class="hero-lead">CampusFlow evoluciona con roles, preferencias y relaciones reales entre usuarios y cursos. Cada respuesta tiene un contrato explícito y cada ruta una regla de acceso.</p><div class="meta"><span class="pill" data-hot>Relaciones JPA</span><span class="pill" data-hot>DTOs y datos</span><span class="pill">Java 17 · Spring Boot</span></div></div></div></header><div class="content"><section class="section view" id="ticket" data-accent="1" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🎫</span><div><span class="sec-n">01 · CampusFlow</span><h2 class="sec-t">Un usuario ya no vive aislado</h2><p class="sec-s">CampusFlow continúa donde quedó la Clase 13.</p></div></div><div class="body"><div class="panel"><h3>Ticket de producto</h3><p>Cada usuario necesita un rol. Un instructor puede dictar varios cursos; un estudiante puede inscribirse en varios. La contraseña no debe aparecer en ninguna respuesta de la API. El registro será público, pero nadie podrá autoasignarse ADMINISTRADOR.</p></div><div class="micro-task"><span class="component-label">Antes de construir</span><p class="micro-task-q">Con Usuario(id, nombre, email), ¿alcanza con agregar el rol?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">No. También necesitamos relaciones con cursos y un contrato de salida que no incluya la contraseña. Esas son las dos decisiones centrales de hoy.</p></details></div><div class="cards"><div class="card" data-accent="1"><b>Relaciones reales</b><p>Representar instructor y estudiantes según las reglas del negocio.</p></div><div class="card" data-accent="2"><b>DTOs de entrada y salida</b><p>Controlar lo que recibe la API y lo que devuelve, sin exponer entidades completas.</p></div></div><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Alcance de este laboratorio</h3><p>Construiremos relaciones, DTOs, preferencias y CRUD, e integraremos el login con JWT de la Clase 11. El catálogo será público; administrar usuarios exigirá ADMINISTRADOR. El aislamiento por academia queda pendiente.</p></div></div></div></section>
+<section class="section view" id="instructor" data-accent="2" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🔗</span><div><span class="sec-n">02 · CampusFlow</span><h2 class="sec-t">Un instructor, varios cursos</h2><p class="sec-s">La clave foránea está en cursos para este mapeo.</p></div></div><div class="body"><div class="rel-pair"><div class="entity" data-accent="1"><div class="entity-name">usuarios</div><ul class="entity-fields"><li class="is-key"><span class="key pk">PK</span>id</li><li>nombre</li><li>rol</li></ul></div><div class="rel-link"><span class="rel-card">1 : N</span><span class="rel-desc">instructor → cursos dictados</span></div><div class="entity" data-accent="2"><div class="entity-name">cursos</div><ul class="entity-fields"><li class="is-key"><span class="key pk">PK</span>id</li><li>nombre</li><li class="is-key"><span class="key fk">FK</span>instructor_id</li></ul></div></div><p>El negocio de la clase asigna un instructor por curso. Un mismo instructor puede dictar varios. En Java, Curso.instructor es @ManyToOne; Usuario.cursosDictados es @OneToMany(mappedBy = "instructor").</p><div class="micro-task"><span class="component-label">Identifica al propietario</span><p class="micro-task-q">¿Qué cambio debe persistirse para asignar un instructor: agregar a la lista del usuario o establecer curso.instructor?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">Curso es el lado propietario. Hay que asignar curso.setInstructor(usuario) y persistir ese estado. Mantener ambos lados coherentes en memoria es útil, pero modificar solo el lado inverso no actualiza por sí solo la clave foránea.</p></details></div><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>mappedBy no significa “inmutable”</h3><p>Nombra el atributo Java del lado propietario, no una columna SQL. La colección inversa permite navegar la relación y puede cambiar en memoria; no controla la escritura de la asociación.</p></div></div></div></section>
+<section class="section view" id="inscripciones" data-accent="3" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">👥</span><div><span class="sec-n">03 · CampusFlow</span><h2 class="sec-t">Varios estudiantes, varios cursos</h2><p class="sec-s">La inscripción conecta dos identidades.</p></div></div><div class="body"><div class="er-board"><div class="entity" data-accent="1"><div class="entity-name">usuarios</div><ul class="entity-fields"><li class="is-key"><span class="key pk">PK</span>id</li><li>nombre</li></ul></div><div class="entity" data-accent="3"><div class="entity-name">curso_estudiante</div><ul class="entity-fields"><li class="is-key"><span class="key fk">FK</span>curso_id</li><li class="is-key"><span class="key fk">FK</span>estudiante_id</li></ul></div><div class="entity" data-accent="2"><div class="entity-name">cursos</div><ul class="entity-fields"><li class="is-key"><span class="key pk">PK</span>id</li><li>nombre</li></ul></div></div><p>El @ManyToMany simple se representa con una tabla de unión: cada fila asocia un curso con un estudiante. Curso.estudiantes declara @JoinTable; Usuario.cursosInscritos usa mappedBy = "estudiantes".</p><div class="cards"><div class="card" data-accent="1"><b>joinColumns</b><p>curso_id apunta a esta entidad: Curso.</p></div><div class="card" data-accent="2"><b>inverseJoinColumns</b><p>estudiante_id apunta a la entidad relacionada: Usuario.</p></div></div><div class="micro-task"><span class="component-label">Reconoce el límite</span><p class="micro-task-q">Si mañana la inscripción necesita fecha y estado, ¿en qué clase guardarías esos datos?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">La asociación necesitaría una entidad propia, por ejemplo Inscripcion, con referencias a Usuario y Curso. El @ManyToMany simple de hoy no mapea atributos propios de la inscripción.</p></details></div></div></section>
+<section class="section view" id="dto" data-accent="4" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🧾</span><div><span class="sec-n">04 · CampusFlow</span><h2 class="sec-t">La entidad guarda; el DTO comunica</h2><p class="sec-s">Dos contratos distintos para entrar y salir.</p></div></div><div class="body"><div class="cards"><div class="card" data-accent="1"><b>CrearUsuarioRequest</b><p>nombre · email · password · rol. Valida presencia, formato y longitud.</p></div><div class="card" data-accent="2"><b>ActualizarUsuarioRequest</b><p>nombre · tema · notificacionesActivas. No permite aplicar cambios de email, password o rol.</p></div><div class="card" data-accent="3"><b>UsuarioResponse</b><p>id · nombre · email · rol · tema · notificacionesActivas. No contiene password.</p></div></div><div class="micro-task"><span class="component-label">Diseña la salida</span><p class="micro-task-q">¿Basta con “recordar quitar” la contraseña en cada método?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">Un response explícito y un mapper común reducen el riesgo: seleccionan los campos que salen. Aun así, hay que usar ese contrato en todos los endpoints y comprobar también los errores. Un DTO no sustituye la autorización.</p></details></div><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>La vitrina y la bodega</h3><p>La entidad puede contener datos que el cliente no necesita. El DTO de respuesta muestra solo los campos elegidos. Nombre y email también son datos personales; no se vuelven públicos por estar en un DTO.</p></div></div></div></section>
+<section class="section view" id="preparar" data-accent="1" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🛠️</span><div><span class="sec-n">05 · CampusFlow</span><h2 class="sec-t">Extender el proyecto existente</h2><p class="sec-s">Roles y preferencias apoyan las dos decisiones centrales.</p></div></div><div class="body"><ul class="checklist"><li>Trabaja sobre CampusFlow de la Clase 13; conserva su paquete raíz y sus perfiles dev/prod.</li><li>Confirma que existen CursoRepository y ResourceNotFoundException. Las referencias completas están en la consulta final.</li><li>Usa el perfil dev, MySQL local y DB_PASSWORD. Trabaja con datos de laboratorio.</li><li>Detén la aplicación y aplica las entidades, DTOs, servicios y controllers antes de reiniciar. Las versiones intermedias no son el estado listo para probar.</li></ul><p>RolUsuario restringe los valores a ESTUDIANTE, INSTRUCTOR y ADMINISTRADOR. Cada usuario tiene un solo rol en esta implementación. SecurityConfig usará ese rol para decidir qué rutas puede ejecutar.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/model/RolUsuario.java"><span><span class="code-reveal-title">Ver RolUsuario.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/model/RolUsuario.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/model/RolUsuario.java">src/main/java/com/devsenior/campusflow/usuarios/model/RolUsuario.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/model/RolUsuario.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.model;
+
+public enum RolUsuario {
+    ESTUDIANTE,
+    INSTRUCTOR,
+    ADMINISTRADOR
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/model/TemaVisual.java"><span><span class="code-reveal-title">Ver TemaVisual.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/model/TemaVisual.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/model/TemaVisual.java">src/main/java/com/devsenior/campusflow/usuarios/model/TemaVisual.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/model/TemaVisual.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.model;
+
+public enum TemaVisual {
+    CLARO,
+    OSCURO
+}</code></pre></div></div></details><p>PreferenciasUsuario agrupa tema y notificaciones. @Embeddable no crea una entidad con id: @Embedded incorpora sus campos a usuarios. Los valores iniciales de usuarios nuevos son CLARO y true.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/model/PreferenciasUsuario.java"><span><span class="code-reveal-title">Ver PreferenciasUsuario.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/model/PreferenciasUsuario.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/model/PreferenciasUsuario.java">src/main/java/com/devsenior/campusflow/usuarios/model/PreferenciasUsuario.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/model/PreferenciasUsuario.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.model;
+
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
+@Embeddable
+public class PreferenciasUsuario {
+
+    @Enumerated(EnumType.STRING)
+    private TemaVisual tema = TemaVisual.CLARO;
+
+    private boolean notificacionesActivas = true;
+
+    public TemaVisual getTema() {
+        return tema;
+    }
+
+    public void setTema(TemaVisual tema) {
+        this.tema = tema;
+    }
+
+    public boolean isNotificacionesActivas() {
+        return notificacionesActivas;
+    }
+
+    public void setNotificacionesActivas(boolean notificacionesActivas) {
+        this.notificacionesActivas = notificacionesActivas;
+    }
+}</code></pre></div></div></details><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Datos heredados</h3><p>Las filas de la Clase 13 pueden no tener rol, password o preferencias. Los valores de un objeto nuevo no son una migración de registros existentes. Para la secuencia de prueba crea usuarios nuevos; los datos anteriores requieren una decisión de migración.</p></div></div></div></section>
+<section class="section view" id="entidades" data-accent="2" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🗂️</span><div><span class="sec-n">06 · CampusFlow</span><h2 class="sec-t">Completar ambos lados de las relaciones</h2><p class="sec-s">Usuario y Curso se actualizan como una sola unidad de trabajo.</p></div></div><div class="body"><div class="active-build"><div class="build-step"><span class="build-step-index">01</span><div class="build-step-copy"><h3 class="build-step-title">Usuario permite navegar las relaciones</h3><p class="build-step-purpose">cursosDictados y cursosInscritos son los lados inversos. El atributo password almacenará un hash, no el texto original.</p><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Fragmento · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/model/Usuario.java">src/main/java/com/devsenior/campusflow/usuarios/model/Usuario.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/model/Usuario.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">@OneToMany(mappedBy = &quot;instructor&quot;)
+private List&lt;Curso&gt; cursosDictados = new ArrayList&lt;&gt;();
+
+@ManyToMany(mappedBy = &quot;estudiantes&quot;)
+private List&lt;Curso&gt; cursosInscritos = new ArrayList&lt;&gt;();</code></pre></div></div></div><div class="build-step"><span class="build-step-index">02</span><div class="build-step-copy"><h3 class="build-step-title">Curso decide cómo se guarda la asociación</h3><p class="build-step-purpose">instructor_id almacena la referencia al instructor. curso_estudiante asocia cursos y estudiantes.</p><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Fragmento · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/cursos/model/Curso.java">src/main/java/com/devsenior/campusflow/cursos/model/Curso.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/cursos/model/Curso.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">@ManyToOne
+@JoinColumn(name = &quot;instructor_id&quot;)
+private Usuario instructor;
+
+@ManyToMany
+@JoinTable(
+        name = &quot;curso_estudiante&quot;,
+        joinColumns = @JoinColumn(name = &quot;curso_id&quot;),
+        inverseJoinColumns = @JoinColumn(name = &quot;estudiante_id&quot;)
+)
+private List&lt;Usuario&gt; estudiantes = new ArrayList&lt;&gt;();</code></pre></div></div></div></div><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/model/Usuario.java"><span><span class="code-reveal-title">Ver Usuario.java completo</span><span class="code-reveal-note">Reemplazar · src/main/java/com/devsenior/campusflow/usuarios/model/Usuario.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/model/Usuario.java">src/main/java/com/devsenior/campusflow/usuarios/model/Usuario.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/model/Usuario.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.model;
+
+import java.util.ArrayList;
+import java.util.List;
+import com.devsenior.campusflow.cursos.model.Curso;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = &quot;usuarios&quot;)
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+
+    @Column(unique = true)
+    private String email;
+
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private RolUsuario rol;
+
+    @Embedded
+    private PreferenciasUsuario preferencias = new PreferenciasUsuario();
+
+    @OneToMany(mappedBy = &quot;instructor&quot;)
+    private List&lt;Curso&gt; cursosDictados = new ArrayList&lt;&gt;();
+
+    @ManyToMany(mappedBy = &quot;estudiantes&quot;)
+    private List&lt;Curso&gt; cursosInscritos = new ArrayList&lt;&gt;();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public RolUsuario getRol() {
+        return rol;
+    }
+
+    public void setRol(RolUsuario rol) {
+        this.rol = rol;
+    }
+
+    public PreferenciasUsuario getPreferencias() {
+        return preferencias;
+    }
+
+    public void setPreferencias(PreferenciasUsuario preferencias) {
+        this.preferencias = preferencias;
+    }
+
+    public List&lt;Curso&gt; getCursosDictados() {
+        return cursosDictados;
+    }
+
+    public void setCursosDictados(List&lt;Curso&gt; cursosDictados) {
+        this.cursosDictados = cursosDictados;
+    }
+
+    public List&lt;Curso&gt; getCursosInscritos() {
+        return cursosInscritos;
+    }
+
+    public void setCursosInscritos(List&lt;Curso&gt; cursosInscritos) {
+        this.cursosInscritos = cursosInscritos;
+    }
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/cursos/model/Curso.java"><span><span class="code-reveal-title">Ver Curso.java completo</span><span class="code-reveal-note">Reemplazar · src/main/java/com/devsenior/campusflow/cursos/model/Curso.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/cursos/model/Curso.java">src/main/java/com/devsenior/campusflow/cursos/model/Curso.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/cursos/model/Curso.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.cursos.model;
+
+import java.util.ArrayList;
+import java.util.List;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = &quot;cursos&quot;)
+public class Curso {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+
+    @ManyToOne
+    @JoinColumn(name = &quot;instructor_id&quot;)
+    private Usuario instructor;
+
+    @ManyToMany
+    @JoinTable(
+            name = &quot;curso_estudiante&quot;,
+            joinColumns = @JoinColumn(name = &quot;curso_id&quot;),
+            inverseJoinColumns = @JoinColumn(name = &quot;estudiante_id&quot;)
+    )
+    private List&lt;Usuario&gt; estudiantes = new ArrayList&lt;&gt;();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Usuario getInstructor() {
+        return instructor;
+    }
+
+    public void setInstructor(Usuario instructor) {
+        this.instructor = instructor;
+    }
+
+    public List&lt;Usuario&gt; getEstudiantes() {
+        return estudiantes;
+    }
+
+    public void setEstudiantes(List&lt;Usuario&gt; estudiantes) {
+        this.estudiantes = estudiantes;
+    }
+}</code></pre></div></div></details><div class="checkpoint"><span class="component-label">Checkpoint</span><h3>Antes de continuar</h3><p>Cada mappedBy coincide con un atributo real de Curso: instructor y estudiantes. Los getters y setters ya están completos; no los generes otra vez. Mantén la aplicación detenida hasta reemplazar también los controllers por sus respuestas DTO.</p></div></div></section>
+<section class="section view" id="password" data-accent="3" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🔐</span><div><span class="sec-n">07 · CampusFlow</span><h2 class="sec-t">Guardar un hash, nunca el texto original</h2><p class="sec-s">BCrypt transforma la contraseña antes del INSERT.</p></div></div><div class="body"><div class="micro-task"><span class="component-label">Distingue</span><p class="micro-task-q">¿Un hash se descifra para recuperar la contraseña?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">No. PasswordEncoder permite codificar y verificar una contraseña candidata con matches. Hashing y cifrado reversible son mecanismos diferentes.</p></details></div><p>El POM final incluye spring-boot-starter-security y JJWT 0.13.0. El starter ya incorpora BCrypt. Se conserva Spring Boot 3.3.4 como base de la guía; recarga el proyecto Maven en Cursor después de reemplazar el archivo.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar pom.xml"><span><span class="code-reveal-title">Ver pom.xml completo</span><span class="code-reveal-note">Reemplazar · pom.xml · xml</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar · xml</span><span class="code-file" title="pom.xml">pom.xml</span></div><button class="copy-btn" type="button" aria-label="Copiar pom.xml">Copiar</button></div><pre class="line-numbers"><code class="language-markup">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;3.3.4&lt;/version&gt;
+        &lt;relativePath/&gt;
+    &lt;/parent&gt;
+    &lt;groupId&gt;com.devsenior&lt;/groupId&gt;
+    &lt;artifactId&gt;campusflow&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;name&gt;campusflow&lt;/name&gt;
+    &lt;description&gt;CampusFlow - Plataforma SaaS de gestion de bootcamps y cursos online&lt;/description&gt;
+    &lt;properties&gt;
+        &lt;java.version&gt;17&lt;/java.version&gt;
+    &lt;/properties&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-validation&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-api&lt;/artifactId&gt;
+            &lt;version&gt;0.13.0&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-impl&lt;/artifactId&gt;
+            &lt;version&gt;0.13.0&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-jackson&lt;/artifactId&gt;
+            &lt;version&gt;0.13.0&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;</code></pre></div></div></details><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Construir el estado final</h3><p>La SPA presenta el POM consolidado y una sola SecurityConfig en security, que construirás en Rutas y permisos. Mantén la aplicación detenida hasta terminar ese bloque. El starter activa seguridad automática mientras falta la configuración propia; eso no significa por sí solo que la aplicación no pueda arrancar.</p></div></div><div class="checkpoint"><span class="component-label">Checkpoint</span><h3>Secuencia que debes reconocer</h3><p>request.password → passwordEncoder.encode(...) → usuario.password → persistencia. El mapper de salida no selecciona password. La contraseña entra a la aplicación, pero no se envía como texto plano al INSERT.</p></div></div></section>
+<section class="section view" id="usuarios-dto" data-accent="4" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">📨</span><div><span class="sec-n">08 · CampusFlow</span><h2 class="sec-t">Seleccionar campos de entrada y salida</h2><p class="sec-s">El mapper centraliza la conversión a UsuarioResponse.</p></div></div><div class="body"><p>CrearUsuarioRequest valida nombre, email, password y rol. ActualizarUsuarioRequest exige nombre; tema y notificacionesActivas pueden omitirse para conservar su valor. Boolean admite null y false como casos diferentes.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/dto/CrearUsuarioRequest.java"><span><span class="code-reveal-title">Ver CrearUsuarioRequest.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/dto/CrearUsuarioRequest.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/dto/CrearUsuarioRequest.java">src/main/java/com/devsenior/campusflow/usuarios/dto/CrearUsuarioRequest.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/dto/CrearUsuarioRequest.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.dto;
+
+import com.devsenior.campusflow.usuarios.model.RolUsuario;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public class CrearUsuarioRequest {
+
+    @NotBlank
+    private String nombre;
+
+    @NotBlank
+    @Email
+    private String email;
+
+    @NotBlank
+    @Size(min = 8, message = &quot;La contraseña debe tener mínimo 8 caracteres&quot;)
+    private String password;
+
+    @NotNull
+    private RolUsuario rol;
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public RolUsuario getRol() {
+        return rol;
+    }
+
+    public void setRol(RolUsuario rol) {
+        this.rol = rol;
+    }
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/dto/ActualizarUsuarioRequest.java"><span><span class="code-reveal-title">Ver ActualizarUsuarioRequest.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/dto/ActualizarUsuarioRequest.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/dto/ActualizarUsuarioRequest.java">src/main/java/com/devsenior/campusflow/usuarios/dto/ActualizarUsuarioRequest.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/dto/ActualizarUsuarioRequest.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.dto;
+
+import com.devsenior.campusflow.usuarios.model.TemaVisual;
+import jakarta.validation.constraints.NotBlank;
+
+public class ActualizarUsuarioRequest {
+
+    @NotBlank
+    private String nombre;
+
+    private TemaVisual tema;
+
+    private Boolean notificacionesActivas;
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public TemaVisual getTema() {
+        return tema;
+    }
+
+    public void setTema(TemaVisual tema) {
+        this.tema = tema;
+    }
+
+    public Boolean getNotificacionesActivas() {
+        return notificacionesActivas;
+    }
+
+    public void setNotificacionesActivas(Boolean notificacionesActivas) {
+        this.notificacionesActivas = notificacionesActivas;
+    }
+}</code></pre></div></div></details><div class="micro-task"><span class="component-label">Predice una actualización</span><p class="micro-task-q">Si notificacionesActivas llega como false, ¿es lo mismo que no enviarlo?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">No. false pide desactivar; null significa no cambiar. Por eso el request usa Boolean y el service comprueba != null antes de actualizar.</p></details></div><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/dto/UsuarioResponse.java"><span><span class="code-reveal-title">Ver UsuarioResponse.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/dto/UsuarioResponse.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/dto/UsuarioResponse.java">src/main/java/com/devsenior/campusflow/usuarios/dto/UsuarioResponse.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/dto/UsuarioResponse.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.dto;
+
+import com.devsenior.campusflow.usuarios.model.RolUsuario;
+import com.devsenior.campusflow.usuarios.model.TemaVisual;
+
+public class UsuarioResponse {
+
+    private Long id;
+    private String nombre;
+    private String email;
+    private RolUsuario rol;
+    private TemaVisual tema;
+    private boolean notificacionesActivas;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public RolUsuario getRol() {
+        return rol;
+    }
+
+    public void setRol(RolUsuario rol) {
+        this.rol = rol;
+    }
+
+    public TemaVisual getTema() {
+        return tema;
+    }
+
+    public void setTema(TemaVisual tema) {
+        this.tema = tema;
+    }
+
+    public boolean isNotificacionesActivas() {
+        return notificacionesActivas;
+    }
+
+    public void setNotificacionesActivas(boolean notificacionesActivas) {
+        this.notificacionesActivas = notificacionesActivas;
+    }
+}</code></pre></div></div></details><p>UsuarioMapper arma el response con una lista explícita de campos. Si una fila antigua no trae el objeto de preferencias, usa valores de respaldo para la respuesta. Esto no asigna roles ni contraseñas a registros antiguos.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/mapper/UsuarioMapper.java"><span><span class="code-reveal-title">Ver UsuarioMapper.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/mapper/UsuarioMapper.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/mapper/UsuarioMapper.java">src/main/java/com/devsenior/campusflow/usuarios/mapper/UsuarioMapper.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/mapper/UsuarioMapper.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.mapper;
+
+import com.devsenior.campusflow.usuarios.dto.UsuarioResponse;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import com.devsenior.campusflow.usuarios.model.PreferenciasUsuario;
+
+public class UsuarioMapper {
+
+    public static UsuarioResponse toResponse(Usuario usuario) {
+        PreferenciasUsuario preferencias = usuario.getPreferencias();
+        if (preferencias == null) {
+            preferencias = new PreferenciasUsuario();
+        }
+        UsuarioResponse response = new UsuarioResponse();
+        response.setId(usuario.getId());
+        response.setNombre(usuario.getNombre());
+        response.setEmail(usuario.getEmail());
+        response.setRol(usuario.getRol());
+        response.setTema(preferencias.getTema());
+        response.setNotificacionesActivas(preferencias.isNotificacionesActivas());
+        return response;
+    }
+}</code></pre></div></div></details></div></section>
+<section class="section view" id="errores" data-accent="1" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🩺</span><div><span class="sec-n">09 · CampusFlow</span><h2 class="sec-t">Distinguir ausencia, conflicto y entrada inválida</h2><p class="sec-s">Los errores también forman parte del contrato HTTP.</p></div></div><div class="body"><p>findByEmail devuelve Optional: puede no existir un usuario con ese email. El service comprueba ese caso antes de crear. La restricción unique de la base es una segunda barrera, incluida la concurrencia.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/repository/UsuarioRepository.java"><span><span class="code-reveal-title">Ver UsuarioRepository.java completo</span><span class="code-reveal-note">Reemplazar · src/main/java/com/devsenior/campusflow/usuarios/repository/UsuarioRepository.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/repository/UsuarioRepository.java">src/main/java/com/devsenior/campusflow/usuarios/repository/UsuarioRepository.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/repository/UsuarioRepository.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.repository;
+
+import java.util.Optional;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UsuarioRepository extends JpaRepository&lt;Usuario, Long&gt; {
+
+    Optional&lt;Usuario&gt; findByEmail(String email);
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/common/exception/EmailDuplicadoException.java"><span><span class="code-reveal-title">Ver EmailDuplicadoException.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/common/exception/EmailDuplicadoException.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/common/exception/EmailDuplicadoException.java">src/main/java/com/devsenior/campusflow/common/exception/EmailDuplicadoException.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/common/exception/EmailDuplicadoException.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.common.exception;
+
+public class EmailDuplicadoException extends RuntimeException {
+
+    public EmailDuplicadoException(String mensaje) {
+        super(mensaje);
+    }
+}</code></pre></div></div></details><p>El handler mantiene el tratamiento de errores MVC de la Clase 13 y añade email duplicado. También responde 409 ante conflictos de integridad, como una relación que impide borrar. Los detalles SQL no se envían al cliente.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/common/exception/GlobalExceptionHandler.java"><span><span class="code-reveal-title">Ver GlobalExceptionHandler.java completo</span><span class="code-reveal-note">Reemplazar · src/main/java/com/devsenior/campusflow/common/exception/GlobalExceptionHandler.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/common/exception/GlobalExceptionHandler.java">src/main/java/com/devsenior/campusflow/common/exception/GlobalExceptionHandler.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/common/exception/GlobalExceptionHandler.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.common.exception;
+
+import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; manejarNoEncontrado(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of(&quot;error&quot;, ex.getMessage()));
+    }
+
+    @ExceptionHandler(EmailDuplicadoException.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; manejarEmailDuplicado(EmailDuplicadoException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of(&quot;error&quot;, ex.getMessage()));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; manejarIntegridad(DataIntegrityViolationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of(&quot;error&quot;, &quot;La operación entra en conflicto con datos existentes: revisa el email o las relaciones del usuario.&quot;));
+    }
+
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; manejarAutenticacion(
+            org.springframework.security.core.AuthenticationException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of(&quot;error&quot;, &quot;Credenciales inválidas&quot;));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; manejarGeneral(Exception ex) {
+        log.error(&quot;Error no controlado al procesar la petición&quot;, ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(&quot;error&quot;, &quot;Ocurrió un error interno. Intenta de nuevo.&quot;));
+    }
+}</code></pre></div></div></details><div class="table-wrap"><table class="data-table"><caption>Errores que no deben confundirse</caption><thead><tr><th scope="col">Estado</th><th scope="col">Significado en la práctica</th></tr></thead><tbody><tr><td>400</td><td>Entrada inválida por @Valid o un cuerpo que no puede interpretarse.</td></tr><tr><td>404</td><td>El usuario o curso solicitado no existe.</td></tr><tr><td>409</td><td>Email repetido o una restricción de integridad.</td></tr><tr><td>500</td><td>Fallo inesperado; respuesta genérica y registro del servidor.</td></tr></tbody></table></div><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Evitar una regresión</h3><p>Un handler genérico de Exception no debe convertir la validación de entrada en 500. ResponseEntityExceptionHandler conserva los casos MVC; esos errores pueden usar ProblemDetail, mientras los handlers propios usan el mapa error.</p></div></div></div></section>
+<section class="section view" id="usuarios-service" data-accent="2" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🧩</span><div><span class="sec-n">10 · CampusFlow</span><h2 class="sec-t">Crear, consultar, actualizar y eliminar</h2><p class="sec-s">El caso de uso reúne validación, persistencia y conversión.</p></div></div><div class="body"><div class="active-build"><div class="build-step"><span class="build-step-index">01</span><div class="build-step-copy"><h3 class="build-step-title">Crear con un orden explícito</h3><p class="build-step-purpose">Comprueba el email, calcula el hash, guarda la entidad y devuelve el DTO. Ninguna respuesta necesita password.</p><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Fragmento · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java">src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+Usuario guardado = usuarioRepository.save(usuario);
+return UsuarioMapper.toResponse(guardado);</code></pre></div></div></div><div class="build-step"><span class="build-step-index">02</span><div class="build-step-copy"><h3 class="build-step-title">Actualizar solo lo acordado</h3><p class="build-step-purpose">nombre es obligatorio; las preferencias son opcionales. email, rol y password no se modifican en este caso de uso.</p><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Fragmento · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java">src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">if (request.getTema() != null) {
+    usuario.getPreferencias().setTema(request.getTema());
+}
+if (request.getNotificacionesActivas() != null) {
+    usuario.getPreferencias().setNotificacionesActivas(request.getNotificacionesActivas());
+}</code></pre></div></div></div></div><p>@Transactional delimita la operación del service y mantiene disponible la persistencia durante la conversión a DTO. Es apoyo de implementación: no necesitas depender de una sesión abierta hasta el controller para consultar relaciones.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java"><span><span class="code-reveal-title">Ver UsuarioService.java completo</span><span class="code-reveal-note">Reemplazar · src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java">src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import com.devsenior.campusflow.common.exception.EmailDuplicadoException;
+import com.devsenior.campusflow.common.exception.ResourceNotFoundException;
+import com.devsenior.campusflow.usuarios.dto.ActualizarUsuarioRequest;
+import com.devsenior.campusflow.usuarios.dto.CrearUsuarioRequest;
+import com.devsenior.campusflow.usuarios.dto.UsuarioResponse;
+import com.devsenior.campusflow.usuarios.mapper.UsuarioMapper;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import com.devsenior.campusflow.usuarios.model.PreferenciasUsuario;
+import com.devsenior.campusflow.usuarios.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class UsuarioService {
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public UsuarioResponse crear(CrearUsuarioRequest request) {
+        usuarioRepository.findByEmail(request.getEmail()).ifPresent(usuarioExistente -&gt; {
+            throw new EmailDuplicadoException(&quot;Ya existe un usuario registrado con ese email&quot;);
+        });
+
+        Usuario usuario = new Usuario();
+        usuario.setNombre(request.getNombre());
+        usuario.setEmail(request.getEmail());
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        usuario.setRol(request.getRol());
+
+        Usuario guardado = usuarioRepository.save(usuario);
+        return UsuarioMapper.toResponse(guardado);
+    }
+
+    public List&lt;UsuarioResponse&gt; listarUsuarios() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(UsuarioMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public UsuarioResponse buscarPorId(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;No existe un usuario con id &quot; + id));
+        return UsuarioMapper.toResponse(usuario);
+    }
+
+    public UsuarioResponse actualizar(Long id, ActualizarUsuarioRequest request) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;No existe un usuario con id &quot; + id));
+
+        usuario.setNombre(request.getNombre());
+        if (usuario.getPreferencias() == null) {
+            usuario.setPreferencias(new PreferenciasUsuario());
+        }
+        if (request.getTema() != null) {
+            usuario.getPreferencias().setTema(request.getTema());
+        }
+        if (request.getNotificacionesActivas() != null) {
+            usuario.getPreferencias().setNotificacionesActivas(request.getNotificacionesActivas());
+        }
+
+        Usuario actualizado = usuarioRepository.save(usuario);
+        return UsuarioMapper.toResponse(actualizado);
+    }
+
+    public void eliminar(Long id) {
+        if (!usuarioRepository.existsById(id)) {
+            throw new ResourceNotFoundException(&quot;No existe un usuario con id &quot; + id);
+        }
+        usuarioRepository.deleteById(id);
+    }
+}</code></pre></div></div></details><div class="checkpoint"><span class="component-label">Checkpoint</span><h3>Leer sin memorizar</h3><p>findByEmail → ifPresent lanza conflicto; findById → orElseThrow lanza ausencia. eliminar verifica existencia y deja que la base impida romper referencias. Prueba 204 con un usuario sin relaciones.</p></div></div></section>
+<section class="section view" id="usuarios-controller" data-accent="3" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🌐</span><div><span class="sec-n">11 · CampusFlow</span><h2 class="sec-t">HTTP entra y sale por el controller</h2><p class="sec-s">@Valid activa las restricciones del request.</p></div></div><div class="body"><div class="table-wrap"><table class="data-table"><caption>Contrato de usuarios</caption><thead><tr><th scope="col">Método y ruta</th><th scope="col">Entrada</th><th scope="col">Salida</th></tr></thead><tbody><tr><td>POST /api/usuarios</td><td>CrearUsuarioRequest</td><td>201 · UsuarioResponse</td></tr><tr><td>GET /api/usuarios</td><td>Sin cuerpo</td><td>200 · lista de UsuarioResponse</td></tr><tr><td>GET /api/usuarios/{id}</td><td>id en URL</td><td>200 · UsuarioResponse o 404</td></tr><tr><td>PUT /api/usuarios/{id}</td><td>ActualizarUsuarioRequest</td><td>200 · UsuarioResponse</td></tr><tr><td>DELETE /api/usuarios/{id}</td><td>id en URL</td><td>204 sin cuerpo; 404 o 409 según el caso</td></tr></tbody></table></div><div class="micro-task"><span class="component-label">Conecta las piezas</span><p class="micro-task-q">¿Qué pasa si el DTO tiene @NotBlank pero este punto de entrada no activa la validación?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">En este controller MVC, @Valid sobre el request solicita que se comprueben las anotaciones antes de llamar al service. Declararlas en la clase no basta para este flujo.</p></details></div><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java"><span><span class="code-reveal-title">Ver UsuarioController.java completo</span><span class="code-reveal-note">Reemplazar · src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java">src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.controller;
+
+import java.util.List;
+import com.devsenior.campusflow.usuarios.dto.ActualizarUsuarioRequest;
+import com.devsenior.campusflow.usuarios.dto.CrearUsuarioRequest;
+import com.devsenior.campusflow.usuarios.dto.UsuarioResponse;
+import com.devsenior.campusflow.usuarios.service.UsuarioService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api/usuarios&quot;)
+public class UsuarioController {
+
+    private final UsuarioService usuarioService;
+
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;UsuarioResponse&gt; crear(@Valid @RequestBody CrearUsuarioRequest request) {
+        UsuarioResponse response = usuarioService.crear(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public List&lt;UsuarioResponse&gt; listar() {
+        return usuarioService.listarUsuarios();
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public UsuarioResponse buscarPorId(@PathVariable Long id) {
+        return usuarioService.buscarPorId(id);
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public UsuarioResponse actualizar(@PathVariable Long id, @Valid @RequestBody ActualizarUsuarioRequest request) {
+        return usuarioService.actualizar(id, request);
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; eliminar(@PathVariable Long id) {
+        usuarioService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+}</code></pre></div></div></details><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Campos permitidos no son permisos</h3><p>El PUT no aplica cambios de rol. El POST acepta rol únicamente para un administrador autenticado. SecurityConfig protege todo /api/usuarios/**; el registro público usa otro request sin rol.</p></div></div></div></section>
+<section class="section view" id="cursos-dto" data-accent="4" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">📚</span><div><span class="sec-n">12 · CampusFlow</span><h2 class="sec-t">Resumir el curso sin devolver el usuario completo</h2><p class="sec-s">Una segunda aplicación del mismo criterio de salida.</p></div></div><div class="body"><p>CrearCursoRequest pide nombre e instructorId. CursoResponse muestra id, nombre, instructorNombre y cantidadEstudiantes. No devuelve la entidad Usuario anidada ni sus relaciones.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/cursos/dto/CrearCursoRequest.java"><span><span class="code-reveal-title">Ver CrearCursoRequest.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/cursos/dto/CrearCursoRequest.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/cursos/dto/CrearCursoRequest.java">src/main/java/com/devsenior/campusflow/cursos/dto/CrearCursoRequest.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/cursos/dto/CrearCursoRequest.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.cursos.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class CrearCursoRequest {
+
+    @NotBlank
+    private String nombre;
+
+    @NotNull
+    private Long instructorId;
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Long getInstructorId() {
+        return instructorId;
+    }
+
+    public void setInstructorId(Long instructorId) {
+        this.instructorId = instructorId;
+    }
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/cursos/dto/CursoResponse.java"><span><span class="code-reveal-title">Ver CursoResponse.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/cursos/dto/CursoResponse.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/cursos/dto/CursoResponse.java">src/main/java/com/devsenior/campusflow/cursos/dto/CursoResponse.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/cursos/dto/CursoResponse.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.cursos.dto;
+
+public class CursoResponse {
+
+    private Long id;
+    private String nombre;
+    private String instructorNombre;
+    private int cantidadEstudiantes;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getInstructorNombre() {
+        return instructorNombre;
+    }
+
+    public void setInstructorNombre(String instructorNombre) {
+        this.instructorNombre = instructorNombre;
+    }
+
+    public int getCantidadEstudiantes() {
+        return cantidadEstudiantes;
+    }
+
+    public void setCantidadEstudiantes(int cantidadEstudiantes) {
+        this.cantidadEstudiantes = cantidadEstudiantes;
+    }
+}</code></pre></div></div></details><div class="micro-task"><span class="component-label">Elige la información necesaria</span><p class="micro-task-q">¿Qué necesitaría el cliente para mostrar una tarjeta de curso: todo Usuario o el nombre del instructor?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">Este contrato elige el nombre y el número de estudiantes. El mapper selecciona esos datos y evita serializar el grafo completo de entidades.</p></details></div><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/cursos/mapper/CursoMapper.java"><span><span class="code-reveal-title">Ver CursoMapper.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/cursos/mapper/CursoMapper.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/cursos/mapper/CursoMapper.java">src/main/java/com/devsenior/campusflow/cursos/mapper/CursoMapper.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/cursos/mapper/CursoMapper.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.cursos.mapper;
+
+import com.devsenior.campusflow.cursos.dto.CursoResponse;
+import com.devsenior.campusflow.cursos.model.Curso;
+
+public class CursoMapper {
+
+    public static CursoResponse toResponse(Curso curso) {
+        CursoResponse response = new CursoResponse();
+        response.setId(curso.getId());
+        response.setNombre(curso.getNombre());
+        response.setInstructorNombre(
+                curso.getInstructor() != null ? curso.getInstructor().getNombre() : null);
+        response.setCantidadEstudiantes(curso.getEstudiantes().size());
+        return response;
+    }
+}</code></pre></div></div></details><div class="checkpoint"><span class="component-label">Checkpoint</span><h3>Comprueba la intención</h3><p>instructorNombre puede ser null para un curso antiguo sin instructor. cantidadEstudiantes se calcula desde la colección mientras la operación del service mantiene la sesión disponible.</p></div></div></section>
+<section class="section view" id="cursos-service" data-accent="1" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🧑‍🏫</span><div><span class="sec-n">13 · CampusFlow</span><h2 class="sec-t">Asignar instructor e inscribir un estudiante</h2><p class="sec-s">Las escrituras se realizan desde Curso, el lado propietario.</p></div></div><div class="body"><div class="active-build"><div class="build-step"><span class="build-step-index">01</span><div class="build-step-copy"><h3 class="build-step-title">Asignar por identidad existente</h3><p class="build-step-purpose">Busca instructorId; si no existe, responde 404. La relación se guarda con curso.setInstructor(instructor).</p><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Fragmento · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java">src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">Curso curso = new Curso();
+curso.setNombre(request.getNombre());
+curso.setInstructor(instructor);</code></pre></div></div></div><div class="build-step"><span class="build-step-index">02</span><div class="build-step-copy"><h3 class="build-step-title">Inscribir desde el propietario</h3><p class="build-step-purpose">Obtiene curso y estudiante, añade el usuario a curso.estudiantes y guarda. La respuesta sigue siendo CursoResponse.</p><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Fragmento · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java">src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">curso.getEstudiantes().add(estudiante);
+Curso actualizado = cursoRepository.save(curso);
+return CursoMapper.toResponse(actualizado);</code></pre></div></div></div></div><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java"><span><span class="code-reveal-title">Ver CursoService.java completo</span><span class="code-reveal-note">Reemplazar · src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java">src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.cursos.service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import com.devsenior.campusflow.common.exception.ResourceNotFoundException;
+import com.devsenior.campusflow.cursos.dto.CrearCursoRequest;
+import com.devsenior.campusflow.cursos.dto.CursoResponse;
+import com.devsenior.campusflow.cursos.mapper.CursoMapper;
+import com.devsenior.campusflow.cursos.model.Curso;
+import com.devsenior.campusflow.cursos.repository.CursoRepository;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import com.devsenior.campusflow.usuarios.repository.UsuarioRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class CursoService {
+
+    private final CursoRepository cursoRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    public CursoService(CursoRepository cursoRepository, UsuarioRepository usuarioRepository) {
+        this.cursoRepository = cursoRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    public CursoResponse crear(CrearCursoRequest request) {
+        Usuario instructor = usuarioRepository.findById(request.getInstructorId())
+                .orElseThrow(() -&gt; new ResourceNotFoundException(
+                        &quot;No existe un usuario con id &quot; + request.getInstructorId()));
+
+        Curso curso = new Curso();
+        curso.setNombre(request.getNombre());
+        curso.setInstructor(instructor);
+
+        Curso guardado = cursoRepository.save(curso);
+        return CursoMapper.toResponse(guardado);
+    }
+
+    public List&lt;CursoResponse&gt; listarCursos() {
+        return cursoRepository.findAll()
+                .stream()
+                .map(CursoMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public CursoResponse inscribirEstudiante(Long cursoId, Long estudianteId) {
+        Curso curso = cursoRepository.findById(cursoId)
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;No existe un curso con id &quot; + cursoId));
+
+        Usuario estudiante = usuarioRepository.findById(estudianteId)
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;No existe un usuario con id &quot; + estudianteId));
+
+        curso.getEstudiantes().add(estudiante);
+        Curso actualizado = cursoRepository.save(curso);
+        return CursoMapper.toResponse(actualizado);
+    }
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/cursos/controller/CursoController.java"><span><span class="code-reveal-title">Ver CursoController.java completo</span><span class="code-reveal-note">Reemplazar · src/main/java/com/devsenior/campusflow/cursos/controller/CursoController.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/cursos/controller/CursoController.java">src/main/java/com/devsenior/campusflow/cursos/controller/CursoController.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/cursos/controller/CursoController.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.cursos.controller;
+
+import java.util.List;
+import com.devsenior.campusflow.cursos.dto.CrearCursoRequest;
+import com.devsenior.campusflow.cursos.dto.CursoResponse;
+import com.devsenior.campusflow.cursos.service.CursoService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api/cursos&quot;)
+public class CursoController {
+
+    private final CursoService cursoService;
+
+    public CursoController(CursoService cursoService) {
+        this.cursoService = cursoService;
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;CursoResponse&gt; crear(@Valid @RequestBody CrearCursoRequest request) {
+        CursoResponse response = cursoService.crear(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public List&lt;CursoResponse&gt; listar() {
+        return cursoService.listarCursos();
+    }
+
+    @PostMapping(&quot;/{cursoId}/estudiantes/{estudianteId}&quot;)
+    public CursoResponse inscribirEstudiante(@PathVariable Long cursoId, @PathVariable Long estudianteId) {
+        return cursoService.inscribirEstudiante(cursoId, estudianteId);
+    }
+}</code></pre></div></div></details><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Límites deliberados del ejercicio</h3><p>Esta versión no comprueba que el instructor tenga rol INSTRUCTOR ni evita inscripciones repetidas. Durante la secuencia guiada usa los roles indicados y realiza una sola inscripción. Esas reglas quedan pendientes, como indica la guía.</p></div></div><div class="checkpoint"><span class="component-label">Checkpoint</span><h3>Terminar antes de arrancar</h3><p>Continúa con registro, JWT y SecurityConfig antes de reiniciar. POST /api/cursos crea con body; POST /api/cursos/{cursoId}/estudiantes/{estudianteId} inscribe sin body.</p></div></div></section>
+<section class="section view" id="auth-contratos" data-accent="2" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🪪</span><div><span class="sec-n">14 · CampusFlow</span><h2 class="sec-t">Registrarse no es administrar usuarios</h2><p class="sec-s">Repaso aplicado del login de la Clase 11.</p></div></div><div class="body"><div class="micro-task"><span class="component-label">Evita la autoasignación</span><p class="micro-task-q">Si el registro es público, ¿quién debe elegir el rol de la nueva cuenta?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">El servidor. RegistroRequest no admite rol y AuthService siempre asigna ESTUDIANTE. CrearUsuarioRequest sí acepta rol, pero solo lo usa el CRUD protegido de administradores.</p></details></div><div class="cards"><div class="card" data-accent="1"><b>RegistroRequest</b><p>nombre, email y password validados. El cliente no decide sus permisos.</p></div><div class="card" data-accent="2"><b>LoginRequest</b><p>email y password obligatorios. AuthenticationManager verifica las credenciales.</p></div><div class="card" data-accent="3"><b>AuthResponse</b><p>Solo el token. Su contenido firmado incluye email y rol; no incluyas secretos en sus claims.</p></div></div><p>La validación se activa con @Valid en AuthController. Los archivos completos ya incluyen getters, setters y restricciones.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/dto/RegistroRequest.java"><span><span class="code-reveal-title">Ver RegistroRequest.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/dto/RegistroRequest.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/dto/RegistroRequest.java">src/main/java/com/devsenior/campusflow/usuarios/dto/RegistroRequest.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/dto/RegistroRequest.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public class RegistroRequest {
+
+    @NotBlank
+    private String nombre;
+    @NotBlank
+    @Email
+    private String email;
+    @NotBlank
+    @Size(min = 8, max = 72)
+    private String password;
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/dto/LoginRequest.java"><span><span class="code-reveal-title">Ver LoginRequest.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/dto/LoginRequest.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/dto/LoginRequest.java">src/main/java/com/devsenior/campusflow/usuarios/dto/LoginRequest.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/dto/LoginRequest.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public class LoginRequest {
+
+    @NotBlank
+    @Email
+    private String email;
+    @NotBlank
+    private String password;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/dto/AuthResponse.java"><span><span class="code-reveal-title">Ver AuthResponse.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/dto/AuthResponse.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/dto/AuthResponse.java">src/main/java/com/devsenior/campusflow/usuarios/dto/AuthResponse.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/dto/AuthResponse.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.dto;
+
+public class AuthResponse {
+
+    private String token;
+
+    public AuthResponse(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
+}</code></pre></div></div></details></div></section>
+<section class="section view" id="jwt" data-accent="3" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🔏</span><div><span class="sec-n">15 · CampusFlow</span><h2 class="sec-t">Firmar la identidad y validar el token</h2><p class="sec-s">Un JWT firmado puede leerse; la firma permite detectar alteraciones.</p></div></div><div class="body"><p>JwtService genera un token con email como subject, un claim rol y expiración de una hora. Al leerlo, parseSignedClaims verifica la firma y la expiración. El filtro usará extraerEmail, que realiza ese parseo; esValido queda disponible como consulta booleana.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/security/JwtService.java"><span><span class="code-reveal-title">Ver JwtService.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/security/JwtService.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/security/JwtService.java">src/main/java/com/devsenior/campusflow/security/JwtService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/security/JwtService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.security;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Service;
+import javax.crypto.SecretKey;
+import java.util.Date;
+import io.jsonwebtoken.io.Decoders;
+import org.springframework.beans.factory.annotation.Value;
+
+@Service
+public class JwtService {
+
+    private final SecretKey clave;
+
+    public JwtService(@Value(&quot;${JWT_SECRET}&quot;) String secretoBase64) {
+        this.clave = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretoBase64));
+    }
+
+    private final long expiracionMs = 1000 * 60 * 60; // 1 hora
+
+    public String generarToken(String email, String rol) {
+        Date ahora = new Date();
+        Date expira = new Date(ahora.getTime() + expiracionMs);
+        return Jwts.builder()
+                .subject(email)
+                .claim(&quot;rol&quot;, rol)
+                .issuedAt(ahora)
+                .expiration(expira)
+                .signWith(clave)
+                .compact();
+    }
+
+    public String extraerEmail(String token) {
+        return parsearClaims(token).getSubject();
+    }
+
+    public boolean esValido(String token) {
+        try {
+            parsearClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private Claims parsearClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(clave)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+}</code></pre></div></div></details><div class="micro-task"><span class="component-label">Verifica la confianza</span><p class="micro-task-q">¿Cambiar ESTUDIANTE por ADMINISTRADOR en el texto del token concede permisos?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">No. Modificar un token firmado invalida la firma. Además, este filtro toma las autoridades de la base de datos mediante UsuarioDetailsService; el claim rol es una fotografía del momento del login.</p></details></div><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Clave fuera del código</h3><p>JwtService lee JWT_SECRET en Base64. Generarás una clave aleatoria de 48 bytes antes de arrancar. Consérvala para reutilizar los tokens; si cambias la clave, los tokens anteriores dejan de validar. No la guardes en Git ni la compartas junto con la SPA.</p></div></div></div></section>
+<section class="section view" id="auth-servicio" data-accent="4" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🔑</span><div><span class="sec-n">16 · CampusFlow</span><h2 class="sec-t">Registrar con un rol fijo; entrar con credenciales</h2><p class="sec-s">AuthService conecta repositorio, encoder y AuthenticationManager.</p></div></div><div class="body"><div class="active-build"><div class="build-step"><span class="build-step-index">01</span><div class="build-step-copy"><h3 class="build-step-title">Registro público</h3><p class="build-step-purpose">Comprueba email duplicado, calcula BCrypt, asigna ESTUDIANTE y guarda. Devuelve un token mediante AuthResponse.</p><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Fragmento · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java">src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+usuario.setRol(RolUsuario.ESTUDIANTE);
+usuarioRepository.save(usuario);</code></pre></div></div></div><div class="build-step"><span class="build-step-index">02</span><div class="build-step-copy"><h3 class="build-step-title">Login</h3><p class="build-step-purpose">AuthenticationManager utiliza UsuarioDetailsService y PasswordEncoder. Solo si las credenciales coinciden se genera el token.</p><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Fragmento · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java">src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(
+                request.getEmail(), request.getPassword()));</code></pre></div></div></div></div><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java"><span><span class="code-reveal-title">Ver AuthService.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java">src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.service;
+
+import com.devsenior.campusflow.common.exception.EmailDuplicadoException;
+import com.devsenior.campusflow.common.exception.ResourceNotFoundException;
+import com.devsenior.campusflow.security.JwtService;
+import com.devsenior.campusflow.usuarios.dto.AuthResponse;
+import com.devsenior.campusflow.usuarios.dto.LoginRequest;
+import com.devsenior.campusflow.usuarios.dto.RegistroRequest;
+import com.devsenior.campusflow.usuarios.model.RolUsuario;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import com.devsenior.campusflow.usuarios.repository.UsuarioRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class AuthService {
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+
+    public AuthService(UsuarioRepository usuarioRepository,
+                       PasswordEncoder passwordEncoder,
+                       AuthenticationManager authenticationManager,
+                       JwtService jwtService) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+    }
+
+    public AuthResponse registrar(RegistroRequest request) {
+        usuarioRepository.findByEmail(request.getEmail()).ifPresent(usuarioExistente -&gt; {
+            throw new EmailDuplicadoException(&quot;Ya existe un usuario registrado con ese email&quot;);
+        });
+
+        Usuario usuario = new Usuario();
+        usuario.setNombre(request.getNombre());
+        usuario.setEmail(request.getEmail());
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        usuario.setRol(RolUsuario.ESTUDIANTE);
+        usuarioRepository.save(usuario);
+
+        String token = jwtService.generarToken(usuario.getEmail(), usuario.getRol().name());
+        return new AuthResponse(token);
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(), request.getPassword()));
+
+        Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;No existe un usuario con ese email&quot;));
+        String token = jwtService.generarToken(usuario.getEmail(), usuario.getRol().name());
+        return new AuthResponse(token);
+    }
+}</code></pre></div></div></details><p>AuthController activa @Valid y ofrece POST /api/auth/register y POST /api/auth/login. Ambos responden 200 con {token}; un registro duplicado responde 409, una entrada inválida 400 y credenciales incorrectas 401.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/controller/AuthController.java"><span><span class="code-reveal-title">Ver AuthController.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/usuarios/controller/AuthController.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/controller/AuthController.java">src/main/java/com/devsenior/campusflow/usuarios/controller/AuthController.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/controller/AuthController.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.controller;
+
+import com.devsenior.campusflow.usuarios.dto.AuthResponse;
+import com.devsenior.campusflow.usuarios.dto.LoginRequest;
+import com.devsenior.campusflow.usuarios.dto.RegistroRequest;
+import com.devsenior.campusflow.usuarios.service.AuthService;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api/auth&quot;)
+public class AuthController {
+
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
+    @PostMapping(&quot;/register&quot;)
+    public AuthResponse register(@Valid @RequestBody RegistroRequest request) {
+        return authService.registrar(request);
+    }
+
+    @PostMapping(&quot;/login&quot;)
+    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
+        return authService.login(request);
+    }
+}</code></pre></div></div></details><div class="checkpoint"><span class="component-label">Checkpoint</span><h3>Misma tabla, permisos distintos</h3><p>Registrar una cuenta propia como estudiante es público. Crear cuentas con un rol elegido en /api/usuarios exige ADMINISTRADOR.</p></div></div></section>
+<section class="section view" id="jwt-filtro" data-accent="1" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🛂</span><div><span class="sec-n">17 · CampusFlow</span><h2 class="sec-t">Cargar la identidad antes de autorizar</h2><p class="sec-s">La firma valida el token; la base aporta el rol vigente.</p></div></div><div class="body"><p>UsuarioDetailsService busca por email y convierte el usuario a UserDetails. roles agrega el prefijo ROLE_ que compara hasRole. Los registros antiguos sin rol o password deben migrarse antes de autenticarse.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/security/UsuarioDetailsService.java"><span><span class="code-reveal-title">Ver UsuarioDetailsService.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/security/UsuarioDetailsService.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/security/UsuarioDetailsService.java">src/main/java/com/devsenior/campusflow/security/UsuarioDetailsService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/security/UsuarioDetailsService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.security;
+
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import com.devsenior.campusflow.usuarios.repository.UsuarioRepository;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UsuarioDetailsService implements UserDetailsService {
+
+    private final UsuarioRepository usuarioRepository;
+
+    public UsuarioDetailsService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -&gt; new UsernameNotFoundException(&quot;Usuario no encontrado&quot;));
+
+        if (usuario.getRol() == null || usuario.getPassword() == null) {
+            throw new UsernameNotFoundException(&quot;Usuario sin credenciales completas&quot;);
+        }
+
+        return User.withUsername(usuario.getEmail())
+                .password(usuario.getPassword())
+                .roles(usuario.getRol().name())
+                .build();
+    }
+}</code></pre></div></div></details><p>JwtAuthFilter lee Bearer, valida y extrae el subject, carga el usuario y coloca sus autoridades en SecurityContextHolder. Un token vencido, alterado o de una cuenta inexistente devuelve 401. Sin Bearer continúa sin autenticar; la regla de la ruta decidirá el acceso.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/security/JwtAuthFilter.java"><span><span class="code-reveal-title">Ver JwtAuthFilter.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/security/JwtAuthFilter.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/security/JwtAuthFilter.java">src/main/java/com/devsenior/campusflow/security/JwtAuthFilter.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/security/JwtAuthFilter.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import java.io.IOException;
+import io.jsonwebtoken.JwtException;
+import org.springframework.security.core.AuthenticationException;
+
+@Component
+public class JwtAuthFilter extends OncePerRequestFilter {
+
+    private final JwtService jwtService;
+    private final UsuarioDetailsService usuarioDetailsService;
+
+    public JwtAuthFilter(JwtService jwtService, UsuarioDetailsService usuarioDetailsService) {
+        this.jwtService = jwtService;
+        this.usuarioDetailsService = usuarioDetailsService;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String header = request.getHeader(&quot;Authorization&quot;);
+
+        if (header == null || !header.startsWith(&quot;Bearer &quot;)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            try {
+                String email = jwtService.extraerEmail(token);
+                if (email == null || email.isBlank()) {
+                    throw new IllegalArgumentException(&quot;Token sin identidad&quot;);
+                }
+                UserDetails userDetails = usuarioDetailsService.loadUserByUsername(email);
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            } catch (JwtException | IllegalArgumentException | AuthenticationException ex) {
+                SecurityContextHolder.clearContext();
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType(&quot;application/json&quot;);
+                response.setCharacterEncoding(&quot;UTF-8&quot;);
+                response.getWriter().write(&quot;{\&quot;error\&quot;:\&quot;Token inválido o usuario no disponible\&quot;}&quot;);
+                return;
+            }
+        }
+
+        filterChain.doFilter(request, response);
+    }
+}</code></pre></div></div></details><div class="micro-task"><span class="component-label">Predice el cambio</span><p class="micro-task-q">Un administrador pierde su rol en la base. ¿Su token anterior mantiene los permisos hasta vencer?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">En esta implementación, no. La siguiente petición vuelve a cargar el rol desde la base y ya no autoriza como administrador. El claim puede seguir mostrando el rol anterior, pero no se usa para construir las autoridades. STATELESS significa que no se conserva una sesión HTTP de autenticación; permite consultar la base.</p></details></div><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Token inválido en una ruta pública</h3><p>Este filtro rechaza con 401 un Bearer inválido incluso en el catálogo. Para consultar como visitante elimina la cabecera Authorization.</p></div></div></div></section>
+<section class="section view" id="permisos" data-accent="2" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🛡️</span><div><span class="sec-n">18 · CampusFlow</span><h2 class="sec-t">Autorizar según la ruta y el método</h2><p class="sec-s">Las reglas se evalúan en orden; se aplica la primera coincidencia.</p></div></div><div class="body"><div class="table-wrap"><table class="data-table"><caption>Permisos de CampusFlow</caption><thead><tr><th scope="col">Operación</th><th scope="col">Acceso</th></tr></thead><tbody><tr><td>POST /api/auth/register y /api/auth/login</td><td>Público; registro siempre ESTUDIANTE.</td></tr><tr><td>GET /api/cursos/**</td><td>Público.</td></tr><tr><td>POST /api/cursos</td><td>INSTRUCTOR o ADMINISTRADOR.</td></tr><tr><td>/api/usuarios/**</td><td>Solo ADMINISTRADOR, incluido el ejercicio de cursos dictados.</td></tr><tr><td>POST /api/cursos/{id}/estudiantes/{id}</td><td>Cualquier usuario autenticado.</td></tr></tbody></table></div><p>SecurityConfig registra la cadena sin sesión HTTP, desactiva CSRF para esta API que recibe Bearer en una cabecera y ubica JwtAuthFilter antes del filtro de usuario/contraseña. Si luego se autentica con cookies, hay que revisar la protección CSRF. La configuración evita registrar JwtAuthFilter dos veces.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/security/SecurityConfig.java"><span><span class="code-reveal-title">Ver SecurityConfig.java completo</span><span class="code-reveal-note">Crear · src/main/java/com/devsenior/campusflow/security/SecurityConfig.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/security/SecurityConfig.java">src/main/java/com/devsenior/campusflow/security/SecurityConfig.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/security/SecurityConfig.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.security;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+public class SecurityConfig {
+
+    private final JwtAuthFilter jwtAuthFilter;
+
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -&gt; csrf.disable())
+            .authorizeHttpRequests(auth -&gt; auth
+                .requestMatchers(&quot;/api/auth/**&quot;).permitAll()
+                .requestMatchers(HttpMethod.GET, &quot;/api/cursos/**&quot;).permitAll()
+                .requestMatchers(HttpMethod.POST, &quot;/api/cursos&quot;).hasAnyRole(&quot;INSTRUCTOR&quot;, &quot;ADMINISTRADOR&quot;)
+                .requestMatchers(&quot;/api/usuarios/**&quot;).hasRole(&quot;ADMINISTRADOR&quot;)
+                .anyRequest().authenticated()
+            )
+            .exceptionHandling(ex -&gt; ex
+                .authenticationEntryPoint((request, response, error) -&gt; {
+                    response.setStatus(401);
+                    response.setContentType(&quot;application/json&quot;);
+                    response.setCharacterEncoding(&quot;UTF-8&quot;);
+                    response.getWriter().write(&quot;{\&quot;error\&quot;:\&quot;Autenticación requerida\&quot;}&quot;);
+                })
+                .accessDeniedHandler((request, response, error) -&gt; {
+                    response.setStatus(403);
+                    response.setContentType(&quot;application/json&quot;);
+                    response.setCharacterEncoding(&quot;UTF-8&quot;);
+                    response.getWriter().write(&quot;{\&quot;error\&quot;:\&quot;Permisos insuficientes\&quot;}&quot;);
+                })
+            )
+            .sessionManagement(sm -&gt; sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public org.springframework.boot.web.servlet.FilterRegistrationBean&lt;JwtAuthFilter&gt; registroJwt(
+            JwtAuthFilter filter) {
+        var registro = new org.springframework.boot.web.servlet.FilterRegistrationBean&lt;&gt;(filter);
+        registro.setEnabled(false);
+        return registro;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+            throws Exception {
+        return config.getAuthenticationManager();
+    }
+}</code></pre></div></div></details><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Conserva una sola configuración</h3><p>El estado final usa security/SecurityConfig.java. Si existe config/SecurityConfig.java de la versión anterior o del paso temporal de la guía, elimina ese archivo del proyecto antes de arrancar. Dos clases con ese nombre pueden colisionar al registrar beans.</p></div></div><div class="table-wrap"><table class="data-table"><caption>Contrato explícito de errores</caption><thead><tr><th scope="col">Respuesta</th><th scope="col">Qué significa</th></tr></thead><tbody><tr><td>401</td><td>No se pudo autenticar: falta token en ruta protegida, token inválido o login incorrecto.</td></tr><tr><td>403</td><td>Identidad válida cuyo rol actual no permite la operación.</td></tr></tbody></table></div><div class="checkpoint"><span class="component-label">Checkpoint</span><h3>Límite de la regla de inscripción</h3><p>Autenticarse no prueba que estudianteId sea el propio usuario. Esa validación por recurso, los roles del usuario asignado y los duplicados siguen pendientes.</p></div></div></section>
+<section class="section view" id="arranque" data-accent="3" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">▶</span><div><span class="sec-n">19 · CampusFlow</span><h2 class="sec-t">Preparar el entorno y arrancar la versión completa</h2><p class="sec-s">Cursor + Java 17 + Maven + MySQL de laboratorio.</p></div></div><div class="body"><ul class="checklist"><li>Instala Extension Pack for Java y Spring Boot Extension Pack en Cursor. Usa Java: Reload Projects después del POM final.</li><li>Conserva los perfiles y las variables de conexión de la Clase 13. MySQL local debe estar disponible y DB_PASSWORD configurada.</li><li>Confirma que solo existe security/SecurityConfig.java y que todos los archivos anteriores están guardados.</li><li>Genera JWT_SECRET en la terminal integrada de PowerShell. Arranca desde esa misma terminal para que el proceso herede la variable.</li></ul><p>El siguiente bloque genera una clave aleatoria para esta sesión y ejecuta el perfil dev. No imprime la clave. Maven debe estar disponible; si el proyecto tiene wrapper, puedes sustituir mvn por .\mvnw.cmd.</p><div class="code-block"><div class="code-head"><div><span class="code-context">Ejecutar · text</span><span class="code-file" title="Terminal integrada · PowerShell">Terminal integrada · PowerShell</span></div><button class="copy-btn" type="button" aria-label="Copiar Terminal integrada · PowerShell">Copiar</button></div><pre class="line-numbers"><code class="language-plaintext">$jwtBytes = New-Object byte[] 48
+$jwtRng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$jwtRng.GetBytes($jwtBytes)
+$jwtRng.Dispose()
+$env:JWT_SECRET = [Convert]::ToBase64String($jwtBytes)
+mvn spring-boot:run &quot;-Dspring-boot.run.profiles=dev&quot;</code></pre></div><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Reiniciar y depurar</h3><p>Para reiniciar desde la misma terminal, repite solo el comando Maven: conserva la clave. Si usas Run and Debug, configura JWT_SECRET y las variables de base en el entorno de ese proceso; una variable creada en la terminal no modifica el entorno del editor.</p></div></div><div class="micro-task"><span class="component-label">Cursor con criterio</span><p class="micro-task-q">¿Qué le pedirías a la IA antes de aceptar una configuración de seguridad?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">Primero define tú qué rol necesita cada ruta. Después pide contrastar esa matriz con SecurityConfig, sin cambiar permisos. Revisa el resultado y prueba casos permitidos y denegados en Postman.</p></details></div></div></section>
+<section class="section view" id="primer-admin" data-accent="4" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">👤</span><div><span class="sec-n">20 · CampusFlow</span><h2 class="sec-t">Crear el primer administrador de laboratorio</h2><p class="sec-s">Un único email conecta registro, SQL y login.</p></div></div><div class="body"><p>En Postman crea baseUrl = http://localhost:8080. Configura Body → raw → JSON. Usa No Auth para registro y login; no heredes un token vencido de la colección.</p><div class="panel"><h3>1 · Registrar la cuenta inicial</h3><p>POST {{baseUrl}}/api/auth/register. Espera 200 y guarda token como tokenInicial. En este momento la cuenta es ESTUDIANTE.</p></div><div class="code-block"><div class="code-head"><div><span class="code-context">Body en Postman · json</span><span class="code-file" title="Registro de administrador inicial · JSON">Registro de administrador inicial · JSON</span></div><button class="copy-btn" type="button" aria-label="Copiar Registro de administrador inicial · JSON">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  &quot;nombre&quot;: &quot;Administrador de laboratorio&quot;,
+  &quot;email&quot;: &quot;admin@campusflow.com&quot;,
+  &quot;password&quot;: &quot;claveSegura123&quot;
+}</code></pre></div><div class="panel"><h3>2 · Verificar y promover</h3><p>GET {{baseUrl}}/api/usuarios con Bearer {{tokenInicial}} devuelve 403. En tu cliente MySQL, selecciona la base dev de CampusFlow y promueve exactamente la cuenta recién registrada.</p></div><div class="code-block"><div class="code-head"><div><span class="code-context">Ejecutar · sql</span><span class="code-file" title="Cliente MySQL · base dev de CampusFlow">Cliente MySQL · base dev de CampusFlow</span></div><button class="copy-btn" type="button" aria-label="Copiar Cliente MySQL · base dev de CampusFlow">Copiar</button></div><pre class="line-numbers"><code class="language-sql">UPDATE usuarios SET rol = 'ADMINISTRADOR'
+WHERE email = 'admin@campusflow.com';
+
+SELECT id, email, rol FROM usuarios
+WHERE email = 'admin@campusflow.com';</code></pre></div><div class="panel"><h3>3 · Entrar como administrador</h3><p>POST {{baseUrl}}/api/auth/login. Espera 200 y guarda token como tokenAdmin. Usa Authorization → Bearer Token → {{tokenAdmin}} en las siguientes peticiones administrativas.</p></div><div class="code-block"><div class="code-head"><div><span class="code-context">Body en Postman · json</span><span class="code-file" title="Login administrador · JSON">Login administrador · JSON</span></div><button class="copy-btn" type="button" aria-label="Copiar Login administrador · JSON">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  &quot;email&quot;: &quot;admin@campusflow.com&quot;,
+  &quot;password&quot;: &quot;claveSegura123&quot;
+}</code></pre></div><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Qué cambia al volver a entrar</h3><p>El token nuevo refleja ADMINISTRADOR en su claim. El token inicial válido también autorizaría después de la promoción, porque el filtro lee el rol de la base. Se hace login otra vez para mantener coherente la información del token con la cuenta actual.</p></div></div></div></section>
+<section class="section view" id="pruebas-seguridad" data-accent="1" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🧪</span><div><span class="sec-n">21 · CampusFlow</span><h2 class="sec-t">Probar tanto permisos como rechazos</h2><p class="sec-s">Una respuesta 200 no basta para verificar la seguridad.</p></div></div><div class="body"><div class="table-wrap"><table class="data-table"><caption>Antes del CRUD</caption><thead><tr><th scope="col">Prueba</th><th scope="col">Resultado esperado</th></tr></thead><tbody><tr><td>GET /api/cursos con No Auth</td><td>200.</td></tr><tr><td>GET /api/usuarios con No Auth</td><td>401.</td></tr><tr><td>GET /api/usuarios con tokenAdmin</td><td>200.</td></tr><tr><td>Login con email válido y contraseña incorrecta</td><td>401 genérico, sin indicar si el email existe.</td></tr><tr><td>Registro vacío o email mal formado</td><td>400, sin insertar usuario.</td></tr><tr><td>Repetir el registro de admin@campusflow.com</td><td>409.</td></tr><tr><td>GET /api/usuarios con un Bearer alterado o vencido</td><td>401.</td></tr></tbody></table></div><p>Para probar un token alterado, modifica un carácter de su contenido firmado y conserva el original en tokenAdmin. El vencimiento de esta clase es una hora. No pegues tokens reales en servicios externos para inspeccionarlos.</p><div class="checkpoint"><span class="component-label">Checkpoint</span><h3>Continúa con identidad explícita</h3><p>En las pruebas de usuarios usarás tokenAdmin. Después crearás tokens de instructor y estudiante para contrastar sus permisos.</p></div></div></section>
+<section class="section view" id="pruebas-usuarios" data-accent="2" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🧪</span><div><span class="sec-n">22 · CampusFlow</span><h2 class="sec-t">Probar el CRUD con respuestas observables</h2><p class="sec-s">En Postman, baseUrl = http://localhost:8080.</p></div></div><div class="body"><p>Usa Bearer {{tokenAdmin}} en todas las peticiones de esta escena. Usa una base de laboratorio y guarda los ids devueltos como variables de Postman. Carla y su payload provienen de la traza de la guía; los otros usuarios son datos propuestos para completar la prueba. No presupongas que los ids comienzan en 1.</p><div class="panel"><h3>1 · Crear instructora</h3><p>POST {{baseUrl}}/api/usuarios · Body → raw → JSON. Espera 201, tema CLARO y notificacionesActivas true. Guarda id como instructorId. La respuesta no contiene password.</p></div><div class="code-block"><div class="code-head"><div><span class="code-context">Body en Postman · json</span><span class="code-file" title="Crear instructora · JSON">Crear instructora · JSON</span></div><button class="copy-btn" type="button" aria-label="Copiar Crear instructora · JSON">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  &quot;nombre&quot;: &quot;Carla Ríos&quot;,
+  &quot;email&quot;: &quot;carla@correo.com&quot;,
+  &quot;password&quot;: &quot;claveSegura123&quot;,
+  &quot;rol&quot;: &quot;INSTRUCTOR&quot;
+}</code></pre></div><div class="panel"><h3>2 · Crear estudiante</h3><p>POST {{baseUrl}}/api/usuarios con este body. Espera 201 y guarda id como estudianteId.</p></div><div class="code-block"><div class="code-head"><div><span class="code-context">Body en Postman · json</span><span class="code-file" title="Crear estudiante · JSON">Crear estudiante · JSON</span></div><button class="copy-btn" type="button" aria-label="Copiar Crear estudiante · JSON">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  &quot;nombre&quot;: &quot;Estudiante de prueba&quot;,
+  &quot;email&quot;: &quot;estudiante.clase14@correo.com&quot;,
+  &quot;password&quot;: &quot;claveSegura123&quot;,
+  &quot;rol&quot;: &quot;ESTUDIANTE&quot;
+}</code></pre></div><ul class="checklist"><li>3 · Repite el POST de Carla con el mismo email: 409. No cambies el email para esa prueba.</li><li>4 · GET {{baseUrl}}/api/usuarios: 200 y ninguna contraseña ni hash en la lista.</li><li>5 · GET {{baseUrl}}/api/usuarios/{{idInexistente}}: 404. Usa un id que hayas comprobado que no está en el listado.</li></ul><div class="panel"><h3>6 · Actualizar instructora</h3><p>PUT {{baseUrl}}/api/usuarios/{{instructorId}}. Espera 200. nombre y tema cambian; email y rol permanecen iguales.</p></div><div class="code-block"><div class="code-head"><div><span class="code-context">Body en Postman · json</span><span class="code-file" title="Actualizar instructora · JSON">Actualizar instructora · JSON</span></div><button class="copy-btn" type="button" aria-label="Copiar Actualizar instructora · JSON">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  &quot;nombre&quot;: &quot;Carla Ríos actualizada&quot;,
+  &quot;tema&quot;: &quot;OSCURO&quot;,
+  &quot;notificacionesActivas&quot;: false
+}</code></pre></div><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Comprobar también la entrada</h3><p>Un email mal formado o una contraseña de menos de ocho caracteres debe producir 400. No debe crear un registro ni devolver el password rechazado. Para repetir toda la práctica, conserva los ids o usa nuevos emails únicos.</p></div></div></div></section>
+<section class="section view" id="pruebas-cursos" data-accent="3" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">✅</span><div><span class="sec-n">23 · CampusFlow</span><h2 class="sec-t">Conectar el curso y comprobar la inscripción</h2><p class="sec-s">Reutiliza los ids y prepara los tokens de cada rol.</p></div></div><div class="body"><p>Usa POST /api/auth/login con carla@correo.com y claveSegura123 para guardar tokenInstructor; repite con estudiante.clase14@correo.com y la misma contraseña para tokenEstudiante. El login usa No Auth. GET /api/usuarios con tokenEstudiante debe responder 403; sin token, 401.</p><div class="panel"><h3>7 · Crear curso</h3><p>POST {{baseUrl}}/api/cursos con tokenInstructor o tokenAdmin. Con tokenEstudiante debe responder 403, sin crear el curso. El siguiente body es una plantilla Postman: instructorId se sustituye por un número desde la variable guardada. Espera 201; instructorNombre debe ser Carla Ríos actualizada. Guarda id como cursoId.</p></div><div class="code-block"><div class="code-head"><div><span class="code-context">Body en Postman · json</span><span class="code-file" title="Crear curso · plantilla JSON de Postman">Crear curso · plantilla JSON de Postman</span></div><button class="copy-btn" type="button" aria-label="Copiar Crear curso · plantilla JSON de Postman">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  &quot;nombre&quot;: &quot;Java Básico&quot;,
+  &quot;instructorId&quot;: {{instructorId}}
+}</code></pre></div><div class="panel"><h3>8 · Inscribir una sola vez</h3><p>POST {{baseUrl}}/api/cursos/{{cursoId}}/estudiantes/{{estudianteId}}, sin body y con tokenEstudiante. Sin token debe responder 401. Con token válido, realiza una sola inscripción: espera 200 y cantidadEstudiantes = 1. GET {{baseUrl}}/api/cursos con No Auth debe confirmar el mismo resultado.</p></div><div class="micro-task"><span class="component-label">Elige el dato de prueba</span><p class="micro-task-q">¿Podrías comprobar DELETE borrando ahora a la instructora del curso?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">No esperes 204 en ese caso: la clave foránea puede impedirlo. Para probar un borrado exitoso crea otro usuario sin cursos ni inscripciones. No elimines los datos que sostienen las relaciones del ejercicio.</p></details></div><div class="panel"><h3>9 · Borrar un usuario sin relaciones</h3><p>Usa tokenAdmin para todo este paso. Crea con POST {{baseUrl}}/api/usuarios este usuario y guarda su id como borrarId. Después, DELETE {{baseUrl}}/api/usuarios/{{borrarId}} debe devolver 204 sin cuerpo. GET sobre el mismo id debe devolver 404.</p></div><div class="code-block"><div class="code-head"><div><span class="code-context">Body en Postman · json</span><span class="code-file" title="Usuario exclusivo para borrado · JSON">Usuario exclusivo para borrado · JSON</span></div><button class="copy-btn" type="button" aria-label="Copiar Usuario exclusivo para borrado · JSON">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  &quot;nombre&quot;: &quot;Usuario para borrar&quot;,
+  &quot;email&quot;: &quot;borrar.clase14@correo.com&quot;,
+  &quot;password&quot;: &quot;claveSegura123&quot;,
+  &quot;rol&quot;: &quot;ESTUDIANTE&quot;
+}</code></pre></div><div class="checkpoint"><span class="component-label">Checkpoint</span><h3>Qué acabas de demostrar</h3><p>CRUD, asignación de instructor y tabla de unión trabajan juntos. Las respuestas seleccionan datos mediante DTOs. Un conflicto de integridad no debe confundirse con un borrado exitoso.</p></div></div></section>
+<section class="section view" id="extension" data-accent="4" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">✍️</span><div><span class="sec-n">24 · CampusFlow</span><h2 class="sec-t">Consultar los cursos dictados por un usuario</h2><p class="sec-s">Usar el lado inverso para leer, manteniendo DTOs.</p></div></div><div class="body"><div class="micro-task"><span class="component-label">Recupera el patrón</span><p class="micro-task-q">¿Cómo resolverías GET /api/usuarios/{id}/cursos-dictados sin devolver entidades?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">Busca el usuario o lanza 404, recorre cursosDictados y convierte cada Curso con CursoMapper. El endpoint se agrega a UsuarioController y delega en UsuarioService.</p></details></div><p>La ruta se ubica en usuarios por la decisión de API de esta clase. Otros diseños son posibles; aquí preservamos ese contrato. La transacción del service permite recorrer la colección y preparar los DTOs antes de responder.</p><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Fragmento · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java">src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">return usuario.getCursosDictados().stream()
+        .map(CursoMapper::toResponse)
+        .collect(Collectors.toList());</code></pre></div><p>Después del intento, reemplaza estos dos archivos por sus versiones completas del ejercicio; conservan el CRUD existente.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java"><span><span class="code-reveal-title">Ver UsuarioService.java completo</span><span class="code-reveal-note">Reemplazar · ejercicio · src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar · ejercicio · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java">src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.service;
+
+import java.util.List;
+import com.devsenior.campusflow.cursos.dto.CursoResponse;
+import com.devsenior.campusflow.cursos.mapper.CursoMapper;
+import java.util.stream.Collectors;
+import com.devsenior.campusflow.common.exception.EmailDuplicadoException;
+import com.devsenior.campusflow.common.exception.ResourceNotFoundException;
+import com.devsenior.campusflow.usuarios.dto.ActualizarUsuarioRequest;
+import com.devsenior.campusflow.usuarios.dto.CrearUsuarioRequest;
+import com.devsenior.campusflow.usuarios.dto.UsuarioResponse;
+import com.devsenior.campusflow.usuarios.mapper.UsuarioMapper;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import com.devsenior.campusflow.usuarios.model.PreferenciasUsuario;
+import com.devsenior.campusflow.usuarios.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class UsuarioService {
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public UsuarioResponse crear(CrearUsuarioRequest request) {
+        usuarioRepository.findByEmail(request.getEmail()).ifPresent(usuarioExistente -&gt; {
+            throw new EmailDuplicadoException(&quot;Ya existe un usuario registrado con ese email&quot;);
+        });
+
+        Usuario usuario = new Usuario();
+        usuario.setNombre(request.getNombre());
+        usuario.setEmail(request.getEmail());
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        usuario.setRol(request.getRol());
+
+        Usuario guardado = usuarioRepository.save(usuario);
+        return UsuarioMapper.toResponse(guardado);
+    }
+
+    public List&lt;UsuarioResponse&gt; listarUsuarios() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(UsuarioMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public UsuarioResponse buscarPorId(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;No existe un usuario con id &quot; + id));
+        return UsuarioMapper.toResponse(usuario);
+    }
+
+    public UsuarioResponse actualizar(Long id, ActualizarUsuarioRequest request) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;No existe un usuario con id &quot; + id));
+
+        usuario.setNombre(request.getNombre());
+        if (usuario.getPreferencias() == null) {
+            usuario.setPreferencias(new PreferenciasUsuario());
+        }
+        if (request.getTema() != null) {
+            usuario.getPreferencias().setTema(request.getTema());
+        }
+        if (request.getNotificacionesActivas() != null) {
+            usuario.getPreferencias().setNotificacionesActivas(request.getNotificacionesActivas());
+        }
+
+        Usuario actualizado = usuarioRepository.save(usuario);
+        return UsuarioMapper.toResponse(actualizado);
+    }
+
+    public List&lt;CursoResponse&gt; listarCursosDictados(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;No existe un usuario con id &quot; + id));
+        return usuario.getCursosDictados().stream()
+                .map(CursoMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public void eliminar(Long id) {
+        if (!usuarioRepository.existsById(id)) {
+            throw new ResourceNotFoundException(&quot;No existe un usuario con id &quot; + id);
+        }
+        usuarioRepository.deleteById(id);
+    }
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java"><span><span class="code-reveal-title">Ver UsuarioController.java completo</span><span class="code-reveal-note">Reemplazar · ejercicio · src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar · ejercicio · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java">src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.usuarios.controller;
+
+import java.util.List;
+import com.devsenior.campusflow.cursos.dto.CursoResponse;
+import com.devsenior.campusflow.usuarios.dto.ActualizarUsuarioRequest;
+import com.devsenior.campusflow.usuarios.dto.CrearUsuarioRequest;
+import com.devsenior.campusflow.usuarios.dto.UsuarioResponse;
+import com.devsenior.campusflow.usuarios.service.UsuarioService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api/usuarios&quot;)
+public class UsuarioController {
+
+    private final UsuarioService usuarioService;
+
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;UsuarioResponse&gt; crear(@Valid @RequestBody CrearUsuarioRequest request) {
+        UsuarioResponse response = usuarioService.crear(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public List&lt;UsuarioResponse&gt; listar() {
+        return usuarioService.listarUsuarios();
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public UsuarioResponse buscarPorId(@PathVariable Long id) {
+        return usuarioService.buscarPorId(id);
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public UsuarioResponse actualizar(@PathVariable Long id, @Valid @RequestBody ActualizarUsuarioRequest request) {
+        return usuarioService.actualizar(id, request);
+    }
+
+    @GetMapping(&quot;/{id}/cursos-dictados&quot;)
+    public List&lt;CursoResponse&gt; listarCursosDictados(@PathVariable Long id) {
+        return usuarioService.listarCursosDictados(id);
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; eliminar(@PathVariable Long id) {
+        usuarioService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+}</code></pre></div></div></details><div class="checkpoint"><span class="component-label">Checkpoint</span><h3>Transferencia observable</h3><p>Con tokenAdmin, GET {{baseUrl}}/api/usuarios/{{instructorId}}/cursos-dictados devuelve 200 y una lista con Java Básico. Para un usuario sin cursos dictados, []; para un id inexistente, 404. Ningún elemento contiene password. Con tokenEstudiante devuelve 403; sin token, 401.</p></div></div></section>
+<section class="section view" id="cierre" data-accent="1" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">🚀</span><div><span class="sec-n">25 · CampusFlow</span><h2 class="sec-t">Del listado plano a usuarios relacionados</h2><p class="sec-s">Dos ideas quedan; varias decisiones de producto siguen abiertas.</p></div></div><div class="body"><div class="cards"><div class="card" data-accent="1"><b>Relaciones reales</b><p>La cardinalidad responde al negocio. Curso guarda instructor_id y es propietario de la unión curso_estudiante.</p></div><div class="card" data-accent="2"><b>Contratos explícitos</b><p>Requests y responses tienen campos distintos. El mapper elige la salida y el hash se calcula antes de persistir.</p></div></div><ul class="checklist"><li><strong>Construcción:</strong> rol, preferencias, CRUD, dos relaciones y registro/login con JWT.</li><li><strong>Prueba:</strong> crear, actualizar, inscribir y borrar sin exponer la contraseña en las respuestas.</li><li><strong>Pendientes:</strong> tenant, validación del rol de los usuarios asignados, inscripción solo a sí mismo e inscripciones repetidas.</li></ul><div class="micro-task"><span class="component-label">Siguiente necesidad</span><p class="micro-task-q">Si cambia la inscripción para incluir fecha o estado, ¿el mapeo simple de hoy sigue alcanzando?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer">No para representar esos atributos en JPA. Modela Inscripcion como entidad propia y conecta sus referencias con Curso y Usuario. Es una evolución del negocio, no una anotación elegida al azar.</p></details></div><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Puente a la Clase 15</h3><p>El login aporta una identidad autenticada para asociar suscripciones en la Clase 15. La integración debe obtener esa identidad del contexto de seguridad y comprobar permisos sobre el recurso; un usuarioId enviado por el cliente no demuestra quién paga.</p></div></div></div></section>
+<section class="section view" id="consulta" data-accent="2" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">📚</span><div><span class="sec-n">26 · Consulta</span><h2 class="sec-t">Consulta: recorrido, errores y archivos heredados</h2><p class="sec-s">Apoyo para reconstruir el flujo completo.</p></div></div><div class="body"><p>Traza conceptual de creación; el id y el hash reales dependen de la ejecución. El hash abreviado no es un valor para copiar.</p><div class="code-block"><div class="code-head"><div><span class="code-context">Consultar · text</span><span class="code-file" title="Traza de creación">Traza de creación</span></div><button class="copy-btn" type="button" aria-label="Copiar Traza de creación">Copiar</button></div><pre class="line-numbers"><code class="language-plaintext">POST /api/usuarios + Bearer tokenAdmin
+→ JwtAuthFilter: verifica firma y carga rol vigente desde la base
+→ SecurityConfig: exige ADMINISTRADOR
+→ @Valid comprueba CrearUsuarioRequest
+→ UsuarioController.crear(request)
+→ UsuarioService.crear(request)
+→ findByEmail: si existe, conflicto 409
+→ PasswordEncoder.encode: calcula hash
+→ save: persiste Usuario
+→ UsuarioMapper: selecciona datos sin password
+→ HTTP 201 con UsuarioResponse</code></pre></div><div class="table-wrap"><table class="data-table"><caption>Diagnóstico funcional</caption><thead><tr><th scope="col">Mensaje o señal</th><th scope="col">Cómo interpretarlo</th><th scope="col">Qué revisar</th></tr></thead><tbody><tr><td>401</td><td>No hay autenticación válida.</td><td>Comprueba Bearer, expiración, firma y existencia de la cuenta. En login, revisa las credenciales.</td></tr><tr><td>403</td><td>La identidad está autenticada, pero no tiene permiso.</td><td>Revisa el rol vigente en la base y la regla de ruta/método.</td></tr><tr><td>LazyInitializationException</td><td>Se accedió a una relación sin contexto de persistencia disponible.</td><td>La conversión a DTO ocurre dentro del service transaccional. No confundas sesión cerrada con “conexión” en todos los casos.</td></tr><tr><td>Duplicate entry por email</td><td>La restricción única rechazó el registro.</td><td>Puede haber concurrencia aun con findByEmail. Revisa la unicidad y responde conflicto; no filtres SQL.</td></tr><tr><td>404 creando curso</td><td>instructorId no corresponde a un usuario existente.</td><td>Usa el id real devuelto por la creación.</td></tr><tr><td>409 al borrar</td><td>Hay una relación o restricción que impide la operación.</td><td>Para probar 204 usa el usuario desechable sin relaciones.</td></tr></tbody></table></div><p>Referencias de continuidad: no dupliques estos archivos si ya existen. CampusflowApplication mantiene el paquete raíz; CursoRepository y ResourceNotFoundException son los de la Clase 13.</p><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/CampusflowApplication.java"><span><span class="code-reveal-title">Ver CampusflowApplication.java completo</span><span class="code-reveal-note">Verificar existente · src/main/java/com/devsenior/campusflow/CampusflowApplication.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Verificar existente · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/CampusflowApplication.java">src/main/java/com/devsenior/campusflow/CampusflowApplication.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/CampusflowApplication.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class CampusflowApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(CampusflowApplication.class, args);
+    }
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/cursos/repository/CursoRepository.java"><span><span class="code-reveal-title">Ver CursoRepository.java completo</span><span class="code-reveal-note">Verificar existente · src/main/java/com/devsenior/campusflow/cursos/repository/CursoRepository.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Verificar existente · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/cursos/repository/CursoRepository.java">src/main/java/com/devsenior/campusflow/cursos/repository/CursoRepository.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/cursos/repository/CursoRepository.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.cursos.repository;
+
+import com.devsenior.campusflow.cursos.model.Curso;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CursoRepository extends JpaRepository&lt;Curso, Long&gt; {
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/common/exception/ResourceNotFoundException.java"><span><span class="code-reveal-title">Ver ResourceNotFoundException.java completo</span><span class="code-reveal-note">Verificar existente · src/main/java/com/devsenior/campusflow/common/exception/ResourceNotFoundException.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Verificar existente · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/common/exception/ResourceNotFoundException.java">src/main/java/com/devsenior/campusflow/common/exception/ResourceNotFoundException.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/common/exception/ResourceNotFoundException.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.common.exception;
+
+public class ResourceNotFoundException extends RuntimeException {
+
+    public ResourceNotFoundException(String mensaje) {
+        super(mensaje);
+    }
+}</code></pre></div></div></details><details class="code-reveal"><summary aria-label="Mostrar u ocultar src/main/java/com/devsenior/campusflow/cursos/model/Curso.java"><span><span class="code-reveal-title">Ver Curso.java completo</span><span class="code-reveal-note">Referencia · Clase 13 · src/main/java/com/devsenior/campusflow/cursos/model/Curso.java · java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Referencia · Clase 13 · java</span><span class="code-file" title="src/main/java/com/devsenior/campusflow/cursos/model/Curso.java">src/main/java/com/devsenior/campusflow/cursos/model/Curso.java</span></div><button class="copy-btn" type="button" aria-label="Copiar src/main/java/com/devsenior/campusflow/cursos/model/Curso.java">Copiar</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.cursos.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = &quot;cursos&quot;)
+public class Curso {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+}</code></pre></div></div></details><p>Fuentes: <a href="https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html" target="_blank" rel="noopener">Autorización de rutas</a> · <a href="https://github.com/jwtk/jjwt" target="_blank" rel="noopener">JJWT</a> · <a href="https://docs.spring.io/spring-security/reference/getting-spring-security.html" target="_blank" rel="noopener">Spring Security</a> · <a href="https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/crypto/bcrypt/BCryptPasswordEncoder.html" target="_blank" rel="noopener">BCryptPasswordEncoder</a> · <a href="https://jakarta.ee/learn/docs/jakartaee-tutorial/current/persist/persistence-intro/persistence-intro.html" target="_blank" rel="noopener">Relaciones JPA</a> · <a href="https://docs.spring.io/spring-data/jpa/reference/jpa/transactions.html" target="_blank" rel="noopener">Transacciones</a>.</p></div></section>
+<section class="section view" id="archivos" data-accent="3" data-layout="canvas" hidden><div class="sec-head"><span class="sec-icon" aria-hidden="true">📁</span><div><span class="sec-n">27 · Consulta</span><h2 class="sec-t">Mapa final de la implementación</h2><p class="sec-s">Los archivos nuevos viven dentro del dominio que los utiliza.</p></div></div><div class="body"><div class="code-block"><div class="code-head"><div><span class="code-context">Consultar · text</span><span class="code-file" title="Estructura final de paquetes">Estructura final de paquetes</span></div><button class="copy-btn" type="button" aria-label="Copiar Estructura final de paquetes">Copiar</button></div><pre class="line-numbers"><code class="language-plaintext">com.devsenior.campusflow
+├─ common/exception
+├─ security (JWT, filtro, UserDetailsService y SecurityConfig final)
+├─ usuarios (model, dto, mapper, repository, service, controller)
+└─ cursos (model, dto, mapper, repository, service, controller)
+
+Eliminar config/SecurityConfig.java si existe.</code></pre></div><div class="table-wrap"><table class="data-table"><caption>Inventario completo</caption><thead><tr><th scope="col">Archivo</th><th scope="col">Ruta</th><th scope="col">Acción</th></tr></thead><tbody><tr><td>Curso.java</td><td>src/main/java/com/devsenior/campusflow/cursos/model/Curso.java</td><td>Reemplazar</td></tr><tr><td>RolUsuario.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/model/RolUsuario.java</td><td>Crear</td></tr><tr><td>TemaVisual.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/model/TemaVisual.java</td><td>Crear</td></tr><tr><td>PreferenciasUsuario.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/model/PreferenciasUsuario.java</td><td>Crear</td></tr><tr><td>Usuario.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/model/Usuario.java</td><td>Reemplazar</td></tr><tr><td>SecurityConfig.java</td><td>src/main/java/com/devsenior/campusflow/security/SecurityConfig.java</td><td>Crear</td></tr><tr><td>UsuarioRepository.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/repository/UsuarioRepository.java</td><td>Reemplazar</td></tr><tr><td>EmailDuplicadoException.java</td><td>src/main/java/com/devsenior/campusflow/common/exception/EmailDuplicadoException.java</td><td>Crear</td></tr><tr><td>GlobalExceptionHandler.java</td><td>src/main/java/com/devsenior/campusflow/common/exception/GlobalExceptionHandler.java</td><td>Reemplazar</td></tr><tr><td>CrearUsuarioRequest.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/dto/CrearUsuarioRequest.java</td><td>Crear</td></tr><tr><td>ActualizarUsuarioRequest.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/dto/ActualizarUsuarioRequest.java</td><td>Crear</td></tr><tr><td>UsuarioResponse.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/dto/UsuarioResponse.java</td><td>Crear</td></tr><tr><td>UsuarioMapper.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/mapper/UsuarioMapper.java</td><td>Crear</td></tr><tr><td>UsuarioService.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/service/UsuarioService.java</td><td>Reemplazar</td></tr><tr><td>UsuarioController.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/controller/UsuarioController.java</td><td>Reemplazar</td></tr><tr><td>CrearCursoRequest.java</td><td>src/main/java/com/devsenior/campusflow/cursos/dto/CrearCursoRequest.java</td><td>Crear</td></tr><tr><td>CursoResponse.java</td><td>src/main/java/com/devsenior/campusflow/cursos/dto/CursoResponse.java</td><td>Crear</td></tr><tr><td>CursoMapper.java</td><td>src/main/java/com/devsenior/campusflow/cursos/mapper/CursoMapper.java</td><td>Crear</td></tr><tr><td>CursoService.java</td><td>src/main/java/com/devsenior/campusflow/cursos/service/CursoService.java</td><td>Reemplazar</td></tr><tr><td>CursoController.java</td><td>src/main/java/com/devsenior/campusflow/cursos/controller/CursoController.java</td><td>Reemplazar</td></tr><tr><td>RegistroRequest.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/dto/RegistroRequest.java</td><td>Crear</td></tr><tr><td>LoginRequest.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/dto/LoginRequest.java</td><td>Crear</td></tr><tr><td>AuthResponse.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/dto/AuthResponse.java</td><td>Crear</td></tr><tr><td>JwtService.java</td><td>src/main/java/com/devsenior/campusflow/security/JwtService.java</td><td>Crear</td></tr><tr><td>AuthService.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/service/AuthService.java</td><td>Crear</td></tr><tr><td>AuthController.java</td><td>src/main/java/com/devsenior/campusflow/usuarios/controller/AuthController.java</td><td>Crear</td></tr><tr><td>UsuarioDetailsService.java</td><td>src/main/java/com/devsenior/campusflow/security/UsuarioDetailsService.java</td><td>Crear</td></tr><tr><td>JwtAuthFilter.java</td><td>src/main/java/com/devsenior/campusflow/security/JwtAuthFilter.java</td><td>Crear</td></tr><tr><td>CampusflowApplication.java</td><td>src/main/java/com/devsenior/campusflow/CampusflowApplication.java</td><td>Verificar existente</td></tr><tr><td>ResourceNotFoundException.java</td><td>src/main/java/com/devsenior/campusflow/common/exception/ResourceNotFoundException.java</td><td>Verificar existente</td></tr><tr><td>CursoRepository.java</td><td>src/main/java/com/devsenior/campusflow/cursos/repository/CursoRepository.java</td><td>Verificar existente</td></tr><tr><td>pom.xml</td><td>pom.xml</td><td>Reemplazar</td></tr></tbody></table></div><div class="callout" data-tone="info"><span class="callout-icon" aria-hidden="true">i</span><div><h3>Seguir el estado correcto</h3><p>La implementación principal termina antes de las pruebas. El ejercicio reemplaza únicamente UsuarioService y UsuarioController por sus versiones ampliadas. Verifica la ruta al copiar y no dupliques las clases existentes.</p></div></div><p class="doc-foot">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · <a href="https://linkedin.com/in/ana-alvarado-instructora-full-stack" target="_blank" rel="noopener">linkedin.com/in/ana-alvarado-instructora-full-stack</a></p></div></section></div><nav class="view-controls" id="viewControls" aria-label="Navegación entre secciones"><button class="view-btn" id="prevView" type="button" aria-label="Sección anterior">←</button><span class="view-position" id="viewPosition" aria-live="polite">Portada</span><button class="view-btn" id="nextView" type="button" aria-label="Sección siguiente">→</button></nav></main></div><script src="vendor/prism-core.min.js"></script><script src="vendor/prism-clike.min.js"></script><script src="vendor/prism-markup.min.js"></script><script src="vendor/prism-java.min.js"></script><script src="vendor/prism-properties.min.js"></script><script src="vendor/prism-sql.min.js"></script><script src="vendor/prism-json.min.js"></script><script src="vendor/prism-line-numbers.min.js"></script><script src="anaclase-v11.js"></script></body></html>

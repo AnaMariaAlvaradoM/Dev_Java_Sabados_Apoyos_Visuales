@@ -1,5 +1,5 @@
 /* ========================================================================== 
-   ANA LEARNING EXPERIENCE SYSTEM · CONTROLADOR v9.0 "ESCENAS VIVAS"
+   ANA LEARNING EXPERIENCE SYSTEM · CONTROLADOR v11.0 "CONSTRUCCIÓN ACTIVA"
    © 2026 Ana Alvarado · Educadora Tech & Desarrolladora Full Stack
 
    Una SPA real: portada y una sola sección visible a la vez.
@@ -134,7 +134,7 @@
     var normalized = theme === 'claro' ? 'claro' : 'oscuro';
     root.dataset.tema = normalized;
     guardAccentContrast();
-    try { localStorage.setItem('ana-tema-v9', normalized); } catch (error) {}
+    try { localStorage.setItem('ana-tema-v11', normalized); } catch (error) {}
 
     if (themeButton) {
       var dark = normalized === 'oscuro';
@@ -147,7 +147,7 @@
 
   var savedTheme;
   try {
-    savedTheme = localStorage.getItem('ana-tema-v9') || localStorage.getItem('ana-tema-v8');
+    savedTheme = localStorage.getItem('ana-tema-v11') || localStorage.getItem('ana-tema-v9') || localStorage.getItem('ana-tema-v8');
   } catch (error) {}
   setTheme(savedTheme || (root.dataset.temaBase === 'claro' ? 'claro' : 'oscuro'));
   if (themeButton) {
@@ -204,6 +204,25 @@
           button.textContent = 'No se pudo copiar';
         }
         textarea.remove();
+      }
+    });
+  });
+
+  /* -----------------------------------------------------------------
+     Construcción activa: revelar soluciones sin romper el ritmo.
+     - <details class="code-reveal"> mantiene el archivo completo disponible,
+       pero fuera del camino visual principal hasta que el estudiante lo necesita.
+     - Al abrir una solución se vuelve a aplicar Prism solo dentro de ese bloque.
+     - Las microactividades usan <details> nativo: funcionan sin JavaScript.
+     ----------------------------------------------------------------- */
+  Array.prototype.forEach.call(document.querySelectorAll('details.code-reveal'), function (details) {
+    var summary = details.querySelector(':scope > summary');
+    if (summary) summary.setAttribute('aria-label', summary.getAttribute('aria-label') || 'Mostrar u ocultar archivo completo');
+
+    details.addEventListener('toggle', function () {
+      if (!details.open) return;
+      if (typeof window.Prism !== 'undefined' && window.Prism.highlightAllUnder) {
+        window.requestAnimationFrame(function () { window.Prism.highlightAllUnder(details); });
       }
     });
   });
@@ -274,12 +293,12 @@
       shell.dataset.collapsed = collapsed ? 'false' : 'true';
       collapseButton.textContent = collapsed ? '‹' : '›';
       collapseButton.setAttribute('aria-label', collapsed ? 'Colapsar menú' : 'Expandir menú');
-      try { localStorage.setItem('ana-sidebar-v9', shell.dataset.collapsed); } catch (error) {}
+      try { localStorage.setItem('ana-sidebar-v11', shell.dataset.collapsed); } catch (error) {}
     });
 
     var savedSidebar;
     try {
-      savedSidebar = localStorage.getItem('ana-sidebar-v9') || localStorage.getItem('ana-sidebar-v8');
+      savedSidebar = localStorage.getItem('ana-sidebar-v11') || localStorage.getItem('ana-sidebar-v9') || localStorage.getItem('ana-sidebar-v8');
     } catch (error) {}
     if (savedSidebar === 'true') {
       shell.dataset.collapsed = 'true';
@@ -440,6 +459,6 @@
   var accent = getComputedStyle(root).getPropertyValue('--scene-accent').trim() || '#2fd4cb';
   try {
     console.log('%c© 2026 Ana Alvarado', 'color:' + accent + ';font-weight:800;font-size:16px');
-    console.log('Ana Learning Experience System v9.0 "Escenas Vivas" · Material de autoría exclusiva.');
+    console.log('Ana Learning Experience System v11.0 "Construcción Activa" · Material de autoría exclusiva.');
   } catch (error) {}
 })();
