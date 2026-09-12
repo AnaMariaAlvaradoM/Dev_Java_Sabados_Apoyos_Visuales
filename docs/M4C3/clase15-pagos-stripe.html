@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<!--
+  CLASE 15 · PAGOS + STRIPE + WEBHOOKS + SUSCRIPCIONES
+  ANA LEARNING EXPERIENCE SYSTEM v11.1 "CONSTRUCCIÓN ACTIVA"
+  © 2026 Ana Alvarado
+-->
+<html lang="es" data-tema="oscuro" data-tema-base="oscuro" data-empresa="dev-senior" data-paleta="cobalto" data-atmosfera="tecnica">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Ana Alvarado">
+  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <meta name="description" content="Clase 15 de CampusFlow: Stripe Checkout, webhooks firmados, idempotencia y suscripciones con Spring Boot.">
+  <title>Clase 15 · Cobrar de verdad con Stripe · Ana Alvarado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+  <link rel="stylesheet" href="anaestilos-v11.css">
+</head>
+<body>
+  <a class="skip-link" href="#s1">Saltar al contenido</a>
+  <div class="topline" id="topline" aria-hidden="true"></div>
+  <div class="controls" aria-label="Controles">
+    <button class="ctrl" id="temaBtn" type="button" aria-label="Cambiar tema">☀</button>
+    <button class="ctrl" id="fullscreenBtn" type="button" aria-label="Pantalla completa">⛶</button>
+  </div>
+
+  <div class="shell" id="shell" data-collapsed="false">
+    <aside class="sidebar" aria-label="Índice de la clase">
+      <div class="sb-top">
+        <span class="brand-mark">A</span>
+        <div class="sb-title"><b>Java AI Engineer</b><span>Módulo 4 · Clase 15</span></div>
+      </div>
+      <button class="sb-toggle" id="collapseBtn" type="button" aria-label="Colapsar menú">‹</button>
+      <nav class="sb-nav" id="nav" aria-label="Secciones">
+        <a class="nav-item active" data-icon="✦" href="#portada"><span class="nav-index">00</span><span class="nav-label">Portada</span></a>
+        <a class="nav-item" data-icon="🎫" href="#s1"><span class="nav-index">01</span><span class="nav-label">Ticket</span></a>
+        <a class="nav-item" data-icon="🧭" href="#s2"><span class="nav-index">02</span><span class="nav-label">El salto SaaS</span></a>
+        <a class="nav-item" data-icon="💳" href="#s3"><span class="nav-index">03</span><span class="nav-label">Checkout</span></a>
+        <a class="nav-item" data-icon="🔔" href="#s4"><span class="nav-index">04</span><span class="nav-label">Webhooks</span></a>
+        <a class="nav-item" data-icon="🏗️" href="#s5"><span class="nav-index">05</span><span class="nav-label">Arquitectura</span></a>
+        <a class="nav-item" data-icon="🧰" href="#s6"><span class="nav-index">06</span><span class="nav-label">Un solo entorno</span></a>
+        <a class="nav-item" data-icon="⌨️" href="#s6b"><span class="nav-index">07</span><span class="nav-label">Stripe CLI</span></a>
+        <a class="nav-item" data-icon="⚙️" href="#s7"><span class="nav-index">08</span><span class="nav-label">Configurar</span></a>
+        <a class="nav-item" data-icon="🗃️" href="#s8"><span class="nav-index">09</span><span class="nav-label">Persistencia</span></a>
+        <a class="nav-item" data-icon="📦" href="#s9"><span class="nav-index">10</span><span class="nav-label">Contratos</span></a>
+        <a class="nav-item" data-icon="🛒" href="#s10"><span class="nav-index">11</span><span class="nav-label">Pago único</span></a>
+        <a class="nav-item" data-icon="🛡️" href="#s11"><span class="nav-index">12</span><span class="nav-label">Webhook seguro</span></a>
+        <a class="nav-item" data-icon="🔁" href="#s12"><span class="nav-index">13</span><span class="nav-label">Suscripción</span></a>
+        <a class="nav-item" data-icon="🧪" href="#s13"><span class="nav-index">14</span><span class="nav-label">Verificar</span></a>
+        <a class="nav-item" data-icon="🩺" href="#s14"><span class="nav-index">15</span><span class="nav-label">Diagnóstico</span></a>
+        <a class="nav-item" data-icon="🚀" href="#s15"><span class="nav-index">16</span><span class="nav-label">Transferencia</span></a>
+        <a class="nav-item" data-icon="✅" href="#s16"><span class="nav-index">17</span><span class="nav-label">Cierre</span></a>
+      </nav>
+      <div class="sb-prog">
+        <div class="lbl"><span>Progreso</span><span id="progPct">0%</span></div>
+        <div class="track"><div class="fill" id="progFill"></div></div>
+      </div>
+      <p class="sb-foot">© 2026 Ana Alvarado<br>Educadora Tech &amp; Desarrolladora Full Stack</p>
+    </aside>
+
+    <main class="main">
+      <header class="hero view" id="portada" data-accent="1">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <span class="eyebrow">CampusFlow · Clase 15</span>
+            <h1 class="hero-title">Cobrar de verdad: <em>Stripe, Checkout y webhooks</em></h1>
+            <p class="hero-lead">Crea pagos únicos y suscripciones mensuales. Activa el plan solo cuando Stripe confirme el pago con un evento firmado e idempotente.</p>
+            <div class="meta">
+              <span class="pill" data-hot>Java 17 + Spring Boot 3</span>
+              <span class="pill">Stripe 33.4.2</span>
+              <span class="pill">Sandbox aislado</span>
+              <span class="pill">Proyecto evolutivo</span>
+            </div>
+          </div>
+          <figure class="hero-visual">
+            <svg viewBox="0 0 420 420" role="img" aria-label="Una tarjeta protegida conecta CampusFlow con una confirmación firmada de Stripe">
+              <circle cx="210" cy="210" r="148" fill="none" stroke="var(--a2)" stroke-width="2" stroke-dasharray="8 12"/>
+              <rect x="88" y="135" width="244" height="154" rx="30" fill="var(--surf-1)" stroke="var(--a1)" stroke-width="5"/>
+              <path d="M90 182h240" stroke="var(--a3)" stroke-width="18"/>
+              <rect x="122" y="225" width="80" height="18" rx="9" fill="var(--a4)"/>
+              <circle cx="282" cy="235" r="24" fill="var(--a2)"/>
+              <path d="M270 236l8 8 17-20" fill="none" stroke="var(--a1-ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M210 70v46M210 304v46" stroke="var(--a1)" stroke-width="6" stroke-linecap="round"/>
+            </svg>
+            <figcaption class="hero-note">La petición crea el checkout. Otro mensaje, iniciado por Stripe, confirma y activa el plan.</figcaption>
+          </figure>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="section view" id="s1" data-accent="1" data-layout="split" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🎫</span>
+            <div class="sec-copy">
+              <span class="sec-n">01 · Petición de producto</span>
+              <h2 class="sec-t">Dos condiciones no negociables</h2>
+              <p class="sec-s">La tecnología aparece porque el negocio necesita cobrar sin apropiarse del dato más sensible.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="panel">
+              <h3>Ticket · CampusFlow</h3>
+              <p>Un usuario debe poder pagar el plan Individual con tarjeta.</p>
+              <p>La tarjeta nunca pasa por nuestro servidor y el plan solo se activa cuando el pago esté confirmado de verdad.</p>
+            </div>
+            <div class="socratica">
+              <span class="component-label">Decide antes de construir</span>
+              <p class="socratica-q">¿Dónde debe procesarse la tarjeta y qué señal autoriza activar el plan?</p>
+              <p class="socratica-hint">Distingue quién inicia cada mensaje y quién puede falsificarlo.</p>
+              <details class="reveal">
+                <summary>Ver respuesta</summary>
+                <div class="reveal-body">
+                  <p class="lead-answer">Stripe procesa la tarjeta; un webhook firmado confirma el pago.</p>
+                  <p>El redirect del navegador solo informa que el usuario volvió. No demuestra que pagó y nunca debe activar acceso.</p>
+                </div>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s2" data-accent="2" data-layout="split" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🧭</span>
+            <div class="sec-copy">
+              <span class="sec-n">02 · Evolución del producto</span>
+              <h2 class="sec-t">De gestionar datos a vender acceso</h2>
+              <p class="sec-s">El login de la Clase 14 ahora identifica a la persona que paga.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="compare">
+              <div class="compare-card" data-side="negative">
+                <h3>Antes de esta clase</h3>
+                <ul>
+                  <li>Usuarios, roles y contraseñas protegidas.</li>
+                  <li>Cursos conectados con instructores y estudiantes.</li>
+                  <li>JWT y rutas protegidas por rol.</li>
+                  <li>Planes definidos, pero sin cobro ni activación.</li>
+                </ul>
+              </div>
+              <div class="compare-card" data-side="positive">
+                <h3>Al finalizar</h3>
+                <ul>
+                  <li>Checkout alojado por Stripe.</li>
+                  <li>Pago único y suscripción mensual.</li>
+                  <li>Confirmación asíncrona y firmada.</li>
+                  <li>Plan activo y evento persistido una sola vez.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="callout" data-tone="info">
+              <span class="callout-icon">i</span>
+              <div><h3>De SaaS a cobro asociado</h3><p>Un <strong>Software as a Service</strong> se usa por internet mientras el cliente conserva su acceso, normalmente mediante una suscripción. El token JWT ya identifica quién paga: viaja en <code>Authorization: Bearer &lt;token&gt;</code> y Spring lo convierte en <code>Authentication</code>.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s3" data-accent="3" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">💳</span>
+            <div class="sec-copy">
+              <span class="sec-n">03 · Concepto central</span>
+              <h2 class="sec-t">Checkout Session: el datáfono alojado</h2>
+              <p class="sec-s">CampusFlow configura el cobro; Stripe recibe la tarjeta y devuelve una URL.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="flow">
+              <div class="flow-step"><span class="fs-index">01</span><strong>CampusFlow</strong><span>Define precio, modo y usuario</span></div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step" data-emphasis><span class="fs-index">02</span><strong>Stripe Checkout</strong><span>Procesa la tarjeta</span></div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step"><span class="fs-index">03</span><strong>URL alojada</strong><span>El cliente paga fuera del backend</span></div>
+            </div>
+            <div class="cards">
+              <div class="card" data-accent="1"><span class="emoji-orb">1×</span><b><code>payment</code></b><p>Cobro único. Es la rampa simple para comprender el flujo.</p></div>
+              <div class="card" data-accent="2"><span class="emoji-orb">↻</span><b><code>subscription</code></b><p>Cobro recurrente. La periodicidad vive en el Price de Stripe.</p></div>
+              <div class="card" data-accent="3"><span class="emoji-orb">🏷️</span><b><code>metadata</code></b><p>Transporta <code>usuarioId</code> y <code>plan</code> hacia el webhook.</p></div>
+            </div>
+            <div class="micro-task">
+              <span class="component-label">Detecta la frontera de confianza</span>
+              <p class="micro-task-q">¿Por qué el body pide el plan, pero jamás acepta el monto ni un <code>priceId</code> libre?</p>
+              <details class="micro-reveal">
+                <summary>Comprobar razonamiento</summary>
+                <p class="micro-answer"><strong>El cliente elige el plan; el servidor resuelve el precio.</strong> Así nadie puede alterar el cobro ni combinar un plan caro con un precio barato.</p>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s4" data-accent="4" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🔔</span>
+            <div class="sec-copy">
+              <span class="sec-n">04 · Concepto central</span>
+              <h2 class="sec-t">Webhook: la campana oficial</h2>
+              <p class="sec-s">Stripe inicia una segunda petición cuando el evento ocurre; CampusFlow valida su firma antes de actuar.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="socratica">
+              <span class="component-label">Predice el fallo</span>
+              <p class="socratica-q">¿Qué se rompe si activamos el plan en <code>success_url</code>?</p>
+              <details class="reveal">
+                <summary>Ver respuesta</summary>
+                <div class="reveal-body">
+                  <p class="lead-answer">El navegador deja de ser una señal confiable.</p>
+                  <p>El usuario puede cerrar la pestaña antes de volver o escribir la URL manualmente. Solo el webhook firmado viene directo de Stripe.</p>
+                </div>
+              </details>
+            </div>
+            <div class="mindmap">
+              <div class="mindmap-core"><strong>Webhook confiable</strong><span>POST iniciado por Stripe</span></div>
+              <div class="mindmap-branches">
+                <div class="mindmap-node" data-accent="1"><strong>Cuerpo crudo</strong><p>La firma se calcula sobre los bytes exactos.</p></div>
+                <div class="mindmap-node" data-accent="2"><strong>Firma <code>whsec_</code></strong><p>Prueba el origen y detecta alteraciones.</p></div>
+                <div class="mindmap-node" data-accent="3"><strong>Evento único</strong><p>El <code>event.id</code> evita repetir el efecto.</p></div>
+              </div>
+            </div>
+            <div class="callout" data-tone="warning">
+              <span class="callout-icon">!</span>
+              <div><h3>Regla de bytes</h3><p>El controller recibe <code>@RequestBody String payload</code>. Convertir el JSON a DTO y volverlo a serializar puede cambiar los bytes y hacer fallar la firma.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s5" data-accent="1" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🏗️</span>
+            <div class="sec-copy">
+              <span class="sec-n">05 · Arquitectura</span>
+              <h2 class="sec-t">Dos momentos, un flujo de negocio</h2>
+              <p class="sec-s">Crear la sesión y activar el plan son operaciones separadas por el pago del usuario.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="mermaid-panel">
+              <div class="chart-title">Recorrido vertical del pago</div>
+              <div class="mermaid">
+sequenceDiagram
+  actor U as Usuario
+  participant C as CampusFlow
+  participant S as Stripe Checkout
+  participant W as Webhook
+  participant DB as MySQL
+  U->>C: POST /api/pagos/suscripcion + JWT
+  C->>S: Crear Session (precio + metadata)
+  S-->>C: URL alojada
+  C-->>U: { url }
+  U->>S: Paga con tarjeta
+  Note over C,S: La petición original ya terminó
+  S->>W: checkout.session.completed + firma
+  W->>W: Verificar firma e idempotencia
+  W->>DB: Activar plan + registrar evento
+  W-->>S: HTTP 200
+              </div>
+            </div>
+            <div class="er-board">
+              <div class="entity" data-emphasis>
+                <div class="entity-name">suscripciones</div>
+                <ul class="entity-fields">
+                  <li class="is-key"><span class="key pk">PK</span> id</li>
+                  <li class="is-key"><span class="key fk">FK</span> usuario_id</li>
+                  <li class="is-key"><span class="key uq">UQ</span> usuario_id</li>
+                  <li>plan · estado · ids de Stripe</li>
+                </ul>
+              </div>
+              <div class="entity" data-accent="2">
+                <div class="entity-name">eventos_stripe</div>
+                <ul class="entity-fields">
+                  <li class="is-key"><span class="key pk">PK</span> id</li>
+                  <li class="is-key"><span class="key uq">UQ</span> stripe_event_id</li>
+                  <li>tipo</li>
+                  <li>recibido_en</li>
+                </ul>
+              </div>
+            </div>
+            <div class="code-block">
+              <div class="code-head"><div><span class="code-context">Mapa</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/</span></div><button class="copy-btn" type="button">Copiar</button></div>
+              <pre class="line-numbers"><code class="language-plaintext">pagos/
+├─ config/      StripeConfig.java
+├─ model/       PlanSuscripcion.java · EstadoSuscripcion.java
+│               Suscripcion.java · EventoStripe.java
+├─ dto/         CheckoutResponse.java · CrearSuscripcionRequest.java
+├─ repository/  SuscripcionRepository.java · EventoStripeRepository.java
+├─ service/     StripeService.java · SuscripcionService.java · WebhookService.java
+└─ controller/  PagoController.java · WebhookController.java</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s6" data-accent="2" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🧰</span>
+            <div class="sec-copy">
+              <span class="sec-n">06 · Preparación coherente</span>
+              <h2 class="sec-t">Llaves y precios deben vivir en el mismo Sandbox</h2>
+              <p class="sec-s">Un Sandbox es un entorno aislado que imita Stripe sin mover dinero real. No es lo mismo que el modo de prueba clásico.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="callout" data-tone="warning">
+              <span class="callout-icon">!</span>
+              <div><h3>Regla de oro: un solo entorno</h3><p>Selecciona primero el Sandbox de CampusFlow. Obtén allí la llave <code>sk_test_...</code>, crea allí los dos Prices y autoriza allí la CLI. Los objetos de otro Sandbox o del modo de prueba clásico no se pueden mezclar.</p></div>
+            </div>
+            <div class="stepper">
+              <div class="step-item"><span class="step-num">1</span><h4>Entrar al Sandbox</h4><p>Desde el selector de cuenta, cambia al Sandbox de CampusFlow o créalo desde cero. No actives el modo Live ni completes una verificación comercial ficticia.</p></div>
+              <div class="step-item"><span class="step-num">2</span><h4>Copiar la llave</h4><p>Dentro de ese Sandbox abre Developers → API keys y copia la clave secreta <code>sk_test_...</code>. Nunca la publiques ni la subas a Git.</p></div>
+              <div class="step-item"><span class="step-num">3</span><h4>Crear pago único</h4><p>Producto “Acceso único”, precio de 20 USD y tipo “una vez”. Copia el identificador <code>price_...</code>.</p></div>
+              <div class="step-item"><span class="step-num">4</span><h4>Crear suscripción</h4><p>Producto “Individual”, precio de 10 USD, recurrente mensual. Copia su segundo <code>price_...</code>.</p></div>
+            </div>
+            <div class="socratica">
+              <span class="component-label">Control de entorno</span>
+              <p class="socratica-q">¿Por qué un <code>price_...</code> válido puede producir “No such price”?</p>
+              <p class="socratica-hint">Piensa en el lugar donde fue creado y en la llave que intenta leerlo.</p>
+              <details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Porque es válido en otro entorno, pero no existe para la llave actual.</p><p>Stripe separa cada Sandbox y el modo de prueba clásico. El prefijo correcto no basta: la llave, el Price y la CLI deben pertenecer al mismo entorno.</p></div></details>
+            </div>
+            <div class="callout" data-tone="danger">
+              <span class="callout-icon">!</span>
+              <div><h3><code>price_</code> no es <code>prod_</code></h3><p>El backend cobra un Price, no un Product. Guarda los dos identificadores que empiezan por <code>price_</code>; un <code>prod_...</code> provocará el error “No such price”.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s6b" data-accent="3" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">⌨️</span>
+            <div class="sec-copy">
+              <span class="sec-n">07 · Puente local</span>
+              <h2 class="sec-t">Instala la Stripe CLI y autoriza el mismo Sandbox</h2>
+              <p class="sec-s">La interfaz de línea de comandos recibe eventos de Stripe y los reenvía al backend que corre en tu equipo.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="active-build">
+              <div class="build-step"><span class="build-step-index">01</span><div class="build-step-copy"><h3 class="build-step-title">Instala la herramienta</h3><p class="build-step-purpose">Elige un solo método. La instalación con npm requiere Node.js 18 o superior.</p><div class="code-block" data-role="fragment" data-tipo="terminal"><div class="code-head"><div><span class="code-context">Ejecutar · opción multiplataforma</span><span class="code-file">terminal</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-bash">npm install -g @stripe/cli</code></pre></div><div class="code-block" data-role="fragment" data-tipo="terminal"><div class="code-head"><div><span class="code-context">Ejecutar · alternativa en macOS</span><span class="code-file">Terminal</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-bash">brew install stripe</code></pre></div></div></div>
+              <div class="build-step"><span class="build-step-index">02</span><div class="build-step-copy"><h3 class="build-step-title">Comprueba la instalación</h3><p class="build-step-purpose">Una versión visible confirma que el comando está disponible en la terminal.</p><div class="code-block" data-role="fragment" data-tipo="terminal"><div class="code-head"><div><span class="code-context">Ejecutar</span><span class="code-file">terminal</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-bash">stripe version</code></pre></div></div></div>
+              <div class="build-step"><span class="build-step-index">03</span><div class="build-step-copy"><h3 class="build-step-title">Autoriza tu Sandbox</h3><p class="build-step-purpose">El navegador mostrará los entornos disponibles. Selecciona exactamente el Sandbox donde creaste la llave y los Prices, y habilita la CLI.</p><div class="code-block" data-role="fragment" data-tipo="terminal"><div class="code-head"><div><span class="code-context">Ejecutar</span><span class="code-file">terminal</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-bash">stripe login</code></pre></div></div></div>
+            </div>
+            <div class="checkpoint"><span class="component-label">Punto de control</span><h3>Cuatro evidencias antes de programar</h3><p>Estás dentro del Sandbox correcto, guardaste una <code>sk_test_...</code>, copiaste dos <code>price_...</code> y <code>stripe version</code> responde. El comando <code>stripe listen</code> se ejecutará al probar el webhook.</p></div>
+            <div class="callout" data-tone="danger"><span class="callout-icon">!</span><div><h3>Nunca uses tarjetas reales</h3><p>En el Sandbox usa datos de prueba. Para un pago exitoso: <code>4242 4242 4242 4242</code>, una fecha futura y cualquier CVC de tres dígitos.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s7" data-accent="3" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">⚙️</span>
+            <div class="sec-copy">
+              <span class="sec-n">08 · Base técnica</span>
+              <h2 class="sec-t">Dependencia, secretos y lenguaje del dominio</h2>
+              <p class="sec-s">La configuración sensible llega por variables de entorno; el código solo conoce nombres de propiedades.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="micro-task">
+              <span class="component-label">Recupera una práctica anterior</span>
+              <p class="micro-task-q">¿Qué diferencia hay entre escribir <code>sk_test_...</code> en Git y leerlo desde <code>${STRIPE_SECRET_KEY}</code>?</p>
+              <details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer"><strong>El repositorio conserva configuración, no credenciales.</strong> Cada entorno aporta sus propios secretos sin exponerlos en el historial.</p></details>
+            </div>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">Dependencia stripe-java 33.4.2</span><span class="code-reveal-note">Editar · campusflow/pom.xml · XML · agregar dentro de dependencies</span></span></summary>
+              <div class="code-reveal-body">
+                <div class="code-block"><div class="code-head"><div><span class="code-context">Agregar</span><span class="code-file">campusflow/pom.xml</span></div><button class="copy-btn" type="button">Copiar fragmento</button></div><pre class="line-numbers"><code class="language-markup">&lt;dependency&gt;
+    &lt;groupId&gt;com.stripe&lt;/groupId&gt;
+    &lt;artifactId&gt;stripe-java&lt;/artifactId&gt;
+    &lt;version&gt;33.4.2&lt;/version&gt;
+&lt;/dependency&gt;</code></pre></div>
+              </div>
+            </details>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">Propiedades de Stripe</span><span class="code-reveal-note">Editar · src/main/resources/application.properties · properties · agregar al final</span></span></summary>
+              <div class="code-reveal-body">
+                <div class="code-block"><div class="code-head"><div><span class="code-context">Agregar</span><span class="code-file">src/main/resources/application.properties</span></div><button class="copy-btn" type="button">Copiar fragmento</button></div><pre class="line-numbers"><code class="language-properties">stripe.secret-key=${STRIPE_SECRET_KEY}
+stripe.webhook-secret=${STRIPE_WEBHOOK_SECRET:whsec_pendiente}
+stripe.price-pago-unico=${STRIPE_PRICE_PAGO_UNICO}
+stripe.price-plan-individual=${STRIPE_PRICE_PLAN_INDIVIDUAL}
+stripe.url-exito=http://localhost:8080/pago-exitoso
+stripe.url-cancelado=http://localhost:8080/pago-cancelado</code></pre></div>
+              </div>
+            </details>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">StripeConfig.java completo</span><span class="code-reveal-note">Crear · pagos/config/StripeConfig.java · Java · listo para copiar</span></span></summary>
+              <div class="code-reveal-body">
+                <div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/config/StripeConfig.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.config;
+
+import com.stripe.StripeClient;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class StripeConfig {
+
+    @Value("${stripe.secret-key}")
+    private String secretKey;
+
+    @Bean
+    public StripeClient stripeClient() {
+        return new StripeClient(secretKey);
+    }
+}</code></pre></div>
+              </div>
+            </details>
+
+            <div class="cards">
+              <div class="card" data-accent="1"><span class="emoji-orb">🏷️</span><b>PlanSuscripcion</b><p>Qué nivel posee el usuario: GRATIS, INDIVIDUAL o ACADEMIA.</p></div>
+              <div class="card" data-accent="2"><span class="emoji-orb">🚦</span><b>EstadoSuscripcion</b><p>En qué situación de negocio está: INACTIVA, ACTIVA o CANCELADA.</p></div>
+            </div>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">PlanSuscripcion.java completo</span><span class="code-reveal-note">Crear · pagos/model/PlanSuscripcion.java · Java</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/model/PlanSuscripcion.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.model;
+
+public enum PlanSuscripcion {
+    GRATIS,
+    INDIVIDUAL,
+    ACADEMIA
+}</code></pre></div></div>
+            </details>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">EstadoSuscripcion.java completo</span><span class="code-reveal-note">Crear · pagos/model/EstadoSuscripcion.java · Java</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/model/EstadoSuscripcion.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.model;
+
+public enum EstadoSuscripcion {
+    INACTIVA,
+    ACTIVA,
+    CANCELADA
+}</code></pre></div></div>
+            </details>
+          </div>
+        </section>
+
+        <section class="section view" id="s8" data-accent="4" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🗃️</span>
+            <div class="sec-copy">
+              <span class="sec-n">09 · Persistencia</span>
+              <h2 class="sec-t">Guardamos referencias, nunca tarjetas</h2>
+              <p class="sec-s">Una fila representa el plan del usuario; otra registra cada evento único recibido.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="rel-pair">
+              <div class="entity" data-emphasis>
+                <div class="entity-name">usuario</div>
+                <ul class="entity-fields"><li class="is-key"><span class="key pk">PK</span> id</li><li>email</li></ul>
+              </div>
+              <div class="rel-link"><span class="rel-card">1 : 1</span><span class="rel-desc">un usuario tiene una suscripción</span></div>
+              <div class="entity" data-accent="2">
+                <div class="entity-name">suscripcion</div>
+                <ul class="entity-fields"><li class="is-key"><span class="key pk">PK</span> id</li><li class="is-key"><span class="key fk">FK</span> usuario_id</li><li>plan · estado</li></ul>
+              </div>
+            </div>
+            <div class="callout" data-tone="info"><span class="callout-icon">i</span><div><h3>Responsabilidad mínima</h3><p><code>stripeCustomerId</code> y <code>stripeSubscriptionId</code> permiten cruzar sistemas. El número, CVC y vencimiento de la tarjeta nunca entran a CampusFlow.</p></div></div>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">Suscripcion.java completo</span><span class="code-reveal-note">Crear · pagos/model/Suscripcion.java · Java · getters y setters incluidos</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/model/Suscripcion.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.model;
+
+import java.time.LocalDateTime;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "suscripciones")
+public class Suscripcion {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "usuario_id", unique = true)
+    private Usuario usuario;
+
+    @Enumerated(EnumType.STRING)
+    private PlanSuscripcion plan;
+
+    @Enumerated(EnumType.STRING)
+    private EstadoSuscripcion estado = EstadoSuscripcion.INACTIVA;
+
+    private String stripeCustomerId;
+    private String stripeSubscriptionId;
+    private LocalDateTime fechaInicio;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public PlanSuscripcion getPlan() {
+        return plan;
+    }
+
+    public void setPlan(PlanSuscripcion plan) {
+        this.plan = plan;
+    }
+
+    public EstadoSuscripcion getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoSuscripcion estado) {
+        this.estado = estado;
+    }
+
+    public String getStripeCustomerId() {
+        return stripeCustomerId;
+    }
+
+    public void setStripeCustomerId(String stripeCustomerId) {
+        this.stripeCustomerId = stripeCustomerId;
+    }
+
+    public String getStripeSubscriptionId() {
+        return stripeSubscriptionId;
+    }
+
+    public void setStripeSubscriptionId(String stripeSubscriptionId) {
+        this.stripeSubscriptionId = stripeSubscriptionId;
+    }
+
+    public LocalDateTime getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(LocalDateTime fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+}</code></pre></div></div>
+            </details>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">EventoStripe.java completo</span><span class="code-reveal-note">Crear · pagos/model/EventoStripe.java · Java · getters y setters incluidos</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/model/EventoStripe.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.model;
+
+import java.time.LocalDateTime;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "eventos_stripe")
+public class EventoStripe {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
+    private String stripeEventId;
+
+    private String tipo;
+    private LocalDateTime recibidoEn;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getStripeEventId() {
+        return stripeEventId;
+    }
+
+    public void setStripeEventId(String stripeEventId) {
+        this.stripeEventId = stripeEventId;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public LocalDateTime getRecibidoEn() {
+        return recibidoEn;
+    }
+
+    public void setRecibidoEn(LocalDateTime recibidoEn) {
+        this.recibidoEn = recibidoEn;
+    }
+}</code></pre></div></div>
+            </details>
+          </div>
+        </section>
+
+        <section class="section view" id="s9" data-accent="1" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">📦</span>
+            <div class="sec-copy">
+              <span class="sec-n">10 · Contratos</span>
+              <h2 class="sec-t">Repositorios y DTOs con intención</h2>
+              <p class="sec-s">Cada contrato expresa una pregunta concreta: encontrar el plan, detectar un evento repetido, pedir un plan y devolver una URL.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="cards">
+              <div class="card" data-accent="1"><span class="emoji-orb">?</span><b><code>findByUsuarioId</code></b><p>¿Este usuario ya tiene una suscripción que debamos actualizar?</p></div>
+              <div class="card" data-accent="2"><span class="emoji-orb">✓</span><b><code>existsByStripeEventId</code></b><p>¿Este evento ya produjo su efecto?</p></div>
+              <div class="card" data-accent="3"><span class="emoji-orb">↗</span><b><code>CheckoutResponse</code></b><p>La API expone una URL, no el objeto interno del SDK.</p></div>
+            </div>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">SuscripcionRepository.java completo</span><span class="code-reveal-note">Crear · pagos/repository/SuscripcionRepository.java · Java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/repository/SuscripcionRepository.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.repository;
+
+import java.util.Optional;
+import com.devsenior.campusflow.pagos.model.Suscripcion;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface SuscripcionRepository extends JpaRepository&lt;Suscripcion, Long&gt; {
+
+    Optional&lt;Suscripcion&gt; findByUsuarioId(Long usuarioId);
+}</code></pre></div></div></details>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">EventoStripeRepository.java completo</span><span class="code-reveal-note">Crear · pagos/repository/EventoStripeRepository.java · Java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/repository/EventoStripeRepository.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.repository;
+
+import com.devsenior.campusflow.pagos.model.EventoStripe;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface EventoStripeRepository extends JpaRepository&lt;EventoStripe, Long&gt; {
+
+    boolean existsByStripeEventId(String stripeEventId);
+}</code></pre></div></div></details>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">CheckoutResponse.java completo</span><span class="code-reveal-note">Crear · pagos/dto/CheckoutResponse.java · Java</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/dto/CheckoutResponse.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.dto;
+
+public class CheckoutResponse {
+
+    private String url;
+
+    public CheckoutResponse(String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+}</code></pre></div></div></details>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">CrearSuscripcionRequest.java completo</span><span class="code-reveal-note">Crear · pagos/dto/CrearSuscripcionRequest.java · Java · acceso completo incluido</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/dto/CrearSuscripcionRequest.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.dto;
+
+import com.devsenior.campusflow.pagos.model.PlanSuscripcion;
+import jakarta.validation.constraints.NotNull;
+
+public class CrearSuscripcionRequest {
+
+    @NotNull
+    private PlanSuscripcion plan;
+
+    public PlanSuscripcion getPlan() {
+        return plan;
+    }
+
+    public void setPlan(PlanSuscripcion plan) {
+        this.plan = plan;
+    }
+}</code></pre></div></div></details>
+          </div>
+        </section>
+
+        <section class="section view" id="s10" data-accent="2" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🛒</span>
+            <div class="sec-copy">
+              <span class="sec-n">11 · Primera construcción vertical</span>
+              <h2 class="sec-t">Pago único: crea la sesión y devuelve la URL</h2>
+              <p class="sec-s">El JWT identifica al usuario; el Price configurado en el servidor determina cuánto se cobra.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="micro-task">
+              <span class="component-label">Predice antes de abrir el código</span>
+              <p class="micro-task-q">¿Qué tres datos debe llevar la sesión para que sea segura y trazable?</p>
+              <p class="micro-task-hint">Piensa en modo, precio e identidad.</p>
+              <details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer"><strong><code>PAYMENT</code>, un <code>price_...</code> resuelto por el backend y <code>usuarioId</code> en metadata.</strong> La URL de éxito no participa en la autorización.</p></details>
+            </div>
+            <div class="active-build">
+              <div class="build-step">
+                <span class="build-step-index">01</span>
+                <div class="build-step-copy"><h3 class="build-step-title">Construye la intención de cobro</h3><p class="build-step-purpose">El builder concentra las decisiones del pago. <code>setCustomerEmail</code> precarga el correo y el SDK crea la sesión mediante el namespace <code>v1()</code> actual.</p>
+                  <div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Fragmento</span><span class="code-file">pagos/service/StripeService.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-java">SessionCreateParams params = SessionCreateParams.builder()
+        .setMode(SessionCreateParams.Mode.PAYMENT)
+        .setSuccessUrl(urlExito)
+        .setCancelUrl(urlCancelado)
+        .setCustomerEmail(usuario.getEmail())
+        .putMetadata("usuarioId", String.valueOf(usuario.getId()))
+        .addLineItem(SessionCreateParams.LineItem.builder()
+                .setPrice(pricePagoUnico)
+                .setQuantity(1L)
+                .build())
+        .build();
+
+Session session = stripeClient.v1().checkout().sessions().create(params);</code></pre></div>
+                </div>
+              </div>
+              <div class="checkpoint"><span class="component-label">Checkpoint</span><h3>La respuesta debe ser pequeña y navegable</h3><p><code>POST /api/pagos/checkout/pago-unico</code> devuelve <code>{ "url": "https://checkout.stripe.com/..." }</code>.</p></div>
+            </div>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">StripeService.java · estado pago único</span><span class="code-reveal-note">Crear · pagos/service/StripeService.java · Java · versión completa de esta etapa</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/service/StripeService.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.service;
+
+import com.stripe.StripeClient;
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+public class StripeService {
+
+    private final StripeClient stripeClient;
+
+    @Value("${stripe.price-pago-unico}")
+    private String pricePagoUnico;
+
+    @Value("${stripe.url-exito}")
+    private String urlExito;
+
+    @Value("${stripe.url-cancelado}")
+    private String urlCancelado;
+
+    public StripeService(StripeClient stripeClient) {
+        this.stripeClient = stripeClient;
+    }
+
+    public String crearCheckoutPagoUnico(Usuario usuario) throws StripeException {
+        SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl(urlExito)
+                .setCancelUrl(urlCancelado)
+                .setCustomerEmail(usuario.getEmail())
+                .putMetadata("usuarioId", String.valueOf(usuario.getId()))
+                .addLineItem(SessionCreateParams.LineItem.builder()
+                        .setPrice(pricePagoUnico)
+                        .setQuantity(1L)
+                        .build())
+                .build();
+
+        Session session = stripeClient.v1().checkout().sessions().create(params);
+        return session.getUrl();
+    }
+}</code></pre></div></div>
+            </details>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">PagoController.java · estado pago único</span><span class="code-reveal-note">Crear · pagos/controller/PagoController.java · Java · versión completa de esta etapa</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/controller/PagoController.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.controller;
+
+import com.stripe.exception.StripeException;
+import com.devsenior.campusflow.common.exception.ResourceNotFoundException;
+import com.devsenior.campusflow.pagos.dto.CheckoutResponse;
+import com.devsenior.campusflow.pagos.service.StripeService;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import com.devsenior.campusflow.usuarios.repository.UsuarioRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/pagos")
+public class PagoController {
+
+    private final StripeService stripeService;
+    private final UsuarioRepository usuarioRepository;
+
+    public PagoController(StripeService stripeService,
+                          UsuarioRepository usuarioRepository) {
+        this.stripeService = stripeService;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    @PostMapping("/checkout/pago-unico")
+    public CheckoutResponse pagoUnico(Authentication authentication)
+            throws StripeException {
+        Usuario usuario = usuarioActual(authentication);
+        String url = stripeService.crearCheckoutPagoUnico(usuario);
+        return new CheckoutResponse(url);
+    }
+
+    private Usuario usuarioActual(Authentication authentication) {
+        String email = authentication.getName();
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Usuario no encontrado"));
+    }
+}</code></pre></div></div>
+            </details>
+            <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>Excepción de Stripe</h3><p><code>StripeException</code> indica fallas como llave inválida o Price inexistente. El manejador global de CampusFlow la convierte en una respuesta controlada.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s11" data-accent="3" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🛡️</span>
+            <div class="sec-copy">
+              <span class="sec-n">12 · Frontera pública segura</span>
+              <h2 class="sec-t">Abrir el webhook no significa confiar</h2>
+              <p class="sec-s">Stripe no tiene JWT. La ruta es pública, pero cada petición debe demostrar su origen con la firma.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="micro-task"><span class="component-label">Decide el orden</span><p class="micro-task-q">¿La regla <code>permitAll()</code> del webhook va antes o después de <code>anyRequest().authenticated()</code>?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer"><strong>Antes.</strong> Spring evalúa las reglas en orden; la regla general no debe capturar primero la petición de Stripe.</p></details></div>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">SecurityConfig.java · reglas que cambian</span><span class="code-reveal-note">Editar · security/SecurityConfig.java · Java · reemplazar authorizeHttpRequests</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar bloque</span><span class="code-file">src/main/java/com/devsenior/campusflow/security/SecurityConfig.java</span></div><button class="copy-btn" type="button">Copiar fragmento</button></div><pre class="line-numbers"><code class="language-java">.authorizeHttpRequests(auth -> auth
+    .requestMatchers("/api/auth/**").permitAll()
+    .requestMatchers("/api/pagos/webhook").permitAll()
+    .requestMatchers(HttpMethod.GET, "/api/cursos/**").permitAll()
+    .requestMatchers(HttpMethod.POST, "/api/cursos")
+        .hasAnyRole("INSTRUCTOR", "ADMINISTRADOR")
+    .requestMatchers("/api/usuarios/**").hasRole("ADMINISTRADOR")
+    .anyRequest().authenticated()
+)</code></pre></div></div>
+            </details>
+
+            <div class="active-build">
+              <div class="build-step"><span class="build-step-index">01</span><div class="build-step-copy"><h3 class="build-step-title">Verifica y reclama el evento</h3><p class="build-step-purpose">Primero se construye un <code>Event</code> a partir del payload crudo, la cabecera y el secreto. Luego se consulta el id único y se registra dentro de la misma transacción.</p></div></div>
+              <div class="build-step"><span class="build-step-index">02</span><div class="build-step-copy"><h3 class="build-step-title">Responde según el contrato</h3><p class="build-step-purpose">Firma válida: 200. Firma inválida: 400. Un error de procesamiento queda como fallo para que Stripe pueda reintentar.</p></div></div>
+            </div>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">WebhookService.java · firma e idempotencia</span><span class="code-reveal-note">Crear · pagos/service/WebhookService.java · Java · versión completa de esta etapa</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/service/WebhookService.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.service;
+
+import java.time.LocalDateTime;
+import com.stripe.StripeClient;
+import com.stripe.exception.SignatureVerificationException;
+import com.stripe.model.Event;
+import com.devsenior.campusflow.pagos.model.EventoStripe;
+import com.devsenior.campusflow.pagos.repository.EventoStripeRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class WebhookService {
+
+    @Value("${stripe.webhook-secret}")
+    private String webhookSecret;
+
+    private final StripeClient stripeClient;
+    private final EventoStripeRepository eventoStripeRepository;
+
+    public WebhookService(StripeClient stripeClient,
+                          EventoStripeRepository eventoStripeRepository) {
+        this.stripeClient = stripeClient;
+        this.eventoStripeRepository = eventoStripeRepository;
+    }
+
+    @Transactional
+    public void procesar(String payload, String firma)
+            throws SignatureVerificationException {
+        Event event = stripeClient.constructEvent(payload, firma, webhookSecret);
+
+        if (eventoStripeRepository.existsByStripeEventId(event.getId())) {
+            return;
+        }
+
+        EventoStripe evento = new EventoStripe();
+        evento.setStripeEventId(event.getId());
+        evento.setTipo(event.getType());
+        evento.setRecibidoEn(LocalDateTime.now());
+        eventoStripeRepository.save(evento);
+    }
+}</code></pre></div></div>
+            </details>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">WebhookController.java completo</span><span class="code-reveal-note">Crear · pagos/controller/WebhookController.java · Java</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/controller/WebhookController.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.controller;
+
+import com.stripe.exception.SignatureVerificationException;
+import com.devsenior.campusflow.pagos.service.WebhookService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/pagos")
+public class WebhookController {
+
+    private final WebhookService webhookService;
+
+    public WebhookController(WebhookService webhookService) {
+        this.webhookService = webhookService;
+    }
+
+    @PostMapping("/webhook")
+    public ResponseEntity&lt;String&gt; recibir(
+            @RequestBody String payload,
+            @RequestHeader("Stripe-Signature") String firma) {
+        try {
+            webhookService.procesar(payload, firma);
+            return ResponseEntity.ok("");
+        } catch (SignatureVerificationException e) {
+            return ResponseEntity.badRequest().body("Firma inválida");
+        }
+    }
+}</code></pre></div></div>
+            </details>
+          </div>
+        </section>
+
+        <section class="section view" id="s12" data-accent="4" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🔁</span>
+            <div class="sec-copy">
+              <span class="sec-n">13 · Cerrar el círculo</span>
+              <h2 class="sec-t">La misma sesión crece a suscripción</h2>
+              <p class="sec-s">Cambia el modo, aparece el Price recurrente y el webhook transforma la confirmación en acceso.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="compare">
+              <div class="compare-card" data-side="negative"><h3>Pago único</h3><ul><li><code>Mode.PAYMENT</code></li><li>Price one-time</li><li>Metadata: <code>usuarioId</code></li><li>El evento se registra, no activa plan.</li></ul></div>
+              <div class="compare-card" data-side="positive"><h3>Suscripción</h3><ul><li><code>Mode.SUBSCRIPTION</code></li><li>Price recurring mensual</li><li>Metadata: <code>usuarioId + plan</code></li><li>El webhook activa la suscripción.</li></ul></div>
+            </div>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">PlanNoDisponibleException.java completo</span><span class="code-reveal-note">Crear · common/exception/PlanNoDisponibleException.java · Java</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/common/exception/PlanNoDisponibleException.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.common.exception;
+
+public class PlanNoDisponibleException extends RuntimeException {
+
+    public PlanNoDisponibleException(String mensaje) {
+        super(mensaje);
+    }
+}</code></pre></div></div>
+            </details>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">GlobalExceptionHandler.java · manejador nuevo</span><span class="code-reveal-note">Editar · common/exception/GlobalExceptionHandler.java · Java · agregar dentro de la clase</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Agregar método</span><span class="code-file">src/main/java/com/devsenior/campusflow/common/exception/GlobalExceptionHandler.java</span></div><button class="copy-btn" type="button">Copiar fragmento</button></div><pre class="line-numbers"><code class="language-java">@ExceptionHandler(PlanNoDisponibleException.class)
+public ResponseEntity&lt;Map&lt;String, String&gt;&gt; manejarPlanNoDisponible(
+        PlanNoDisponibleException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", ex.getMessage()));
+}</code></pre></div></div>
+            </details>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">StripeService.java · versión final consolidada</span><span class="code-reveal-note">Reemplazar · pagos/service/StripeService.java · Java · pago único + suscripción</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/service/StripeService.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.service;
+
+import com.stripe.StripeClient;
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
+import com.devsenior.campusflow.common.exception.PlanNoDisponibleException;
+import com.devsenior.campusflow.pagos.model.PlanSuscripcion;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+public class StripeService {
+
+    private final StripeClient stripeClient;
+
+    @Value("${stripe.price-pago-unico}")
+    private String pricePagoUnico;
+
+    @Value("${stripe.price-plan-individual}")
+    private String pricePlanIndividual;
+
+    @Value("${stripe.url-exito}")
+    private String urlExito;
+
+    @Value("${stripe.url-cancelado}")
+    private String urlCancelado;
+
+    public StripeService(StripeClient stripeClient) {
+        this.stripeClient = stripeClient;
+    }
+
+    public String crearCheckoutPagoUnico(Usuario usuario)
+            throws StripeException {
+        SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl(urlExito)
+                .setCancelUrl(urlCancelado)
+                .setCustomerEmail(usuario.getEmail())
+                .putMetadata("usuarioId", String.valueOf(usuario.getId()))
+                .addLineItem(SessionCreateParams.LineItem.builder()
+                        .setPrice(pricePagoUnico)
+                        .setQuantity(1L)
+                        .build())
+                .build();
+
+        Session session = stripeClient.v1().checkout().sessions().create(params);
+        return session.getUrl();
+    }
+
+    public String crearCheckoutSuscripcion(
+            Usuario usuario, PlanSuscripcion plan) throws StripeException {
+        String priceId = resolverPrecio(plan);
+
+        SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
+                .setSuccessUrl(urlExito)
+                .setCancelUrl(urlCancelado)
+                .setCustomerEmail(usuario.getEmail())
+                .putMetadata("usuarioId", String.valueOf(usuario.getId()))
+                .putMetadata("plan", plan.name())
+                .addLineItem(SessionCreateParams.LineItem.builder()
+                        .setPrice(priceId)
+                        .setQuantity(1L)
+                        .build())
+                .build();
+
+        Session session = stripeClient.v1().checkout().sessions().create(params);
+        return session.getUrl();
+    }
+
+    private String resolverPrecio(PlanSuscripcion plan) {
+        return switch (plan) {
+            case INDIVIDUAL -> pricePlanIndividual;
+            default -> throw new PlanNoDisponibleException(
+                    "El plan " + plan
+                    + " todavía no está disponible para pago en línea");
+        };
+    }
+}</code></pre></div></div>
+            </details>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">PagoController.java · versión final consolidada</span><span class="code-reveal-note">Reemplazar · pagos/controller/PagoController.java · Java · dos endpoints</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/controller/PagoController.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.controller;
+
+import com.stripe.exception.StripeException;
+import com.devsenior.campusflow.common.exception.ResourceNotFoundException;
+import com.devsenior.campusflow.pagos.dto.CheckoutResponse;
+import com.devsenior.campusflow.pagos.dto.CrearSuscripcionRequest;
+import com.devsenior.campusflow.pagos.service.StripeService;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import com.devsenior.campusflow.usuarios.repository.UsuarioRepository;
+import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/pagos")
+public class PagoController {
+
+    private final StripeService stripeService;
+    private final UsuarioRepository usuarioRepository;
+
+    public PagoController(StripeService stripeService,
+                          UsuarioRepository usuarioRepository) {
+        this.stripeService = stripeService;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    @PostMapping("/checkout/pago-unico")
+    public CheckoutResponse pagoUnico(Authentication authentication)
+            throws StripeException {
+        Usuario usuario = usuarioActual(authentication);
+        String url = stripeService.crearCheckoutPagoUnico(usuario);
+        return new CheckoutResponse(url);
+    }
+
+    @PostMapping("/suscripcion")
+    public CheckoutResponse suscripcion(
+            @Valid @RequestBody CrearSuscripcionRequest request,
+            Authentication authentication) throws StripeException {
+        Usuario usuario = usuarioActual(authentication);
+        String url = stripeService.crearCheckoutSuscripcion(
+                usuario, request.getPlan());
+        return new CheckoutResponse(url);
+    }
+
+    private Usuario usuarioActual(Authentication authentication) {
+        String email = authentication.getName();
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Usuario no encontrado"));
+    }
+}</code></pre></div></div>
+            </details>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">SuscripcionService.java completo</span><span class="code-reveal-note">Crear · pagos/service/SuscripcionService.java · Java</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/service/SuscripcionService.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.service;
+
+import java.time.LocalDateTime;
+import com.devsenior.campusflow.common.exception.ResourceNotFoundException;
+import com.devsenior.campusflow.pagos.model.EstadoSuscripcion;
+import com.devsenior.campusflow.pagos.model.PlanSuscripcion;
+import com.devsenior.campusflow.pagos.model.Suscripcion;
+import com.devsenior.campusflow.pagos.repository.SuscripcionRepository;
+import com.devsenior.campusflow.usuarios.model.Usuario;
+import com.devsenior.campusflow.usuarios.repository.UsuarioRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SuscripcionService {
+
+    private final SuscripcionRepository suscripcionRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    public SuscripcionService(SuscripcionRepository suscripcionRepository,
+                              UsuarioRepository usuarioRepository) {
+        this.suscripcionRepository = suscripcionRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    public void activar(Long usuarioId, PlanSuscripcion plan,
+                        String customerId, String subscriptionId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Usuario no encontrado"));
+
+        Suscripcion suscripcion = suscripcionRepository
+                .findByUsuarioId(usuarioId)
+                .orElse(new Suscripcion());
+
+        suscripcion.setUsuario(usuario);
+        suscripcion.setPlan(plan);
+        suscripcion.setEstado(EstadoSuscripcion.ACTIVA);
+        suscripcion.setStripeCustomerId(customerId);
+        suscripcion.setStripeSubscriptionId(subscriptionId);
+        suscripcion.setFechaInicio(LocalDateTime.now());
+
+        suscripcionRepository.save(suscripcion);
+    }
+}</code></pre></div></div>
+            </details>
+
+            <div class="micro-task"><span class="component-label">Detecta la garantía</span><p class="micro-task-q">¿Por qué el evento se registra antes de activar, pero todo sigue dentro de la misma transacción?</p><details class="micro-reveal"><summary>Comprobar razonamiento</summary><p class="micro-answer"><strong>El id único reclama el evento; la transacción conserva la atomicidad.</strong> Si la activación falla, también se revierte el registro y Stripe puede reintentar.</p></details></div>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">WebhookService.java · versión final consolidada</span><span class="code-reveal-note">Reemplazar · pagos/service/WebhookService.java · Java · firma + idempotencia + activación</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar</span><span class="code-file">src/main/java/com/devsenior/campusflow/pagos/service/WebhookService.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.campusflow.pagos.service;
+
+import java.time.LocalDateTime;
+import com.stripe.StripeClient;
+import com.stripe.exception.SignatureVerificationException;
+import com.stripe.model.Event;
+import com.stripe.model.StripeObject;
+import com.stripe.model.checkout.Session;
+import com.devsenior.campusflow.pagos.model.EventoStripe;
+import com.devsenior.campusflow.pagos.model.PlanSuscripcion;
+import com.devsenior.campusflow.pagos.repository.EventoStripeRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class WebhookService {
+
+    @Value("${stripe.webhook-secret}")
+    private String webhookSecret;
+
+    private final StripeClient stripeClient;
+    private final EventoStripeRepository eventoStripeRepository;
+    private final SuscripcionService suscripcionService;
+
+    public WebhookService(StripeClient stripeClient,
+                          EventoStripeRepository eventoStripeRepository,
+                          SuscripcionService suscripcionService) {
+        this.stripeClient = stripeClient;
+        this.eventoStripeRepository = eventoStripeRepository;
+        this.suscripcionService = suscripcionService;
+    }
+
+    @Transactional
+    public void procesar(String payload, String firma)
+            throws SignatureVerificationException {
+        Event event = stripeClient.constructEvent(payload, firma, webhookSecret);
+
+        if (eventoStripeRepository.existsByStripeEventId(event.getId())) {
+            return;
+        }
+
+        guardarEvento(event);
+
+        if ("checkout.session.completed".equals(event.getType())) {
+            activarDesdeSesion(event);
+        }
+    }
+
+    private void guardarEvento(Event event) {
+        EventoStripe evento = new EventoStripe();
+        evento.setStripeEventId(event.getId());
+        evento.setTipo(event.getType());
+        evento.setRecibidoEn(LocalDateTime.now());
+        eventoStripeRepository.saveAndFlush(evento);
+    }
+
+    private void activarDesdeSesion(Event event) {
+        StripeObject objeto = event.getDataObjectDeserializer().getObject()
+                .orElseThrow(() -> new IllegalStateException(
+                        "No se pudo leer el objeto del evento de Stripe"));
+
+        if (!(objeto instanceof Session session)) {
+            return;
+        }
+
+        if (!"paid".equals(session.getPaymentStatus())) {
+            return;
+        }
+
+        String planTexto = session.getMetadata().get("plan");
+        if (planTexto == null) {
+            return;
+        }
+
+        Long usuarioId = Long.valueOf(
+                session.getMetadata().get("usuarioId"));
+        PlanSuscripcion plan = PlanSuscripcion.valueOf(planTexto);
+        suscripcionService.activar(
+                usuarioId,
+                plan,
+                session.getCustomer(),
+                session.getSubscription());
+    }
+}</code></pre></div></div>
+            </details>
+            <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>Alcance consciente</h3><p>Esta clase asume pago inmediato con tarjeta. Métodos diferidos requieren escuchar también <code>checkout.session.async_payment_succeeded</code>.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s13" data-accent="1" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🧪</span>
+            <div class="sec-copy">
+              <span class="sec-n">14 · Prueba observable</span>
+              <h2 class="sec-t">Verifica el sistema de punta a punta</h2>
+              <p class="sec-s">No basta con recibir 200: hay que observar Stripe, el webhook y la base de datos.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="active-build">
+              <div class="build-step"><span class="build-step-index">A</span><div class="build-step-copy"><h3 class="build-step-title">Levanta el puente local</h3><p class="build-step-purpose">Déjalo abierto. Copia el <code>whsec_...</code> de la salida a <code>STRIPE_WEBHOOK_SECRET</code> y reinicia Spring Boot.</p><div class="code-block" data-role="fragment" data-tipo="terminal"><div class="code-head"><div><span class="code-context">Ejecutar</span><span class="code-file">terminal separada</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-bash">stripe listen --forward-to localhost:8080/api/pagos/webhook</code></pre></div></div></div>
+              <div class="build-step"><span class="build-step-index">B</span><div class="build-step-copy"><h3 class="build-step-title">Prueba el pago único</h3><p class="build-step-purpose">Inicia sesión, envía el token a <code>POST /api/pagos/checkout/pago-unico</code>, abre la URL y paga con <code>4242 4242 4242 4242</code>.</p></div></div>
+              <div class="build-step"><span class="build-step-index">C</span><div class="build-step-copy"><h3 class="build-step-title">Prueba la suscripción</h3><p class="build-step-purpose">Envía el mismo token con el plan. El evento debe terminar en una suscripción ACTIVA.</p><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Body</span><span class="code-file">POST /api/pagos/suscripcion</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  "plan": "INDIVIDUAL"
+}</code></pre></div></div></div>
+              <div class="build-step"><span class="build-step-index">D</span><div class="build-step-copy"><h3 class="build-step-title">Prueba las fronteras</h3><p class="build-step-purpose">Checkout sin token: acceso rechazado. Webhook con body cualquiera y sin firma válida: HTTP 400.</p></div></div>
+            </div>
+            <div class="checkpoint"><span class="component-label">Evidencia en MySQL</span><h3>Dos consultas, dos responsabilidades</h3><p>El evento demuestra recepción idempotente; la suscripción demuestra el efecto de negocio.</p></div>
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Verificar</span><span class="code-file">MySQL</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-sql">SELECT * FROM eventos_stripe;
+SELECT * FROM suscripciones;</code></pre></div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption>Señales de una suscripción correcta</caption>
+                <thead><tr><th>Lugar</th><th>Debes observar</th><th>Qué demuestra</th></tr></thead>
+                <tbody>
+                  <tr><td data-emphasis>Respuesta API</td><td>200 + URL de Checkout</td><td>La sesión fue creada.</td></tr>
+                  <tr><td data-emphasis>Stripe CLI</td><td><code>checkout.session.completed</code> + 200</td><td>El webhook llegó y fue aceptado.</td></tr>
+                  <tr><td data-emphasis>eventos_stripe</td><td>Una fila por <code>event.id</code></td><td>La idempotencia dejó evidencia.</td></tr>
+                  <tr><td data-emphasis>suscripciones</td><td>INDIVIDUAL · ACTIVA · ids llenos</td><td>El pago cambió el estado del negocio.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s14" data-accent="2" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🩺</span>
+            <div class="sec-copy">
+              <span class="sec-n">15 · Diagnóstico</span>
+              <h2 class="sec-t">Lee la señal antes de cambiar código</h2>
+              <p class="sec-s">Cada error apunta a una frontera diferente: credencial, precio, firma, puente local, autenticación o idempotencia.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption>Guía rápida de errores</caption>
+                <thead><tr><th>Señal</th><th>Cómo se lee</th><th>Primera comprobación</th></tr></thead>
+                <tbody>
+                  <tr><td data-emphasis><code>Invalid API Key provided</code></td><td>Stripe no acepta la credencial.</td><td><code>STRIPE_SECRET_KEY</code> empieza por <code>sk_test_</code> y la app fue reiniciada.</td></tr>
+                  <tr><td data-emphasis><code>No such price</code></td><td>El Price no existe en esa cuenta o sandbox.</td><td>Usaste un <code>price_...</code>, no el id del producto.</td></tr>
+                  <tr><td data-emphasis>Webhook responde 400</td><td>La firma no coincide.</td><td>El <code>whsec_...</code> corresponde al <code>stripe listen</code> actual y el body llega crudo.</td></tr>
+                  <tr><td data-emphasis>Pago OK, plan vacío</td><td>El evento no llegó o no traía <code>plan</code>.</td><td>CLI encendida y endpoint <code>/suscripcion</code>, no pago único.</td></tr>
+                  <tr><td data-emphasis>Respuesta no autorizada</td><td>El checkout no tiene identidad válida.</td><td>Cabecera <code>Authorization: Bearer &lt;token&gt;</code>, token vigente y reglas de seguridad de tu proyecto.</td></tr>
+                  <tr><td data-emphasis>Efecto duplicado</td><td>La deduplicación no protegió el procesamiento.</td><td>Consulta antes de actuar y restricción <code>unique</code> sobre <code>stripe_event_id</code>.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>Un 404 en la URL de éxito no invalida el pago</h3><p>Hoy no existe frontend para <code>/pago-exitoso</code>. La activación ocurre por webhook, no por esa página de cortesía.</p></div></div>
+            <div class="micro-task">
+              <span class="component-label">IA como copiloto de diagnóstico</span>
+              <p class="micro-task-q">Antes de pedirle a Cursor que cambie el código, ¿qué evidencia debes compartir y qué dato nunca debes pegar?</p>
+              <details class="micro-reveal"><summary>Ver criterio profesional</summary><p class="micro-answer"><strong>Comparte el error exacto, el endpoint, el resultado esperado y el entorno seleccionado; nunca compartas <code>sk_test_...</code> ni <code>whsec_...</code>.</strong> Pide hipótesis y comprobaciones concretas. Tú decides el cambio después de contrastarlo con la traza y la documentación.</p></details>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s15" data-accent="3" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🚀</span>
+            <div class="sec-copy">
+              <span class="sec-n">16 · Transferencia</span>
+              <h2 class="sec-t">Completa el siguiente evento del ciclo</h2>
+              <p class="sec-s">La práctica cambia el evento y el efecto, pero reutiliza el mismo patrón de hoy.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="micro-task">
+              <span class="component-label">Reto · cancelación</span>
+              <p class="micro-task-q">Cuando llegue <code>customer.subscription.deleted</code>, ¿cómo llevarías la suscripción local a <code>CANCELADA</code> sin duplicar lógica?</p>
+              <p class="micro-task-hint">Necesitas localizar por el id externo y delegar el cambio al service.</p>
+              <details class="micro-reveal">
+                <summary>Ver criterio de solución</summary>
+                <p class="micro-answer"><strong>Agrega <code>findByStripeSubscriptionId</code>, un método <code>cancelar(subscriptionId)</code> y una rama de evento en <code>WebhookService</code>.</strong> Conserva firma, idempotencia y transacción.</p>
+              </details>
+            </div>
+            <div class="panel">
+              <h3>Extensión profesional</h3>
+              <p>Las renovaciones mensuales llegan mediante <code>invoice.paid</code>. No se implementan hoy porque el objetivo es dominar el patrón antes de ampliar la máquina de estados.</p>
+            </div>
+            <div class="socratica">
+              <span class="component-label">Reflexión</span>
+              <p class="socratica-q">¿Por qué guardar el evento es una garantía de negocio y no solo auditoría?</p>
+              <details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Porque Stripe puede reenviar el mismo evento.</p><p>El id único y la transacción permiten que una confirmación produzca un solo efecto, incluso cuando el mensaje llega más de una vez.</p></div></details>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s16" data-accent="4" data-layout="focus" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">✅</span>
+            <div class="sec-copy">
+              <span class="sec-n">17 · Cierre</span>
+              <h2 class="sec-t">CampusFlow ya puede vender acceso</h2>
+              <p class="sec-s">La integración separa datos sensibles, confirmación confiable y estado de negocio.</p>
+            </div>
+          </div>
+          <div class="body">
+            <ul class="checklist">
+              <li><strong>Problema resuelto:</strong> cobrar sin procesar ni guardar tarjetas en CampusFlow.</li>
+              <li><strong>Construcción:</strong> pago único y suscripción mensual mediante Checkout alojado.</li>
+              <li><strong>Fuente de verdad:</strong> webhook con payload crudo y firma <code>whsec_...</code>.</li>
+              <li><strong>Efecto seguro:</strong> evento persistido e idempotente + plan activado en una transacción.</li>
+            </ul>
+            <div class="cards">
+              <div class="card" data-accent="1"><span class="emoji-orb">1</span><b>Delegar lo sensible</b><p>Stripe procesa la tarjeta; CampusFlow conserva referencias.</p></div>
+              <div class="card" data-accent="2"><span class="emoji-orb">2</span><b>Separar momentos</b><p>Crear checkout no equivale a confirmar pago.</p></div>
+              <div class="card" data-accent="3"><span class="emoji-orb">3</span><b>Diseñar para reintentos</b><p>Firma, id único y transacción vuelven confiable el webhook.</p></div>
+            </div>
+            <div class="callout" data-tone="info"><span class="callout-icon">→</span><div><h3>Puente a la Clase 16</h3><p>Al desplegar CampusFlow, las variables pasan al servidor y Stripe llama una URL HTTPS pública registrada en Workbench; la CLI deja de ser el puente.</p></div></div>
+            <div class="panel">
+              <h3>Fuentes técnicas</h3>
+               <p><a href="https://docs.stripe.com/checkout/quickstart" target="_blank" rel="noopener noreferrer">Stripe Checkout Quickstart</a> · <a href="https://docs.stripe.com/webhooks" target="_blank" rel="noopener noreferrer">Webhooks</a> · <a href="https://docs.stripe.com/stripe-cli" target="_blank" rel="noopener noreferrer">Stripe CLI</a> · <a href="https://docs.stripe.com/sandboxes" target="_blank" rel="noopener noreferrer">Sandboxes</a> · <a href="https://docs.stripe.com/keys" target="_blank" rel="noopener noreferrer">API keys</a> · <a href="https://docs.stripe.com/products-prices/overview" target="_blank" rel="noopener noreferrer">Products y Prices</a> · <a href="https://docs.stripe.com/testing" target="_blank" rel="noopener noreferrer">Tarjetas de prueba</a> · <a href="https://github.com/stripe/stripe-java" target="_blank" rel="noopener noreferrer">stripe-java</a>.</p>
+            </div>
+            <p class="doc-foot">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack</p>
+          </div>
+        </section>
+      </div>
+
+      <nav class="view-controls" id="viewControls" aria-label="Navegación entre secciones">
+        <button class="view-btn" id="prevView" type="button" aria-label="Sección anterior">←</button>
+        <span class="view-position" id="viewPosition" aria-live="polite">Portada</span>
+        <button class="view-btn" id="nextView" type="button" aria-label="Sección siguiente">→</button>
+      </nav>
+    </main>
+  </div>
+
+  <div class="watermark" aria-hidden="true">© 2026 ANA ALVARADO</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+  <script src="anaclase-v11.js"></script>
+</body>
+</html>
