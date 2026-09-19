@@ -1270,33 +1270,132 @@ public class WebhookService {
             <div class="sec-copy">
               <span class="sec-n">14 · Prueba observable</span>
               <h2 class="sec-t">Verifica el sistema de punta a punta</h2>
-              <p class="sec-s">No basta con recibir 200: hay que observar Stripe, el webhook y la base de datos.</p>
+              <p class="sec-s">Haz la prueba ventana por ventana: arranca CampusFlow, levanta el puente, actúa como cliente y confirma cada efecto observable.</p>
             </div>
           </div>
           <div class="body">
-            <div class="active-build">
-              <div class="build-step"><span class="build-step-index">A</span><div class="build-step-copy"><h3 class="build-step-title">Levanta el puente local</h3><p class="build-step-purpose">Déjalo abierto. Copia el <code>whsec_...</code> de la salida a <code>STRIPE_WEBHOOK_SECRET</code> y reinicia Spring Boot.</p><div class="code-block" data-role="fragment" data-tipo="terminal"><div class="code-head"><div><span class="code-context">Ejecutar</span><span class="code-file">terminal separada</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-bash">stripe listen --forward-to localhost:8080/api/pagos/webhook</code></pre></div></div></div>
-              <div class="build-step"><span class="build-step-index">B</span><div class="build-step-copy"><h3 class="build-step-title">Prueba el pago único</h3><p class="build-step-purpose">Inicia sesión, envía el token a <code>POST /api/pagos/checkout/pago-unico</code>, abre la URL y paga con <code>4242 4242 4242 4242</code>.</p></div></div>
-              <div class="build-step"><span class="build-step-index">C</span><div class="build-step-copy"><h3 class="build-step-title">Prueba la suscripción</h3><p class="build-step-purpose">Envía el mismo token con el plan. El evento debe terminar en una suscripción ACTIVA.</p><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Body</span><span class="code-file">POST /api/pagos/suscripcion</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
-  "plan": "INDIVIDUAL"
-}</code></pre></div></div></div>
-              <div class="build-step"><span class="build-step-index">D</span><div class="build-step-copy"><h3 class="build-step-title">Prueba las fronteras</h3><p class="build-step-purpose">Checkout sin token: acceso rechazado. Webhook con body cualquiera y sin firma válida: HTTP 400.</p></div></div>
-            </div>
-            <div class="checkpoint"><span class="component-label">Evidencia en MySQL</span><h3>Dos consultas, dos responsabilidades</h3><p>El evento demuestra recepción idempotente; la suscripción demuestra el efecto de negocio.</p></div>
-            <div class="code-block"><div class="code-head"><div><span class="code-context">Verificar</span><span class="code-file">MySQL</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-sql">SELECT * FROM eventos_stripe;
-SELECT * FROM suscripciones;</code></pre></div>
             <div class="table-wrap">
               <table class="data-table">
-                <caption>Señales de una suscripción correcta</caption>
-                <thead><tr><th>Lugar</th><th>Debes observar</th><th>Qué demuestra</th></tr></thead>
+                <caption>Ten estas cuatro ventanas abiertas antes de empezar</caption>
+                <thead><tr><th>Ventana</th><th>Para qué sirve</th><th>Cómo se abre</th></tr></thead>
                 <tbody>
-                  <tr><td data-emphasis>Respuesta API</td><td>200 + URL de Checkout</td><td>La sesión fue creada.</td></tr>
-                  <tr><td data-emphasis>Stripe CLI</td><td><code>checkout.session.completed</code> + 200</td><td>El webhook llegó y fue aceptado.</td></tr>
-                  <tr><td data-emphasis>eventos_stripe</td><td>Una fila por <code>event.id</code></td><td>La idempotencia dejó evidencia.</td></tr>
-                  <tr><td data-emphasis>suscripciones</td><td>INDIVIDUAL · ACTIVA · ids llenos</td><td>El pago cambió el estado del negocio.</td></tr>
+                  <tr><td data-emphasis>1. CampusFlow</td><td>Backend en <code>localhost:8080</code>.</td><td>Botón Run del IDE; su salida aparece en el panel inferior.</td></tr>
+                  <tr><td data-emphasis>2. Terminal Stripe</td><td>Puente de webhooks hacia tu máquina.</td><td>PowerShell, CMD, Terminal o una pestaña nueva de terminal en Cursor. Déjala abierta.</td></tr>
+                  <tr><td data-emphasis>3. Postman</td><td>Envía registro, checkout y suscripción.</td><td>La aplicación de Postman.</td></tr>
+                  <tr><td data-emphasis>4. MySQL Workbench</td><td>Confirma tablas, eventos y suscripciones.</td><td>Conéctalo a la base indicada en <code>spring.datasource.url</code>.</td></tr>
                 </tbody>
               </table>
             </div>
+            <div class="callout" data-tone="info"><span class="callout-icon">i</span><div><h3>La app y <code>stripe listen</code> no comparten terminal</h3><p>CampusFlow arranca con Run desde el IDE. El comando de Stripe corre en otra terminal que permanece abierta. El navegador se abre únicamente cuando Stripe entregue la URL de pago.</p></div></div>
+            <div class="active-build">
+              <div class="build-step">
+                <span class="build-step-index">01</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Arranca la app y comprueba el punto de partida</h3>
+                  <p class="build-step-purpose">Confirma que MySQL está encendido y que existe la base configurada. En <code>application.properties</code>, <code>stripe.secret-key</code> debe resolver a tu <code>sk_test_...</code> real; deja <code>stripe.webhook-secret</code> en <code>whsec_pendiente</code> por ahora. Ejecuta CampusFlow desde Run y espera:</p>
+                  <div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Señal de arranque</span><span class="code-file">panel de ejecución del IDE</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">Started CampusflowApplication in 3.2 seconds</code></pre></div>
+                  <p class="build-step-purpose">En MySQL Workbench, confirma que Hibernate creó <code>usuarios</code>, <code>cursos</code>, <code>suscripciones</code> y <code>eventos_stripe</code>:</p>
+                  <div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Verificar</span><span class="code-file">MySQL Workbench</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-sql">SHOW TABLES;</code></pre></div>
+                  <p class="build-step-purpose">Finalmente, en Postman envía <code>GET http://localhost:8080/api/cursos</code>. La prueba de vida correcta es HTTP 200 con una lista vacía: <code>[]</code>.</p>
+                </div>
+              </div>
+
+              <div class="build-step">
+                <span class="build-step-index">02</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Levanta el puente y configura su secreto</h3>
+                  <p class="build-step-purpose">En una terminal separada ejecuta el listener. Copia el <code>whsec_...</code> completo que aparece en la respuesta y no cierres esta terminal.</p>
+                  <div class="code-block" data-role="fragment" data-tipo="terminal"><div class="code-head"><div><span class="code-context">Ejecutar</span><span class="code-file">terminal separada</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-bash">stripe listen --forward-to localhost:8080/api/pagos/webhook</code></pre></div>
+                  <div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Salida esperada</span><span class="code-file">Stripe CLI</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">&gt; Ready! ... Your webhook signing secret is whsec_a1b2c3d4e5f6...  (^C to quit)</code></pre></div>
+                  <p class="build-step-purpose">Reemplaza <code>whsec_pendiente</code> en <code>stripe.webhook-secret=</code>, guarda, detén CampusFlow y vuelve a arrancarlo para que tome el secreto.</p>
+                  <div class="checkpoint"><span class="component-label">Antes de pagar</span><h3>Tres piezas deben permanecer encendidas</h3><p>MySQL, la terminal de <code>stripe listen</code> y CampusFlow. Si una se apaga, la prueba pierde una parte del recorrido.</p></div>
+                </div>
+              </div>
+
+              <div class="build-step">
+                <span class="build-step-index">03</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Crea el primer usuario y guarda su token</h3>
+                  <p class="build-step-purpose">En Postman crea <code>POST http://localhost:8080/api/auth/register</code>. Body → raw → JSON:</p>
+                  <div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Body</span><span class="code-file">POST /api/auth/register · JSON</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  "nombre": "Ana Prueba",
+  "email": "ana@correo.com",
+  "password": "claveSegura123"
+}</code></pre></div>
+                  <p class="build-step-purpose">La respuesta contiene un token. Copia solo su valor, sin comillas; será el Bearer Token de las peticiones de pago.</p>
+                  <div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Respuesta</span><span class="code-file">token JWT</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  "token": "eyJhbGciOiJIUzI1NiJ9....."
+}</code></pre></div>
+                  <p class="build-step-purpose">Comprueba la persistencia con <code>SELECT * FROM usuarios;</code>: debe existir una fila, el password debe verse cifrado como <code>$2a$...</code> y el rol debe ser <code>ESTUDIANTE</code>. Si el email ya existe y recibes 409, usa <code>POST /api/auth/login</code> con el mismo email y password para obtener el token.</p>
+                </div>
+              </div>
+
+              <div class="build-step">
+                <span class="build-step-index">04</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Completa un pago único como cliente</h3>
+                  <p class="build-step-purpose">En Postman envía <code>POST http://localhost:8080/api/pagos/checkout/pago-unico</code>. En Authorization elige <strong>Bearer Token</strong> y pega el JWT; no envíes Body. Debe responder una URL de Checkout:</p>
+                  <div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Respuesta</span><span class="code-file">POST /api/pagos/checkout/pago-unico</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  "url": "https://checkout.stripe.com/c/pay/cs_test_a1..."
+}</code></pre></div>
+                  <p class="build-step-purpose">Abre esa URL en el navegador. El dominio debe ser <code>checkout.stripe.com</code>. Completa la compra de prueba con estos datos:</p>
+                  <div class="table-wrap"><table class="data-table"><caption>Tarjeta de prueba</caption><thead><tr><th>Campo</th><th>Valor</th></tr></thead><tbody>
+                    <tr><td data-emphasis>Número</td><td><code>4242 4242 4242 4242</code></td></tr>
+                    <tr><td data-emphasis>Vencimiento</td><td>Cualquier fecha futura, por ejemplo <code>12 / 34</code></td></tr>
+                    <tr><td data-emphasis>CVC</td><td>Cualquier valor de tres dígitos, por ejemplo <code>123</code></td></tr>
+                    <tr><td data-emphasis>Nombre</td><td>Cualquiera</td></tr>
+                    <tr><td data-emphasis>Código postal</td><td>Cualquiera, por ejemplo <code>42424</code></td></tr>
+                  </tbody></table></div>
+                  <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>Un 403 en <code>/pago-exitoso</code> está bien hoy</h3><p>La ruta no existe y el navegador no lleva JWT. El pago ya ocurrió: la evidencia real está en <code>stripe listen</code>, no en la pantalla final. La página de agradecimiento pertenece al futuro frontend.</p></div></div>
+                  <p class="build-step-purpose">En la terminal de Stripe deben aparecer el evento y la respuesta aceptada:</p>
+                  <div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Evidencia</span><span class="code-file">Stripe CLI</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">--&gt; checkout.session.completed [evt_...]
+&lt;-- [200] POST http://localhost:8080/api/pagos/webhook [evt_...]</code></pre></div>
+                  <p class="build-step-purpose">Ejecuta <code>SELECT * FROM eventos_stripe;</code>. Debe existir una fila con <code>checkout.session.completed</code>: prueba que se verificó y guardó el evento. El pago único no activa ningún plan.</p>
+                </div>
+              </div>
+
+              <div class="build-step">
+                <span class="build-step-index">05</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Suscríbete y observa la activación del plan</h3>
+                  <p class="build-step-purpose">En Postman envía <code>POST http://localhost:8080/api/pagos/suscripcion</code> con el mismo Bearer Token. Body → raw → JSON:</p>
+                  <div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Body</span><span class="code-file">POST /api/pagos/suscripcion · JSON</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-json">{
+  "plan": "INDIVIDUAL"
+}</code></pre></div>
+                  <p class="build-step-purpose">Abre la URL devuelta, paga otra vez con <code>4242 4242 4242 4242</code> y observa un nuevo <code>checkout.session.completed</code> en la terminal.</p>
+                  <p class="build-step-purpose">En MySQL ejecuta <code>SELECT * FROM suscripciones;</code>. La fila debe tener <code>estado = ACTIVA</code>, <code>plan = INDIVIDUAL</code> y valores no vacíos en <code>stripe_customer_id</code> y <code>stripe_subscription_id</code>. Eso confirma el recorrido completo: usuario → Checkout → pago → webhook → plan activo.</p>
+                </div>
+              </div>
+
+              <div class="build-step">
+                <span class="build-step-index">06</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Comprueba las dos fronteras de seguridad</h3>
+                  <p class="build-step-purpose"><strong>Sin identidad:</strong> duplica la petición de pago único, cambia Authorization a <strong>No Auth</strong> y envía. Debe responder 403: nadie crea un checkout sin estar autenticado.</p>
+                  <p class="build-step-purpose"><strong>Sin firma válida:</strong> en Postman crea <code>POST http://localhost:8080/api/pagos/webhook</code>, agrega el header <code>Stripe-Signature: firma-falsa</code> y envía este body:</p>
+                  <div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Body</span><span class="code-file">POST /api/pagos/webhook · JSON</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-json">{}</code></pre></div>
+                  <p class="build-step-purpose">Debe responder 400. El backend rechaza el evento porque la firma no corresponde al <code>whsec_...</code>.</p>
+                </div>
+              </div>
+            </div>
+            <div class="checkpoint"><span class="component-label">Evidencia final en MySQL</span><h3>Dos consultas, dos responsabilidades</h3><p>El evento demuestra recepción firmada e idempotente; la suscripción demuestra el efecto de negocio.</p></div>
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Verificar</span><span class="code-file">MySQL Workbench</span></div><button class="copy-btn" type="button">Copiar</button></div><pre class="line-numbers"><code class="language-sql">SELECT * FROM eventos_stripe;
+SELECT * FROM suscripciones;</code></pre></div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption>Señales observables de un flujo correcto</caption>
+                <thead><tr><th>Lugar</th><th>Debes observar</th><th>Qué demuestra</th></tr></thead>
+                <tbody>
+                  <tr><td data-emphasis>Prueba de vida</td><td><code>GET /api/cursos</code> → 200 + <code>[]</code></td><td>CampusFlow responde y Postman lo alcanza.</td></tr>
+                  <tr><td data-emphasis>Respuesta API</td><td>URL con dominio <code>checkout.stripe.com</code></td><td>La sesión de Checkout fue creada.</td></tr>
+                  <tr><td data-emphasis>Stripe CLI</td><td><code>checkout.session.completed</code> + <code>[200]</code></td><td>El webhook llegó, pasó la firma y fue aceptado.</td></tr>
+                  <tr><td data-emphasis>eventos_stripe</td><td>Una fila por <code>event.id</code></td><td>La idempotencia dejó evidencia.</td></tr>
+                  <tr><td data-emphasis>suscripciones</td><td>INDIVIDUAL · ACTIVA · ids llenos</td><td>El pago cambió el estado del negocio.</td></tr>
+                  <tr><td data-emphasis>Pruebas negativas</td><td>Checkout sin token → 403; firma falsa → 400</td><td>Autenticación y verificación de firma bloquean falsificaciones.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="callout" data-tone="info"><span class="callout-icon">⚡</span><div><h3>Atajo opcional para comprobar solo el receptor</h3><p><code>stripe trigger checkout.session.completed</code> genera un evento y lo envía por el puente. No incluye el <code>metadata</code> real con <code>usuarioId</code> y <code>plan</code>, así que sirve para comprobar recepción y guardado, pero no para activar una suscripción.</p></div></div>
           </div>
         </section>
 

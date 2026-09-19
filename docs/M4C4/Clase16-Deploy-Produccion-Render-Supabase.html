@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<!--
+  CLASE 16 · CAMPUSFLOW EN PRODUCCIÓN
+  ANA LEARNING EXPERIENCE SYSTEM v11.1 "CONSTRUCCIÓN ACTIVA"
+  © 2026 Ana Alvarado
+-->
+<html lang="es" data-tema="oscuro" data-tema-base="oscuro" data-empresa="dev-senior" data-paleta="cobalto" data-atmosfera="tecnica">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Ana Alvarado">
+  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <title>Clase 16 · Deploy en producción · Ana Alvarado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+  <link rel="stylesheet" href="anaestilos-v11.css">
+</head>
+<body>
+  <a class="skip-link" href="#s1">Saltar al contenido</a>
+  <div class="topline" id="topline" aria-hidden="true"></div>
+  <div class="controls" aria-label="Controles">
+    <button class="ctrl" id="temaBtn" type="button" aria-label="Cambiar tema">☀</button>
+    <button class="ctrl" id="fullscreenBtn" type="button" aria-label="Pantalla completa">⛶</button>
+  </div>
+
+  <div class="shell" id="shell" data-collapsed="false">
+    <aside class="sidebar" aria-label="Índice de la clase">
+      <div class="sb-top">
+        <span class="brand-mark">A</span>
+        <div class="sb-title"><b>Dev Senior Code</b><span>Java AI Engineer · Módulo 4 · Clase 16</span></div>
+      </div>
+      <button class="sb-toggle" id="collapseBtn" type="button" aria-label="Colapsar menú">‹</button>
+      <nav class="sb-nav" id="nav" aria-label="Secciones">
+        <a class="nav-item active" data-icon="✦" href="#portada"><span class="nav-index">00</span><span class="nav-label">Portada</span></a>
+        <a class="nav-item" data-icon="🚪" href="#s1"><span class="nav-index">01</span><span class="nav-label">De local a público</span></a>
+        <a class="nav-item" data-icon="☁️" href="#s2"><span class="nav-index">02</span><span class="nav-label">Mapa del deploy</span></a>
+        <a class="nav-item" data-icon="🔁" href="#s3"><span class="nav-index">03</span><span class="nav-label">Lo que no cambia</span></a>
+        <a class="nav-item" data-icon="🧩" href="#s4"><span class="nav-index">04</span><span class="nav-label">Preparar Spring</span></a>
+        <a class="nav-item" data-icon="📦" href="#s5"><span class="nav-index">05</span><span class="nav-label">Docker y GitHub</span></a>
+        <a class="nav-item" data-icon="🗄️" href="#s6"><span class="nav-index">06</span><span class="nav-label">Supabase</span></a>
+        <a class="nav-item" data-icon="🔐" href="#s7"><span class="nav-index">07</span><span class="nav-label">Variables</span></a>
+        <a class="nav-item" data-icon="🚀" href="#s8"><span class="nav-index">08</span><span class="nav-label">Render</span></a>
+        <a class="nav-item" data-icon="💳" href="#s9"><span class="nav-index">09</span><span class="nav-label">Webhook público</span></a>
+        <a class="nav-item" data-icon="🧪" href="#s10"><span class="nav-index">10</span><span class="nav-label">Prueba end-to-end</span></a>
+        <a class="nav-item" data-icon="📡" href="#s11"><span class="nav-index">11</span><span class="nav-label">Observar producción</span></a>
+        <a class="nav-item" data-icon="🩺" href="#s12"><span class="nav-index">12</span><span class="nav-label">Diagnosticar</span></a>
+        <a class="nav-item" data-icon="✅" href="#s13"><span class="nav-index">13</span><span class="nav-label">Checklist</span></a>
+        <a class="nav-item" data-icon="🏁" href="#s14"><span class="nav-index">14</span><span class="nav-label">Cierre del módulo</span></a>
+      </nav>
+      <div class="sb-prog">
+        <div class="lbl"><span>Progreso</span><span id="progPct">0%</span></div>
+        <div class="track"><div class="fill" id="progFill"></div></div>
+      </div>
+      <p class="sb-foot">© 2026 Ana Alvarado<br>Educadora Tech &amp; Desarrolladora Full Stack</p>
+    </aside>
+
+    <main class="main">
+      <header class="hero view" id="portada" data-accent="1">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <span class="eyebrow">CampusFlow · Clase 16</span>
+            <h1 class="hero-title">De <em>localhost</em> a producción</h1>
+            <p class="hero-lead">Publica el backend SaaS en Render, conecta PostgreSQL en Supabase y deja Stripe entregando webhooks directamente a una URL real.</p>
+            <div class="meta">
+              <span class="pill" data-hot>Deploy real</span>
+              <span class="pill">Java 17 + Spring Boot 3</span>
+              <span class="pill">Render + Supabase</span>
+              <span class="pill">Stripe Sandbox</span>
+            </div>
+          </div>
+          <figure class="hero-visual">
+            <svg viewBox="0 0 420 420" role="img" aria-label="Una aplicación sale de la computadora y llega a una nube pública">
+              <circle cx="210" cy="210" r="154" fill="none" stroke="var(--a2)" stroke-width="2" stroke-dasharray="8 12"/>
+              <path d="M128 269h177c39 0 65-25 65-58 0-31-22-55-54-59-10-47-48-78-94-78-49 0-90 36-97 84-42 2-75 31-75 59 0 30 29 52 78 52z" fill="var(--surf-1)" stroke="var(--a1)" stroke-width="5" stroke-linejoin="round"/>
+              <path d="M144 208h132M144 232h132" stroke="var(--a3)" stroke-width="10" stroke-linecap="round"/>
+              <path d="M210 325v-84M180 271l30-30 30 30" fill="none" stroke="var(--a4)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <figcaption class="hero-note">Hoy el proyecto deja de depender de tu computador: código, configuración y datos trabajan juntos en la nube.</figcaption>
+          </figure>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="section view" id="s1" data-accent="1" data-layout="split" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🚪</span>
+            <div class="sec-copy">
+              <span class="sec-n">01 · Punto de partida</span>
+              <h2 class="sec-t">Funciona, pero todavía nadie puede entrar</h2>
+              <p class="sec-s">CampusFlow ya tiene arquitectura modular, usuarios, JWT, pagos y suscripciones. El límite es físico: todo vive en la máquina de cada estudiante.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="socratica">
+              <span class="component-label">Decide antes de desplegar</span>
+              <p class="socratica-q">Si CampusFlow funciona en <code>localhost</code>, ¿qué le falta para convertirse en un producto que otra persona pueda usar?</p>
+              <p class="socratica-hint">Piensa en dirección pública, ejecución continua, datos y secretos.</p>
+              <details class="reveal">
+                <summary>Ver respuesta</summary>
+                <div class="reveal-body">
+                  <p class="lead-answer">Necesita un servidor público, una base accesible desde ese servidor y configuración segura fuera del código.</p>
+                  <p>Desplegar es poner la aplicación en un servidor de internet. Al final tendrá una URL como <code>https://campusflow.onrender.com</code>, PostgreSQL en la nube y pagos de prueba funcionando sin depender del computador local.</p>
+                </div>
+              </details>
+            </div>
+            <div class="cards">
+              <div class="card" data-accent="1"><span class="emoji-orb" aria-hidden="true">🧱</span><b>Clase 13</b><p>Arquitectura SaaS modular por dominios y capas.</p></div>
+              <div class="card" data-accent="2"><span class="emoji-orb" aria-hidden="true">🔑</span><b>Clase 14</b><p>Roles, contraseñas protegidas, DTOs y login con JWT.</p></div>
+              <div class="card" data-accent="3"><span class="emoji-orb" aria-hidden="true">💳</span><b>Clase 15</b><p>Checkout, webhooks y suscripciones probadas en local.</p></div>
+            </div>
+            <div class="callout" data-tone="success">
+              <span class="callout-icon">✓</span>
+              <div><h3>La promesa de hoy</h3><p>CampusFlow terminará público, persistiendo en la nube y activando una suscripción desde un webhook real de Stripe en modo de prueba.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s2" data-accent="2" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">☁️</span>
+            <div class="sec-copy">
+              <span class="sec-n">02 · Modelo mental</span>
+              <h2 class="sec-t">Cuatro servicios, una sola historia</h2>
+              <p class="sec-s">Cada pieza aparece porque resuelve una necesidad concreta del despliegue.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="cards">
+              <div class="card" data-accent="1"><span class="emoji-orb" aria-hidden="true">🚀</span><b>Render</b><p>Corre Spring Boot en internet y le asigna una URL pública.</p></div>
+              <div class="card" data-accent="2"><span class="emoji-orb" aria-hidden="true">🗄️</span><b>Supabase</b><p>Entrega PostgreSQL administrado para guardar los datos de producción.</p></div>
+              <div class="card" data-accent="3"><span class="emoji-orb" aria-hidden="true">📦</span><b>Docker</b><p>Empaca Java y el <code>.jar</code> en una imagen reproducible para Render.</p></div>
+              <div class="card" data-accent="4"><span class="emoji-orb" aria-hidden="true">🔐</span><b>Variables</b><p>Mantienen contraseñas y llaves fuera del repositorio público.</p></div>
+            </div>
+            <div class="visual-panel">
+              <div class="chart-title">Recorrido del código, las peticiones y los datos</div>
+              <div class="flow" aria-label="Flujo desde el código local hasta la base de datos en producción">
+                <div class="flow-step"><span class="fs-index">01</span><strong>CampusFlow local</strong><span>Código listo</span></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step"><span class="fs-index">02</span><strong>GitHub</strong><span>Recibe el git push</span></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step" data-emphasis><span class="fs-index">03</span><strong>Render</strong><span>Construye Docker y publica la app</span></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step"><span class="fs-index">04</span><strong>URL pública</strong><span>Recibe HTTPS y webhooks</span></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step"><span class="fs-index">05</span><strong>Supabase</strong><span>Persiste por JDBC + SSL</span></div>
+              </div>
+            </div>
+            <div class="callout" data-tone="info">
+              <span class="callout-icon">i</span>
+              <div><h3>El deploy es real; los pagos siguen en Sandbox</h3><p>La aplicación y la URL son públicas. Stripe permanece en modo de prueba y usa la tarjeta <code>4242 4242 4242 4242</code>.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s3" data-accent="3" data-layout="split" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🔁</span>
+            <div class="sec-copy">
+              <span class="sec-n">03 · Decisión arquitectónica</span>
+              <h2 class="sec-t">La base cambia; el dominio no</h2>
+              <p class="sec-s">En local CampusFlow conserva MySQL. En producción usa PostgreSQL. JPA permite que las entidades sigan intactas.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="micro-task">
+              <span class="component-label">Predice · 30 segundos</span>
+              <p class="micro-task-q">Al pasar de MySQL a PostgreSQL, ¿qué esperarías modificar: las entidades, los servicios o la conexión?</p>
+              <p class="micro-task-hint">Recupera para qué sirven JPA e Hibernate.</p>
+              <details class="micro-reveal">
+                <summary>Comprobar razonamiento</summary>
+                <p class="micro-answer"><strong>La conexión y el driver.</strong> JPA mantiene el modelo de entidades; Hibernate genera el SQL apropiado para la base conectada.</p>
+              </details>
+            </div>
+            <div class="compare">
+              <div class="compare-card" data-side="positive">
+                <h3>Permanece igual</h3>
+                <ul>
+                  <li>Entidades y relaciones JPA</li>
+                  <li>Servicios y reglas de negocio</li>
+                  <li>Controllers y endpoints</li>
+                  <li>MySQL para el trabajo local</li>
+                </ul>
+              </div>
+              <div class="compare-card" data-side="negative">
+                <h3>Cambia en producción</h3>
+                <ul>
+                  <li>Driver PostgreSQL disponible</li>
+                  <li>URL, usuario y contraseña</li>
+                  <li>Puerto entregado por Render</li>
+                  <li>Webhook público en vez de Stripe CLI</li>
+                </ul>
+              </div>
+            </div>
+            <div class="callout" data-tone="info">
+              <span class="callout-icon">J</span>
+              <div><h3>Primera idea central</h3><p>JPA desacopla el modelo de una base concreta: una misma aplicación puede trabajar localmente con MySQL y en producción con PostgreSQL.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s4" data-accent="4" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🧩</span>
+            <div class="sec-copy">
+              <span class="sec-n">04 · Preparación</span>
+              <h2 class="sec-t">Spring debe hablar Postgres y obedecer el puerto</h2>
+              <p class="sec-s">Son dos inserciones pequeñas. No se elimina el driver MySQL ni se fija un puerto exclusivo para la nube.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="active-build">
+              <div class="build-step">
+                <span class="build-step-index">01</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Agregar el traductor de PostgreSQL</h3>
+                  <p class="build-step-purpose">Edita <code>campusflow/pom.xml</code> y agrega esta dependencia dentro de <code>&lt;dependencies&gt;</code>, sin quitar la de MySQL. Spring Boot administra la versión.</p>
+                  <div class="code-block" data-role="fragment">
+                    <div class="code-head">
+                      <div><span class="code-context">Editar</span><span class="code-file">campusflow/pom.xml · XML</span></div>
+                      <button class="copy-btn" type="button">Copiar</button>
+                    </div>
+                    <pre class="line-numbers"><code class="language-markup">&lt;dependency&gt;
+    &lt;groupId&gt;org.postgresql&lt;/groupId&gt;
+    &lt;artifactId&gt;postgresql&lt;/artifactId&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="build-step">
+                <span class="build-step-index">02</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Aceptar el puerto del entorno</h3>
+                  <p class="build-step-purpose">Edita <code>src/main/resources/application.properties</code>. Si existe <code>PORT</code>, Spring lo usa; si no, conserva <code>8080</code> para local.</p>
+                  <div class="code-block" data-role="fragment">
+                    <div class="code-head">
+                      <div><span class="code-context">Editar</span><span class="code-file">src/main/resources/application.properties · properties</span></div>
+                      <button class="copy-btn" type="button">Copiar</button>
+                    </div>
+                    <pre class="line-numbers"><code class="language-properties">server.port=${PORT:8080}</code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="checkpoint">
+                <span class="component-label">Checkpoint</span>
+                <h3>Recarga Maven y vuelve a ejecutar en local</h3>
+                <p>CampusFlow debe seguir iniciando con MySQL en <code>localhost:8080</code>. Estos cambios amplían las opciones de ejecución; no reemplazan el entorno local.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s5" data-accent="1" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">📦</span>
+            <div class="sec-copy">
+              <span class="sec-n">05 · Empaque y entrega</span>
+              <h2 class="sec-t">Docker construye la maleta; GitHub la pone al alcance</h2>
+              <p class="sec-s">El Dockerfile compila el proyecto en una etapa y ejecuta solo el <code>.jar</code> en una imagen final más liviana.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="micro-task">
+              <span class="component-label">Detecta la decisión</span>
+              <p class="micro-task-q">¿Por qué conviene separar la compilación y la ejecución en dos etapas?</p>
+              <details class="micro-reveal">
+                <summary>Ver criterio</summary>
+                <p class="micro-answer">Maven solo hace falta para construir. La imagen final necesita Java y el <code>.jar</code>, por eso puede ser más pequeña y simple.</p>
+              </details>
+            </div>
+            <details class="code-reveal">
+              <summary>
+                <span>
+                  <span class="code-reveal-title">Ver Dockerfile completo</span>
+                  <span class="code-reveal-note">Crear · campusflow/Dockerfile · Dockerfile · listo para copiar</span>
+                </span>
+              </summary>
+              <div class="code-reveal-body">
+                <div class="code-block">
+                  <div class="code-head">
+                    <div><span class="code-context">Crear</span><span class="code-file">campusflow/Dockerfile</span></div>
+                    <button class="copy-btn" type="button">Copiar archivo</button>
+                  </div>
+                  <pre class="line-numbers"><code class="language-docker"># Etapa 1: construir el .jar con Maven
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
+
+# Etapa 2: imagen liviana solo para correr el .jar
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]</code></pre>
+                </div>
+              </div>
+            </details>
+            <div class="code-block" data-tipo="terminal">
+              <div class="code-head">
+                <div><span class="code-context">Ejecutar</span><span class="code-file">terminal · dentro de campusflow/</span></div>
+                <button class="copy-btn" type="button">Copiar</button>
+              </div>
+              <pre><code class="language-bash">git add .
+git commit -m "Preparar CampusFlow para deploy: driver Postgres, puerto y Dockerfile"
+git push</code></pre>
+            </div>
+            <div class="callout" data-tone="danger">
+              <span class="callout-icon">!</span>
+              <div><h3>No publiques la llave <code>sk_test_</code></h3><p>Antes del <code>git push</code>, evita dejar secretos en <code>application.properties</code>. La guía propone ignorar ese archivo o rotar la llave de prueba al terminar. En Render, los secretos vivirán como variables de entorno.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s6" data-accent="2" data-layout="split" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🗄️</span>
+            <div class="sec-copy">
+              <span class="sec-n">06 · Datos en la nube</span>
+              <h2 class="sec-t">Supabase: crear Postgres y elegir la conexión correcta</h2>
+              <p class="sec-s">La decisión crítica no es solo crear la base: Render necesita la conexión <strong>Session pooler</strong>.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="stepper">
+              <div class="step-item"><span class="step-num">1</span><h4>Nuevo proyecto</h4><p>Entra a <code>supabase.com</code>, crea <code>campusflow</code> y elige una región cercana, por ejemplo East US.</p></div>
+              <div class="step-item"><span class="step-num">2</span><h4>Contraseña</h4><p>Define y guarda la contraseña de la base. No se mostrará completa otra vez.</p></div>
+              <div class="step-item"><span class="step-num">3</span><h4>Espera</h4><p>La creación puede tomar 1–2 minutos. Hibernate creará las tablas al arrancar.</p></div>
+              <div class="step-item"><span class="step-num">4</span><h4>Connect</h4><p>Abre <strong>Connect</strong> y selecciona <strong>Session pooler</strong>.</p></div>
+            </div>
+            <div class="micro-task">
+              <span class="component-label">Anticipa el fallo</span>
+              <p class="micro-task-q">¿Qué ocurrirá si copias la conexión directa de Supabase porque parece la opción más simple?</p>
+              <p class="micro-task-hint">La conexión directa usa IPv6; el camino de Render necesita IPv4.</p>
+              <details class="micro-reveal">
+                <summary>Comprobar</summary>
+                <p class="micro-answer">El deploy puede fallar con <strong>could not connect</strong>. Usa el host del pooler, reconocible por <code>pooler.supabase.com:5432</code>.</p>
+              </details>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption>Datos que debes copiar del Session pooler</caption>
+                <thead><tr><th>Campo</th><th>Forma esperada</th><th>Uso</th></tr></thead>
+                <tbody>
+                  <tr><td data-emphasis>Host</td><td><code>aws-0-us-east-1.pooler.supabase.com</code></td><td>Servidor PostgreSQL accesible por IPv4.</td></tr>
+                  <tr><td data-emphasis>Port</td><td><code>5432</code></td><td>Puerto de PostgreSQL.</td></tr>
+                  <tr><td data-emphasis>Database</td><td><code>postgres</code></td><td>Base creada por Supabase.</td></tr>
+                  <tr><td data-emphasis>User</td><td><code>postgres.&lt;id-del-proyecto&gt;</code></td><td>Usuario específico del pooler.</td></tr>
+                  <tr><td data-emphasis>Password</td><td>La guardada al crear el proyecto</td><td>Credencial secreta.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s7" data-accent="3" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🔐</span>
+            <div class="sec-copy">
+              <span class="sec-n">07 · Configuración externa</span>
+              <h2 class="sec-t">Los secretos viven en Render, no en GitHub</h2>
+              <p class="sec-s">Las variables del servidor reemplazan la configuración equivalente al ejecutar en producción; local puede conservar MySQL.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="callout" data-tone="info">
+              <span class="callout-icon">i</span>
+              <div><h3>Segunda idea central</h3><p>Una imagen puede viajar entre entornos. Lo que cambia es la configuración que el entorno le entrega al arrancar.</p></div>
+            </div>
+            <div class="code-block">
+              <div class="code-head">
+                <div><span class="code-context">Preparar</span><span class="code-file">Valores JDBC desde Supabase Session pooler</span></div>
+                <button class="copy-btn" type="button">Copiar</button>
+              </div>
+              <pre><code class="language-plaintext">SPRING_DATASOURCE_URL       = jdbc:postgresql://aws-0-&lt;region&gt;.pooler.supabase.com:5432/postgres?sslmode=require
+SPRING_DATASOURCE_USERNAME  = postgres.&lt;id-de-tu-proyecto&gt;
+SPRING_DATASOURCE_PASSWORD  = &lt;la-contraseña-del-proyecto&gt;</code></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-head">
+                <div><span class="code-context">Render · Environment</span><span class="code-file">Variables requeridas para CampusFlow</span></div>
+                <button class="copy-btn" type="button">Copiar</button>
+              </div>
+              <pre><code class="language-plaintext">SPRING_DATASOURCE_URL        = (la URL JDBC preparada arriba)
+SPRING_DATASOURCE_USERNAME   = (el usuario del pooler)
+SPRING_DATASOURCE_PASSWORD   = (la contraseña de Supabase)
+
+STRIPE_SECRET_KEY            = sk_test_...
+STRIPE_PRICE_PAGO_UNICO      = price_...
+STRIPE_PRICE_PLAN_INDIVIDUAL = price_...
+STRIPE_WEBHOOK_SECRET        = whsec_PENDIENTE</code></pre>
+            </div>
+            <div class="cards">
+              <div class="card" data-accent="1"><b><code>sslmode=require</code></b><p>Obliga a cifrar la conexión con Supabase.</p></div>
+              <div class="card" data-accent="2"><b>Tres valores separados</b><p>Evitan problemas con contraseñas que contienen caracteres especiales.</p></div>
+              <div class="card" data-accent="3"><b><code>whsec_PENDIENTE</code></b><p>Es temporal; se reemplaza cuando Stripe conozca la URL pública.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s8" data-accent="4" data-layout="split" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🚀</span>
+            <div class="sec-copy">
+              <span class="sec-n">08 · Publicación</span>
+              <h2 class="sec-t">Crear el Web Service y buscar una señal de vida</h2>
+              <p class="sec-s">Render toma el repositorio, detecta el Dockerfile, construye la imagen y expone una URL pública.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="timeline">
+              <div class="timeline-item"><h3>New + → Web Service</h3><p>Inicia sesión en <code>render.com</code>, conecta GitHub y elige el repositorio de CampusFlow.</p></div>
+              <div class="timeline-item"><h3>Runtime: Docker</h3><p>Confirma que Render detectó el <code>Dockerfile</code>, usa la rama <code>main</code> y el plan <strong>Free</strong>.</p></div>
+              <div class="timeline-item"><h3>Environment</h3><p>Agrega las siete variables preparadas en la escena anterior.</p></div>
+              <div class="timeline-item"><h3>Create Web Service</h3><p>No escribas comandos de build o start: el Dockerfile ya contiene la receta.</p></div>
+              <div class="timeline-item"><h3>Logs</h3><p>Espera <code>Started CampusflowApplication in X seconds</code> y copia la URL pública.</p></div>
+            </div>
+            <div class="checkpoint">
+              <span class="component-label">Prueba de vida</span>
+              <h3>Abre el catálogo público desde internet</h3>
+              <p><code>https://TU-APP.onrender.com/api/cursos</code> debe responder <code>[]</code>. Ya no estás consultando <code>localhost</code>.</p>
+            </div>
+            <div class="callout" data-tone="warning">
+              <span class="callout-icon">⏱</span>
+              <div><h3>El primer deploy y el primer despertar toman tiempo</h3><p>Construir la imagen puede tardar varios minutos. En el plan gratis, tras 15 minutos sin uso la app se duerme; la siguiente visita puede tardar cerca de un minuto.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s9" data-accent="1" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">💳</span>
+            <div class="sec-copy">
+              <span class="sec-n">09 · Stripe en producción</span>
+              <h2 class="sec-t">El webhook ya no necesita un puente local</h2>
+              <p class="sec-s">Stripe puede llamar directamente a Render. El código de <code>WebhookService</code> no cambia; cambia el endpoint registrado y su secreto.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="micro-task">
+              <span class="component-label">Compara</span>
+              <p class="micro-task-q">En local usabas <code>stripe listen</code>. ¿Qué reemplaza ese puente cuando la app ya tiene una URL pública?</p>
+              <details class="micro-reveal">
+                <summary>Ver respuesta</summary>
+                <p class="micro-answer">Un endpoint registrado en el Dashboard de Stripe: <code>https://TU-APP.onrender.com/api/pagos/webhook</code>.</p>
+              </details>
+            </div>
+            <div class="stepper">
+              <div class="step-item"><span class="step-num">1</span><h4>Webhooks</h4><p>En Stripe Sandbox abre <code>dashboard.stripe.com/webhooks</code> y crea un destino de eventos.</p></div>
+              <div class="step-item"><span class="step-num">2</span><h4>Your account</h4><p>Selecciona eventos de tu propia cuenta.</p></div>
+              <div class="step-item"><span class="step-num">3</span><h4>Evento</h4><p>Marca <code>checkout.session.completed</code>.</p></div>
+              <div class="step-item"><span class="step-num">4</span><h4>Endpoint</h4><p>Elige Webhook endpoint y pega la ruta pública completa.</p></div>
+              <div class="step-item"><span class="step-num">5</span><h4>Signing secret</h4><p>Revela y copia el nuevo <code>whsec_...</code>.</p></div>
+            </div>
+            <div class="code-block">
+              <div class="code-head">
+                <div><span class="code-context">Endpoint</span><span class="code-file">Stripe · Webhook público</span></div>
+                <button class="copy-btn" type="button">Copiar</button>
+              </div>
+              <pre><code class="language-plaintext">https://TU-APP.onrender.com/api/pagos/webhook</code></pre>
+            </div>
+            <div class="callout" data-tone="success">
+              <span class="callout-icon">✓</span>
+              <div><h3>Cierra el círculo</h3><p>En Render → Environment, reemplaza <code>whsec_PENDIENTE</code> por el secreto del endpoint registrado. Al guardar, Render vuelve a desplegar automáticamente.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s10" data-accent="2" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🧪</span>
+            <div class="sec-copy">
+              <span class="sec-n">10 · Verificación end-to-end</span>
+              <h2 class="sec-t">Registro → pago → suscripción activa, todo en la nube</h2>
+              <p class="sec-s">Mantén abiertos Postman, el navegador, Supabase y los logs de Render. La URL base ya no es <code>localhost:8080</code>.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption>Ventanas de verificación</caption>
+                <thead><tr><th>Ventana</th><th>Qué observas</th></tr></thead>
+                <tbody>
+                  <tr><td data-emphasis>Postman</td><td>Peticiones a la URL pública de Render.</td></tr>
+                  <tr><td data-emphasis>Navegador</td><td>Checkout de Stripe en modo de prueba.</td></tr>
+                  <tr><td data-emphasis>Supabase</td><td>Usuarios y suscripciones persistidos.</td></tr>
+                  <tr><td data-emphasis>Render → Logs</td><td>Arranque, peticiones y webhook recibido.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="active-build">
+              <div class="build-step">
+                <span class="build-step-index">01</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Registrar el primer usuario</h3>
+                  <p class="build-step-purpose"><code>POST https://TU-APP.onrender.com/api/auth/register</code> · Body → raw → JSON. Envía y copia el <code>token</code> de la respuesta.</p>
+                  <div class="code-block">
+                    <div class="code-head">
+                      <div><span class="code-context">POST body</span><span class="code-file">/api/auth/register · JSON</span></div>
+                      <button class="copy-btn" type="button">Copiar</button>
+                    </div>
+                    <pre class="line-numbers"><code class="language-json">{
+  "nombre": "Ana Prueba",
+  "email": "ana@correo.com",
+  "password": "claveSegura123"
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="build-step">
+                <span class="build-step-index">02</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Confirmar la persistencia</h3>
+                  <p class="build-step-purpose">En Supabase → Table Editor → <code>usuarios</code>, verifica una fila con password cifrado <code>$2a$...</code> y <code>rol = ESTUDIANTE</code>. Las tablas fueron creadas por Hibernate.</p>
+                </div>
+              </div>
+              <div class="build-step">
+                <span class="build-step-index">03</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Crear la suscripción</h3>
+                  <p class="build-step-purpose"><code>POST https://TU-APP.onrender.com/api/pagos/suscripcion</code> · Authorization: Bearer Token → pega el token. Envía este body:</p>
+                  <div class="code-block">
+                    <div class="code-head">
+                      <div><span class="code-context">POST body</span><span class="code-file">/api/pagos/suscripcion · JSON</span></div>
+                      <button class="copy-btn" type="button">Copiar</button>
+                    </div>
+                    <pre class="line-numbers"><code class="language-json">{
+  "plan": "INDIVIDUAL"
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="build-step">
+                <span class="build-step-index">04</span>
+                <div class="build-step-copy">
+                  <h3 class="build-step-title">Pagar y comprobar la activación</h3>
+                  <p class="build-step-purpose">Abre la <code>url</code> devuelta por Stripe y paga con <code>4242 4242 4242 4242</code>, fecha futura y cualquier CVC. Luego confirma un <code>checkout.session.completed</code> con respuesta 200 y una fila <code>ACTIVA</code>, plan <code>INDIVIDUAL</code>, en <code>suscripciones</code>.</p>
+                </div>
+              </div>
+            </div>
+            <div class="visual-panel">
+              <div class="chart-title">Recorrido observable del pago</div>
+              <div class="flow" aria-label="Secuencia del pago desde Postman hasta la suscripción activa">
+                <div class="flow-step"><span class="fs-index">01</span><strong>Postman</strong><span>POST + JWT</span></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step"><span class="fs-index">02</span><strong>Render</strong><span>Crea Checkout</span></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step"><span class="fs-index">03</span><strong>Stripe</strong><span>Entrega URL y procesa pago</span></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step" data-emphasis><span class="fs-index">04</span><strong>Webhook</strong><span>checkout.session.completed</span></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step"><span class="fs-index">05</span><strong>Supabase</strong><span>Guarda ACTIVA</span></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step"><span class="fs-index">06</span><strong>Stripe</strong><span>Recibe HTTP 200</span></div>
+              </div>
+            </div>
+            <div class="callout" data-tone="warning">
+              <span class="callout-icon">↻</span>
+              <div><h3>Si la app estaba dormida</h3><p>El primer webhook puede tardar o fallar mientras Render despierta. Stripe reintenta automáticamente; comprueba Event deliveries hasta ver una respuesta 200.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s11" data-accent="3" data-layout="split" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">📡</span>
+            <div class="sec-copy">
+              <span class="sec-n">11 · Operación</span>
+              <h2 class="sec-t">Producción se observa, no se adivina</h2>
+              <p class="sec-s">Los logs y paneles son la evidencia de lo que el sistema está haciendo cuando ya no corre frente a ti.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="cards">
+              <div class="card" data-accent="1"><span class="emoji-orb" aria-hidden="true">📜</span><b>Render → Logs</b><p>Arranque, peticiones y errores en tiempo real.</p></div>
+              <div class="card" data-accent="2"><span class="emoji-orb" aria-hidden="true">📈</span><b>Render → Metrics</b><p>Uso de memoria y CPU del servicio.</p></div>
+              <div class="card" data-accent="3"><span class="emoji-orb" aria-hidden="true">📨</span><b>Stripe deliveries</b><p>Entrega del webhook y códigos HTTP recibidos.</p></div>
+              <div class="card" data-accent="4"><span class="emoji-orb" aria-hidden="true">🗃️</span><b>Supabase</b><p>Datos guardados en Table Editor y Reports.</p></div>
+            </div>
+            <div class="callout" data-tone="warning">
+              <span class="callout-icon">Z</span>
+              <div><h3>Dos pausas del nivel gratuito</h3><p>Render duerme la app tras 15 minutos sin uso. Supabase puede pausar el proyecto tras aproximadamente una semana sin actividad y permite reactivarlo desde el panel.</p></div>
+            </div>
+            <div class="panel">
+              <h3>Dominio personalizado: útil, pero opcional</h3>
+              <p>La URL <code>onrender.com</code> ya es pública y suficiente para el portafolio. Un dominio como <code>campusflow.com</code> requiere comprarlo y configurarlo en Render → Settings → Custom Domains mediante los registros DNS indicados.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s12" data-accent="4" data-layout="canvas" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🩺</span>
+            <div class="sec-copy">
+              <span class="sec-n">12 · Diagnóstico</span>
+              <h2 class="sec-t">El mensaje del log señala dónde mirar</h2>
+              <p class="sec-s">No reinicies a ciegas. Relaciona la señal observable con la decisión de configuración que puede producirla.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption>Errores comunes del primer deploy</caption>
+                <thead><tr><th>Señal</th><th>Causa probable</th><th>Comprobación o corrección</th></tr></thead>
+                <tbody>
+                  <tr><td data-emphasis>Build de Maven falla</td><td>El proyecto no compilaba o faltó subir un archivo.</td><td>Ejecuta localmente y confirma que el <code>Dockerfile</code> llegó a GitHub.</td></tr>
+                  <tr><td data-emphasis><code>Connection refused</code> / <code>could not connect</code></td><td>Conexión directa de Supabase o datos JDBC incorrectos.</td><td>Usa el Session pooler: <code>pooler.supabase.com:5432</code>.</td></tr>
+                  <tr><td data-emphasis><code>password authentication failed</code></td><td>La contraseña no coincide.</td><td>Revisa <code>SPRING_DATASOURCE_PASSWORD</code> o restablécela en Supabase.</td></tr>
+                  <tr><td data-emphasis>Render no detecta el puerto</td><td>Falta la propiedad que lee <code>PORT</code>.</td><td>Agrega <code>server.port=${PORT:8080}</code> y vuelve a desplegar.</td></tr>
+                  <tr><td data-emphasis>Pago correcto, plan inactivo</td><td><code>whsec_</code> equivocado o webhook no entregado.</td><td>Usa el secreto del endpoint público y revisa Stripe Event deliveries.</td></tr>
+                  <tr><td data-emphasis>Primera petición muy lenta</td><td>La app gratuita estaba dormida.</td><td>Espera el despertar; la siguiente petición debe responder rápido.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="micro-task">
+              <span class="component-label">Detecta · 45 segundos</span>
+              <p class="micro-task-q">El log dice <code>could not connect</code> y la URL de base no contiene <code>pooler</code>. ¿Qué corriges primero?</p>
+              <details class="micro-reveal">
+                <summary>Ver diagnóstico</summary>
+                <p class="micro-answer">Reemplaza la conexión directa por la del <strong>Session pooler</strong> y verifica host, puerto, usuario y contraseña. No cambies las entidades.</p>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s13" data-accent="1" data-layout="focus" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">✅</span>
+            <div class="sec-copy">
+              <span class="sec-n">13 · Evidencia profesional</span>
+              <h2 class="sec-t">“Está en producción” significa diez sí verificables</h2>
+              <p class="sec-s">No basta con que el dashboard diga “deployed”. El producto debe responder, persistir y completar su regla de negocio.</p>
+            </div>
+          </div>
+          <div class="body">
+            <ul class="checklist">
+              <li>GitHub contiene el <code>Dockerfile</code> y el driver de PostgreSQL.</li>
+              <li>Supabase tiene la base PostgreSQL y conservaste su contraseña.</li>
+              <li>Render entrega una URL pública que responde.</li>
+              <li><code>SPRING_DATASOURCE_*</code> apunta al Session pooler.</li>
+              <li>Las variables de Stripe están en Render, no en el código público.</li>
+              <li>Stripe tiene el webhook de Render y Render tiene su <code>whsec_</code>.</li>
+              <li><code>GET /api/cursos</code> responde desde la URL pública.</li>
+              <li>Registro y login funcionan; el usuario aparece en Supabase.</li>
+              <li>Un pago de prueba deja la suscripción en estado <code>ACTIVA</code>.</li>
+              <li>Render Logs y Stripe Event deliveries muestran un flujo sano.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="section view" id="s14" data-accent="2" data-layout="focus" hidden>
+          <div class="sec-head">
+            <span class="sec-icon" aria-hidden="true">🏁</span>
+            <div class="sec-copy">
+              <span class="sec-n">14 · Cierre del módulo</span>
+              <h2 class="sec-t">CampusFlow ya no es una promesa local</h2>
+              <p class="sec-s">El módulo termina con un backend SaaS público, persistente y capaz de completar un pago de prueba de punta a punta.</p>
+            </div>
+          </div>
+          <div class="body">
+            <div class="socratica">
+              <span class="component-label">Cierre · piensa antes de revelar</span>
+              <p class="socratica-q">El código no cambió al pasar de MySQL a PostgreSQL ni de <code>localhost</code> a internet. ¿Qué decisiones anteriores hicieron eso posible?</p>
+              <details class="reveal">
+                <summary>Ver respuesta</summary>
+                <div class="reveal-body">
+                  <p class="lead-answer">No fue una sola tecnología: fue una arquitectura diseñada para cambiar sin romperse.</p>
+                  <p>JPA abstrae la base, las capas y dominios separan responsabilidades, la configuración entra por propiedades y variables, y servicios especializados se encargan de pagos, datos y ejecución. Pensar como ingeniero es tomar decisiones que permiten crecer y cambiar sin reescribirlo todo.</p>
+                </div>
+              </details>
+            </div>
+            <div class="mindmap">
+              <div class="mindmap-core"><strong>CampusFlow en internet</strong><span>resultado del Módulo 4</span></div>
+              <div class="mindmap-branches">
+                <div class="mindmap-node"><strong>Problema resuelto</strong><p>La app dejó de depender de un computador local.</p></div>
+                <div class="mindmap-node" data-accent="2"><strong>Construcción</strong><p>Render + Supabase + webhook público de Stripe.</p></div>
+                <div class="mindmap-node" data-accent="3"><strong>Tres ideas</strong><p>Deploy público, configuración externa y portabilidad con JPA.</p></div>
+                <div class="mindmap-node" data-accent="4"><strong>Siguiente necesidad</strong><p>Operar, observar y evolucionar el producto con evidencia.</p></div>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Fuentes técnicas para profundizar</h3>
+              <p><a href="https://supabase.com/docs/guides/getting-started/quickstarts/spring-boot" target="_blank" rel="noopener noreferrer">Supabase con Spring Boot</a> · <a href="https://supabase.com/docs/guides/database/connecting-to-postgres" target="_blank" rel="noopener noreferrer">Conexiones a PostgreSQL en Supabase</a> · <a href="https://render.com/articles/platforms-with-a-real-free-tier-for-developers-in-2026" target="_blank" rel="noopener noreferrer">Render y plataformas con nivel gratuito</a> · <a href="https://docs.stripe.com/webhooks" target="_blank" rel="noopener noreferrer">Stripe Webhooks</a>.</p>
+            </div>
+            <p class="doc-foot">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack</p>
+          </div>
+        </section>
+      </div>
+
+      <nav class="view-controls" id="viewControls" aria-label="Navegación entre secciones">
+        <button class="view-btn" id="prevView" type="button" aria-label="Sección anterior">←</button>
+        <span class="view-position" id="viewPosition" aria-live="polite">Portada</span>
+        <button class="view-btn" id="nextView" type="button" aria-label="Sección siguiente">→</button>
+      </nav>
+    </main>
+  </div>
+
+  <div class="watermark" aria-hidden="true">© 2026 ANA ALVARADO</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="anaclase-v11.js"></script>
+</body>
+</html>

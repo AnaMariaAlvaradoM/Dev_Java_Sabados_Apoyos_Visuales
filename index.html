@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es" data-empresa="dev-senior">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,7 +20,8 @@
         <small>Dev Senior · Java IA Backend</small>
       </span>
     </a>
-    <button class="ctrl-btn" id="temaBtn" type="button" aria-label="Activar tema oscuro" title="Activar tema oscuro">☾</button>
+    <button class="ctrl-btn" id="temaBtn" type="button" aria-label="Activar tema oscuro"
+      title="Activar tema oscuro">☾</button>
   </header>
 
   <main class="wrap">
@@ -31,11 +33,16 @@
       <div class="library-heading">
         <span class="section-label">Biblioteca</span>
         <h2 id="tituloBiblioteca">Clases por módulo</h2>
-        <p class="library-meta"><strong data-module-count>0</strong> módulos · <strong data-resource-count>0</strong> guías disponibles</p>
+        <p class="library-meta"><strong data-module-count>0</strong> módulos · <strong data-resource-count>0</strong>
+          guías disponibles</p>
       </div>
       <div class="library-actions">
-        <button class="text-btn" id="mostrarBusqueda" type="button" aria-expanded="false" aria-controls="panelBusqueda" aria-label="Buscar una guía">
-          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <button class="text-btn" id="mostrarBusqueda" type="button" aria-expanded="false" aria-controls="panelBusqueda"
+          aria-label="Buscar una guía">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-3.5-3.5"></path>
+          </svg>
           <span data-search-label>Buscar</span>
         </button>
         <button class="text-btn" id="expandirModulos" type="button" aria-expanded="false">Expandir</button>
@@ -43,8 +50,10 @@
       <div class="search-panel" id="panelBusqueda" hidden>
         <label class="search-field">
           <span class="sr-only">Buscar por clase, tema o tecnología</span>
-          <input class="search-input" id="buscarGuia" type="search" autocomplete="off" placeholder="Escribe una clase, tema o tecnología…">
-          <button class="search-clear" id="limpiarBusqueda" type="button" aria-label="Limpiar búsqueda" title="Limpiar búsqueda" hidden>×</button>
+          <input class="search-input" id="buscarGuia" type="search" autocomplete="off"
+            placeholder="Escribe una clase, tema o tecnología…">
+          <button class="search-clear" id="limpiarBusqueda" type="button" aria-label="Limpiar búsqueda"
+            title="Limpiar búsqueda" hidden>×</button>
         </label>
       </div>
       <p class="sr-only" id="estadoResultados" role="status" aria-live="polite"></p>
@@ -184,13 +193,9 @@
             </span>
             <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
-
-
-
-
-          
         </div>
       </details>
+
       <details class="modulo">
         <summary>
           <span class="mod-punto" aria-hidden="true"></span>
@@ -201,8 +206,8 @@
           <span class="mod-badge">Activo</span>
           <span class="mod-chevron" aria-hidden="true">▶</span>
         </summary>
-        
-           <a class="clase" href="docs/M4C1/index.html">
+        <div class="clases">
+          <a class="clase" href="docs/M4C1/index.html">
             <span class="num">13</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 13</span>
@@ -210,7 +215,7 @@
             </span>
             <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
-           <a class="clase" href="docs/M4C2/index.html">
+          <a class="clase" href="docs/M4C2/index.html">
             <span class="num">14</span>
             <span class="clase-info">
               <span class="clase-titulo">Clase 14</span>
@@ -226,18 +231,28 @@
             </span>
             <span class="flecha" aria-hidden="true">&rarr;</span>
           </a>
+          <a class="clase" href="docs/M4C4/Clase16-Deploy-Produccion-Render-Supabase.html">
+            <span class="num">16</span>
+            <span class="clase-info">
+              <span class="clase-titulo">Clase 16</span>
+              <span class="clase-temas">Deploy producción Render + dominio + monitoreo</span>
+            </span>
+            <span class="flecha" aria-hidden="true">&rarr;</span>
+          </a>
 
 
-          
+
         </div>
       </details>
     </div>
 
-    <p class="empty-state" id="sinResultados" hidden><strong>No encontramos esa guía.</strong> Prueba con otro tema, número de clase o tecnología.</p>
+    <p class="empty-state" id="sinResultados" hidden><strong>No encontramos esa guía.</strong> Prueba con otro tema,
+      número de clase o tecnología.</p>
 
     <details class="legal-mini">
       <summary>© Aviso de autoría y uso del material</summary>
-      <p>Este material es de <strong>autoría exclusiva de Ana Alvarado</strong> y está destinado a las y los estudiantes del curso. No se permite su reproducción o redistribución fuera de clase sin autorización escrita.</p>
+      <p>Este material es de <strong>autoría exclusiva de Ana Alvarado</strong> y está destinado a las y los estudiantes
+        del curso. No se permite su reproducción o redistribución fuera de clase sin autorización escrita.</p>
     </details>
   </main>
 
@@ -248,4 +263,5 @@
 
   <script src="portal.js" defer></script>
 </body>
+
 </html>
