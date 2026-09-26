@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="es" data-tema="oscuro" data-tema-base="oscuro" data-empresa="dev-senior" data-paleta="indigo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Ana Alvarado">
+  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <title>Clase 17 · Cursor AI: workflow profesional · Atiende</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&amp;family=Inter:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+  <link rel="stylesheet" href="anaestilos-v12.css">
+</head>
+<body>
+  <a class="skip-link" href="#s1">Saltar al contenido</a>
+  <div class="topline" id="topline" aria-hidden="true"></div>
+  <div class="controls" aria-label="Controles">
+    <button class="ctrl" id="temaBtn" type="button" aria-label="Cambiar tema">☀</button>
+    <button class="ctrl" id="fullscreenBtn" type="button" aria-label="Pantalla completa">⛶</button>
+  </div>
+
+  <div class="shell" id="shell" data-collapsed="false">
+    <aside class="sidebar" aria-label="Índice de la clase">
+      <div class="sb-top">
+        <span class="brand-mark">A</span>
+        <div class="sb-title"><b>Atiende · Módulo 5</b><span>Clase 17 · 120 min</span></div>
+      </div>
+      <button class="sb-toggle" id="collapseBtn" type="button" aria-label="Colapsar menú">‹</button>
+      <nav class="sb-nav" id="nav" aria-label="Secciones">
+        <a class="nav-item active" href="#portada"><span class="nav-index">00</span><span class="nav-label">Portada</span></a>
+        <span class="nav-group">Problema</span>
+        <a class="nav-item" href="#s1"><span class="nav-index">01</span><span class="nav-label">El ticket perdido</span></a>
+        <a class="nav-item" href="#s2"><span class="nav-index">02</span><span class="nav-label">Agente con criterio</span></a>
+        <span class="nav-group">Contexto y plan</span>
+        <a class="nav-item" href="#s3"><span class="nav-index">03</span><span class="nav-label">La SPEC</span></a>
+        <a class="nav-item" href="#s4"><span class="nav-index">04</span><span class="nav-label">Reglas del proyecto</span></a>
+        <a class="nav-item" href="#s5"><span class="nav-index">05</span><span class="nav-label">Plan antes del código</span></a>
+        <span class="nav-group">Construir</span>
+        <a class="nav-item" href="#s6"><span class="nav-index">06</span><span class="nav-label">Dominio Ticket</span></a>
+        <a class="nav-item" href="#s7"><span class="nav-index">07</span><span class="nav-label">Contratos y errores</span></a>
+        <a class="nav-item" href="#s8"><span class="nav-index">08</span><span class="nav-label">Servicio y API</span></a>
+        <span class="nav-group">Verificar</span>
+        <a class="nav-item" href="#s9"><span class="nav-index">09</span><span class="nav-label">Postman encuentra el bug</span></a>
+        <a class="nav-item" href="#s10"><span class="nav-index">10</span><span class="nav-label">Debug con evidencia</span></a>
+        <a class="nav-item" href="#s11"><span class="nav-index">11</span><span class="nav-label">16 tests</span></a>
+        <a class="nav-item" href="#s12"><span class="nav-index">12</span><span class="nav-label">El test rojo</span></a>
+        <span class="nav-group">Consolidar</span>
+        <a class="nav-item" href="#s13"><span class="nav-index">13</span><span class="nav-label">Refactor con criterio</span></a>
+        <a class="nav-item" href="#s14"><span class="nav-index">14</span><span class="nav-label">Documentar y ahorrar</span></a>
+        <a class="nav-item" href="#s15"><span class="nav-index">15</span><span class="nav-label">Cierre y puente</span></a>
+      </nav>
+      <div class="sb-prog">
+        <div class="lbl"><span>Progreso</span><span id="progPct">0%</span></div>
+        <div class="track"><div class="fill" id="progFill"></div></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="hero view" id="portada" data-accent="1">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <span class="eyebrow">Dev Senior · Java AI Engineer</span>
+            <h1 class="hero-title">Cursor AI sin piloto automático</h1>
+            <p class="hero-lead">Del mensaje perdido de Laura a un backend verificable: contexto, plan, diff, depuración y tests como contrato.</p>
+            <div class="meta">
+              <span class="pill" data-hot>120 minutos</span>
+              <span class="pill">Java 17 · Spring Boot 4.1.1</span>
+              <span class="pill">Cursor · JUnit 5 · Mockito</span>
+            </div>
+          </div>
+          <figure class="hero-visual">
+            <svg viewBox="0 0 440 300" role="img" aria-label="Un ticket de soporte avanza por SPEC, plan, diff y pruebas hasta quedar verificado">
+              <rect x="34" y="20" width="372" height="258" rx="18" fill="var(--paper-2)" stroke="var(--paper-line)" stroke-width="2"/>
+              <text x="58" y="56" font-family="Bricolage Grotesque, Inter" font-size="20" font-weight="600" fill="var(--paper-ink)">Ticket #1045 · Laura Gómez</text>
+              <text x="58" y="82" font-family="IBM Plex Mono" font-size="13" fill="var(--paper-soft)">“Hace 8 días que no llega”</text>
+              <line x1="58" y1="101" x2="382" y2="101" stroke="var(--paper-line)" stroke-width="2"/>
+              <rect x="58" y="122" width="64" height="48" rx="9" fill="var(--a1-papel)"/><text x="74" y="151" font-family="Inter" font-size="13" font-weight="700" fill="var(--paper-ink)">SPEC</text>
+              <path d="M130 146h28" stroke="var(--a1-ink)" stroke-width="2"/><path d="M152 140l7 6-7 6" fill="none" stroke="var(--a1-ink)" stroke-width="2"/>
+              <rect x="166" y="122" width="64" height="48" rx="9" fill="var(--paper)" stroke="var(--paper-line)"/><text x="184" y="151" font-family="Inter" font-size="13" font-weight="700" fill="var(--paper-ink)">PLAN</text>
+              <path d="M238 146h28" stroke="var(--a1-ink)" stroke-width="2"/><path d="M260 140l7 6-7 6" fill="none" stroke="var(--a1-ink)" stroke-width="2"/>
+              <rect x="274" y="122" width="64" height="48" rx="9" fill="var(--paper)" stroke="var(--paper-line)"/><text x="290" y="151" font-family="Inter" font-size="13" font-weight="700" fill="var(--paper-ink)">DIFF</text>
+              <path d="M306 178v20" stroke="var(--a1-ink)" stroke-width="2"/><path d="M300 192l6 7 6-7" fill="none" stroke="var(--a1-ink)" stroke-width="2"/>
+              <rect x="166" y="205" width="172" height="46" rx="9" fill="var(--paper)" stroke="var(--success)" stroke-width="2"/>
+              <text x="186" y="233" font-family="IBM Plex Mono" font-size="14" font-weight="600" fill="var(--success)">16/16 · BUILD SUCCESS</text>
+            </svg>
+            <figcaption class="hero-note">La velocidad del agente solo cuenta cuando una persona puede explicar, probar y firmar el resultado.</figcaption>
+          </figure>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="section view" id="s1" data-accent="1" data-layout="canvas" data-escena="apertura" hidden>
+          <div class="sec-head">
+            <span class="sec-n">El incidente</span>
+            <h2 class="sec-t">El mensaje urgente de Laura quedó enterrado entre tres canales</h2>
+            <p class="sec-s">Grano Alto Café recibe WhatsApp, correo y chat web. Sin un sistema común, una entrega atrasada puede parecer una consulta cualquiera.</p>
+          </div>
+          <div class="body">
+            <figure class="figura">
+              <div class="figura-stage">
+                <svg viewBox="0 0 700 250" role="img" aria-label="Mensaje urgente de Laura perdido entre mensajes de WhatsApp, correo y chat web">
+                  <rect x="34" y="24" width="632" height="202" rx="16" fill="var(--paper-2)" stroke="var(--paper-line)" stroke-width="2"/>
+                  <text x="62" y="59" font-family="Bricolage Grotesque, Inter" font-size="20" font-weight="600" fill="var(--paper-ink)">Bandejas separadas · lunes 10:51</text>
+                  <rect x="62" y="81" width="170" height="112" rx="10" fill="var(--paper)" stroke="var(--paper-line)"/><text x="82" y="111" font-family="Inter" font-size="15" font-weight="600" fill="var(--paper-ink)">WhatsApp</text><text x="82" y="140" font-family="Inter" font-size="14" fill="var(--danger)">Laura · pedido 1045</text><text x="82" y="165" font-family="Inter" font-size="13" fill="var(--paper-soft)">8 días · regalo sábado</text>
+                  <rect x="265" y="81" width="170" height="112" rx="10" fill="var(--paper)" stroke="var(--paper-line)"/><text x="285" y="111" font-family="Inter" font-size="15" font-weight="600" fill="var(--paper-ink)">Correo</text><text x="285" y="140" font-family="Inter" font-size="14" fill="var(--paper-soft)">Consulta de molienda</text><text x="285" y="165" font-family="Inter" font-size="13" fill="var(--paper-soft)">sin prioridad común</text>
+                  <rect x="468" y="81" width="170" height="112" rx="10" fill="var(--paper)" stroke="var(--paper-line)"/><text x="488" y="111" font-family="Inter" font-size="15" font-weight="600" fill="var(--paper-ink)">Chat web</text><text x="488" y="140" font-family="Inter" font-size="14" fill="var(--paper-soft)">Mensaje nuevo</text><text x="488" y="165" font-family="Inter" font-size="13" fill="var(--paper-soft)">otra cola aislada</text>
+                </svg>
+              </div>
+              <figcaption>El problema no es recibir mensajes: es conservarlos, ordenarlos y moverlos por estados válidos.</figcaption>
+            </figure>
+
+            <div class="socratica">
+              <span class="component-label">Pregunta de apertura</span>
+              <p class="socratica-q">Cursor escribió 12 archivos que compilan. ¿El trabajo está listo?</p>
+              <details class="reveal">
+                <summary>Ver respuesta</summary>
+                <div class="reveal-body"><p class="lead-answer">No.</p><p>Compilar prueba sintaxis y tipos. Todavía falta comprobar que el agente no inventó reglas, respetó el alcance y satisface los criterios de aceptación.</p></div>
+              </details>
+            </div>
+
+            <div class="compare">
+              <div class="compare-card" data-side="negative"><h3>Al empezar</h3><ol><li>Mensajes dispersos.</li><li>Decisiones implícitas.</li><li>Cursor usado como autocompletado.</li></ol></div>
+              <div class="compare-card" data-side="positive"><h3>Al cerrar</h3><ol><li>Dominio Ticket completo.</li><li>Reglas escritas y verificables.</li><li>16 tests verdes y un workflow repetible.</li></ol></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s2" data-accent="1" data-layout="canvas" data-escena="concepto" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Modelo mental</span>
+            <h2 class="sec-t">El agente es brillante y rápido; también llega sin contexto</h2>
+            <p class="sec-s">Trátalo como un junior muy capaz: recibe un encargo acotado, muestra su trabajo y no firma su propio resultado.</p>
+          </div>
+          <div class="body">
+            <div class="definicion">
+              <div class="def-tecnica"><span class="component-label">Definición técnica</span><p class="def-termino">Agente de código</p><p>Inspecciona archivos, propone o ejecuta cambios y puede usar la terminal dentro del contexto que recibe.</p><span class="def-fuente">Cursor · Agent overview</span></div>
+              <div class="def-vida"><span class="component-label">En la vida real</span><p>Es el integrante nuevo que trabaja a enorme velocidad. La persona senior le da contexto, revisa el diff, ejecuta las pruebas y toma las decisiones de negocio.</p></div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption>Un modo distinto para una intención distinta</caption>
+                <thead><tr><th>Modo</th><th>Se usa para</th><th>Qué no debe hacer</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Ask</code></td><td>Entender o revisar</td><td>No edita archivos</td></tr>
+                  <tr><td><code>Plan</code></td><td>Inspeccionar, preguntar y diseñar</td><td>No escribe código todavía</td></tr>
+                  <tr><td><code>Agent</code></td><td>Editar y ejecutar comandos</td><td>No decide el negocio</td></tr>
+                  <tr><td><code>Debug</code></td><td>Plantear hipótesis, instrumentar y reparar</td><td>No reemplaza la reproducción</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pipeline" role="group" aria-label="Flujo profesional de trabajo con el agente">
+              <div class="pipe-step"><span class="component-label">Humano</span><h3>Define</h3><ul><li>problema</li><li>alcance</li><li>criterios</li></ul></div>
+              <div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+              <div class="pipe-step" data-emphasis><span class="component-label">Agente</span><h3>Propone y ejecuta</h3><ul><li>plan</li><li>cambios</li><li>hipótesis</li></ul></div>
+              <div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+              <div class="pipe-step"><span class="component-label">Humano</span><h3>Verifica y firma</h3><ul><li>diff</li><li>evidencia</li><li>decisión</li></ul></div>
+            </div>
+
+            <div class="micro-task">
+              <span class="component-label">Atajo útil</span>
+              <p class="micro-task-q"><code>Ctrl+I</code> abre el agente; <code>Shift+Tab</code> cambia de modo. ¿Qué modo elegirías para entender una línea antes de aceptarla?</p>
+              <details class="micro-reveal"><summary>Comprobar</summary><p class="micro-answer"><strong>Ask.</strong> Necesitas una explicación, no una edición.</p></details>
+            </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s3" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Concepto central 1 · contexto</span>
+            <h2 class="sec-t">La SPEC convierte decisiones del negocio en una fuente de verdad</h2>
+            <p class="sec-s">La IA puede entrevistar y ordenar; estados, transiciones y alcance siguen siendo decisiones humanas.</p>
+          </div>
+          <div class="body">
+            <div class="definicion">
+              <div class="def-tecnica"><span class="component-label">Definición técnica</span><p class="def-termino">SPEC</p><p>Documento previo al código que declara problema, alcance, entidad, reglas, contratos y criterios de aceptación.</p></div>
+              <div class="def-vida"><span class="component-label">En la vida real</span><p>Es el contrato de la remodelación: antes de mover una pared, todos pueden señalar qué se aprobó y qué quedó fuera.</p></div>
+            </div>
+
+            <div class="socratica">
+              <span class="component-label">Para pensar</span>
+              <p class="socratica-q">¿Quién debería escribir la SPEC: tú o la IA?</p>
+              <details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Las decisiones son tuyas; la IA ayuda a descubrir huecos y dar formato.</p><p>Si la IA decide las reglas, la SPEC deja de servir para verificar a la propia IA.</p></div></details>
+            </div>
+
+            <div class="momento-ia">
+              <div class="momento-ia-head"><span class="momento-ia-titulo">Momento IA</span><span class="ia-nivel">Nivel 2 · Copiloto</span><span class="ia-herramienta">Chat gratuito en navegador</span></div>
+              <div class="momento-ia-body">
+                <p class="ia-porque">Redactar y ordenar es mecánico; descubrir casos olvidados es donde la entrevista aporta valor.</p>
+                <div class="ia-grid">
+                  <div><span class="component-label">Primero razonas tú</span><p>El problema, los estados y qué queda fuera de alcance.</p></div>
+                  <div class="ia-no-delega"><span class="component-label">No se delega</span><p>Las transiciones y el alcance: pertenecen al negocio.</p></div>
+                </div>
+                <div class="code-block" data-tipo="prompt">
+                  <div class="code-head"><div><span class="code-context">Prompt sugerido</span><span class="code-file">ChatGPT, Claude o Gemini</span></div><button class="copy-btn" type="button">Copiar</button></div>
+                  <pre><code class="language-plaintext">Actúa como product manager. Voy a construir la fase 1 de un backend en Spring Boot para centralizar los mensajes de clientes de una tienda online de café (WhatsApp, correo, chat web) como tickets con estado. Hazme preguntas de una en una para descubrir reglas de negocio que se me estén olvidando. Cuando termines, escribe una SPEC en Markdown con: problema, objetivo, fuera de alcance, entidad, reglas de negocio, endpoints, formato de error y criterios de aceptación en forma de checklist. No escribas código.</code></pre>
+                </div>
+                <div><span class="component-label">Cómo validar</span><ul class="checklist"><li>Cada regla responde “esto lo decidí yo” o “lo inventó la IA”.</li><li>Los criterios son comprobables.</li><li>No apareció código antes de aprobar el contrato.</li></ul></div>
+              </div>
+            </div>
+
+            <details class="code-reveal">
+              <summary><span><span class="code-reveal-title">SPEC.md completa</span><span class="code-reveal-note">Crear en la raíz · Markdown · fuente de verdad del dominio</span></span></summary>
+              <div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">SPEC.md</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-markdown"># SPEC &#183; Atiende &#183; Fase 1: recepci&#243;n de tickets
+
+## Problema
+Grano Alto Caf&#233; (tienda online de caf&#233; de especialidad) recibe mensajes por WhatsApp, correo y chat web.
+Dos personas los leen a mano en tres lugares distintos: lo urgente se pierde y nadie sabe cu&#225;ntos mensajes siguen sin respuesta.
+
+## Objetivo de la fase 1
+Centralizar todos los mensajes como tickets con estado, para saber qu&#233; falta por atender.
+
+## Fuera de alcance (llega despu&#233;s)
+- IA: clasificaci&#243;n, prioridad autom&#225;tica y respuestas sugeridas.
+- Pedidos de la tienda.
+- Autenticaci&#243;n.
+- Conexi&#243;n real con WhatsApp o correo: el canal se simula con peticiones HTTP.
+
+## Entidad Ticket
+
+| Campo | Tipo | Regla |
+|---|---|---|
+| id | Long | Autogenerado |
+| clienteNombre | Texto | Obligatorio, m&#225;ximo 100 |
+| clienteContacto | Texto | Obligatorio (tel&#233;fono o correo), m&#225;ximo 120 |
+| canal | WHATSAPP, CORREO, CHAT_WEB | Obligatorio |
+| mensaje | Texto | Obligatorio, m&#225;ximo 2000 |
+| estado | ABIERTO, EN_PROCESO, RESUELTO, CERRADO | Lo asigna el sistema |
+| prioridad | BAJA, MEDIA, ALTA, URGENTE | Lo asigna el sistema |
+| fechaCreacion | Fecha y hora | Autom&#225;tica |
+| fechaActualizacion | Fecha y hora | Autom&#225;tica, cambia en cada modificaci&#243;n |
+
+## Reglas de negocio
+1. Todo ticket nuevo nace ABIERTO y con prioridad MEDIA. El cliente no puede enviar estado ni prioridad.
+2. Transiciones de estado permitidas:
+
+| Desde | Hacia | Caso real |
+|---|---|---|
+| ABIERTO | EN_PROCESO | Alguien de soporte toma el ticket |
+| ABIERTO | CERRADO | Spam o mensaje duplicado |
+| EN_PROCESO | RESUELTO | Se respondi&#243; al cliente |
+| RESUELTO | CERRADO | El cliente confirm&#243; la soluci&#243;n |
+| RESUELTO | EN_PROCESO | El cliente dice que no qued&#243; resuelto |
+
+   Cualquier otra transici&#243;n se rechaza. CERRADO es un estado final.
+3. La regla de transiciones vive en el enum `EstadoTicket`, en el m&#233;todo `boolean puedeCambiarA(EstadoTicket destino)`.
+
+## Endpoints
+
+| M&#233;todo | Ruta | Respuestas |
+|---|---|---|
+| POST | /api/tickets | 201 ticket creado &#183; 400 datos inv&#225;lidos |
+| GET | /api/tickets?estado= | 200 lista, m&#225;s recientes primero; el filtro es opcional |
+| GET | /api/tickets/{id} | 200 &#183; 404 |
+| PATCH | /api/tickets/{id}/estado | 200 &#183; 400 &#183; 404 &#183; 409 transici&#243;n no permitida |
+
+## Formato de error
+JSON con: `codigo`, `error`, `mensaje`, `fecha`.
+
+## Criterios de aceptaci&#243;n
+- [ ] Crear un ticket devuelve 201 con estado ABIERTO y prioridad MEDIA.
+- [ ] Si el cliente env&#237;a estado o prioridad, se ignoran.
+- [ ] Enviar el mensaje vac&#237;o devuelve 400 indicando el campo.
+- [ ] Buscar un id inexistente devuelve 404.
+- [ ] ABIERTO → EN_PROCESO devuelve 200 y la respuesta trae la fechaActualizacion nueva.
+- [ ] ABIERTO → RESUELTO devuelve 409.
+- [ ] Filtrar con estado=ABIERTO solo devuelve tickets abiertos.</code></pre></div></div>
+            </details>
+          </div>
+        </section>
+
+        <section class="section view" id="s4" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Preparar el proyecto</span>
+            <h2 class="sec-t">SPEC dice qué construir; AGENTS.md dice cómo trabajar</h2>
+            <p class="sec-s">El proyecto parte de Spring Initializr y añade límites persistentes antes de abrir el agente.</p>
+          </div>
+          <div class="body">
+            <ol class="stepper">
+              <li class="step-item"><span class="step-num">1</span><div><b>Spring Initializr</b><p>Maven · Java 17 · Spring Boot 4.1.1 · Web, JPA, MySQL y Validation.</p></div></li>
+              <li class="step-item"><span class="step-num">2</span><div><b>Base de datos</b><p>MySQL local y una sola fuente de configuración.</p></div></li>
+              <li class="step-item"><span class="step-num">3</span><div><b>Contexto persistente</b><p><code>SPEC.md</code>, <code>AGENTS.md</code> y <code>.cursorignore</code>.</p></div></li>
+              <li class="step-item"><span class="step-num">4</span><div><b>Primer commit</b><p>Un punto limpio antes de delegar cambios.</p></div></li>
+            </ol>
+
+            <div class="callout" data-variant="warning"><span class="component-label">Ojo técnico · 26/09/2026</span><h3>Si el parent aparece como <code>4.1.1.RELEASE</code>, cámbialo a <code>4.1.1</code>.</h3><p>Después usa “Java: Reload Projects”. El sufijo no está publicado y Maven no podrá resolverlo.</p></div>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">application.properties completo</span><span class="code-reveal-note">Reemplazar · MySQL local · sin perfiles adicionales</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Reemplazar</span><span class="code-file">src/main/resources/application.properties</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-properties">spring.application.name=atiende
+
+spring.datasource.url=jdbc:mysql://localhost:3306/atiende_db?createDatabaseIfNotExist=true
+spring.datasource.username=root
+spring.datasource.password=root
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.open-in-view=false</code></pre></div></div></details>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">AGENTS.md · versión 1 completa</span><span class="code-reveal-note">Crear en la raíz · arquitectura, estilo, tests y límites</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">AGENTS.md</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-markdown"># Atiende &#183; instrucciones para el agente
+
+## Contexto
+Backend de atenci&#243;n al cliente de Grano Alto Caf&#233;.
+Antes de cambiar reglas de negocio, lee `SPEC.md`: es la fuente de verdad.
+
+## Stack
+- Java 17, Spring Boot 4.1, Maven, MySQL.
+- Configuraci&#243;n solo en `application.properties`. Nunca `application.yml` ni perfiles.
+
+## Arquitectura
+- Paquete base `com.devsenior.atiende`, organizado por dominio: `ticket/`, `compartido/`.
+- Capas: Controller → Service → Repository. El Controller no tiene l&#243;gica de negocio.
+- DTOs como `record` en `&lt;dominio&gt;/dto`. Nunca expongas entidades JPA en la API.
+- Un mapper propio por dominio (`@Component`), sin librer&#237;as de mapeo.
+- Inyecci&#243;n por constructor. Nunca `@Autowired` sobre atributos.
+- Enums persistidos con `@Enumerated(EnumType.STRING)`.
+- Errores con excepciones propias y un `@RestControllerAdvice` en `compartido/`.
+
+## C&#243;digo
+- Clases, m&#233;todos y variables en espa&#241;ol.
+- Sin Lombok: getters y setters expl&#237;citos.
+- Validaci&#243;n de entrada con Jakarta Validation en los DTO de request.
+
+## Tests
+- JUnit 5 + Mockito. Los tests del Service no levantan Spring.
+
+## L&#237;mites
+- No agregues dependencias al `pom.xml` sin preguntarme.
+- No modifiques `application.properties` salvo que te lo pida.
+- Si algo de la SPEC es ambiguo, pregunta antes de suponer.</code></pre></div></div></details>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">.cursorignore completo</span><span class="code-reveal-note">Crear en la raíz · bloquea secretos del contexto</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">.cursorignore</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre><code class="language-gitignore"># Secretos: el agente nunca debe leerlos
+**/secrets.properties
+**/.env
+**/.env.*
+**/*.pem
+**/*.key</code></pre></div></div></details>
+
+            <div class="compare">
+              <div class="compare-card" data-side="positive"><h3>Lo que sí protege</h3><ol><li>Evita indexar archivos indicados.</li><li>Reduce secretos dentro del contexto.</li><li>Hace visible la política del equipo.</li></ol></div>
+              <div class="compare-card" data-side="negative"><h3>Lo que no garantiza</h3><ol><li>No es una bóveda.</li><li>Terminales o MCP pueden tener otros accesos.</li><li>La persona aún revisa comandos y permisos.</li></ol></div>
+            </div>
+
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Punto limpio</span><span class="code-file">Terminal</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-bash">git init
+git add .
+git commit -m &quot;Proyecto base de Atiende y SPEC de la fase 1&quot;</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s5" data-accent="1" data-layout="canvas" data-escena="pregunta" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Concepto central 2 · planear</span>
+            <h2 class="sec-t">Cambiar veinte líneas de plan cuesta menos que deshacer doce archivos</h2>
+            <p class="sec-s">Plan mode investiga el proyecto, pregunta y propone una ruta revisable antes de tocar el código.</p>
+          </div>
+          <div class="body">
+            <div class="momento-ia">
+              <div class="momento-ia-head"><span class="momento-ia-titulo">Momento IA</span><span class="ia-nivel">Nivel 3 · Agente</span><span class="ia-herramienta">Cursor · Plan mode</span></div>
+              <div class="momento-ia-body">
+                <p class="ia-porque">El agente inspecciona la base existente y produce un plan concreto; todavía no escribe código.</p>
+                <div class="ia-grid"><div><span class="component-label">Primero razonas tú</span><p>Qué archivos adjuntar y qué restricciones deben aparecer.</p></div><div class="ia-no-delega"><span class="component-label">No se delega</span><p>Aprobar alcance, arquitectura y ubicación de cada regla.</p></div></div>
+                <div class="code-block" data-tipo="prompt"><div class="code-head"><div><span class="code-context">Prompt sugerido</span><span class="code-file">Cursor · Plan</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">@SPEC.md @AGENTS.md
+Implementa la Fase 1 de Atiende descrita en SPEC.md.
+Antes de escribir c&#243;digo, dame un plan con:
+1. La lista exacta de archivos a crear, con su paquete.
+2. D&#243;nde y c&#243;mo vas a validar cada regla de negocio.
+3. C&#243;mo se puede comprobar cada criterio de aceptaci&#243;n.
+No agregues dependencias al pom.xml. No escribas tests todav&#237;a.</code></pre></div>
+                <div><span class="component-label">Cómo validar</span><ul class="checklist"><li>Lista exacta de archivos y paquetes.</li><li>Cada regla tiene un lugar explícito.</li><li>Cada criterio tiene una forma de comprobarse.</li><li>No aparecen dependencias ni tests prematuros.</li></ul></div>
+              </div>
+            </div>
+
+            <div class="sin-ia"><span class="sin-ia-icono" aria-hidden="true"></span><div><h3>Sin IA aquí</h3><p>Revisar el plan es trabajo senior. Si la IA revisa su propio plan, nadie está revisando.</p></div></div>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption>Checklist de revisión antes de ejecutar</caption>
+                <thead><tr><th>Pregunta</th><th>Señal de aprobación</th></tr></thead>
+                <tbody>
+                  <tr><td>¿Respeta <code>AGENTS.md</code>?</td><td>Controller → Service → Repository; records; mapper propio.</td></tr>
+                  <tr><td>¿Invade “Fuera de alcance”?</td><td>No agrega Security, Swagger ni IA.</td></tr>
+                  <tr><td>¿Agrega dependencias?</td><td>No introduce Lombok ni MapStruct.</td></tr>
+                  <tr><td>¿Dónde viven las transiciones?</td><td><code>EstadoTicket.puedeCambiarA</code>.</td></tr>
+                  <tr><td>¿El cliente decide estado o prioridad?</td><td>No: el sistema asigna ABIERTO y MEDIA.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="socratica"><span class="component-label">Decisión de alcance</span><p class="socratica-q">El plan propone Spring Security “para proteger los endpoints”. ¿Lo aceptas?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">No en esta fase.</p><p>La autenticación está fuera de alcance. Una buena idea en el momento equivocado rompe la SPEC y bloquearía las pruebas con 401.</p></div></details></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s6" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Construir · vocabulario del dominio</span>
+            <h2 class="sec-t">Los estados son datos; las transiciones son una regla ejecutable</h2>
+            <p class="sec-s">Los enums evitan variantes de texto y <code>EstadoTicket</code> concentra el grafo permitido por la SPEC.</p>
+          </div>
+          <div class="body">
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption>Transiciones permitidas por el negocio</caption>
+                <thead><tr><th>Desde</th><th>Hacia</th><th>Motivo</th></tr></thead>
+                <tbody>
+                  <tr><td>ABIERTO</td><td>EN_PROCESO</td><td>Soporte lo toma.</td></tr>
+                  <tr><td>ABIERTO</td><td>CERRADO</td><td>Spam o duplicado.</td></tr>
+                  <tr><td>EN_PROCESO</td><td>RESUELTO</td><td>Hay solución.</td></tr>
+                  <tr><td>RESUELTO</td><td>CERRADO</td><td>Se confirma el cierre.</td></tr>
+                  <tr><td>RESUELTO</td><td>EN_PROCESO</td><td>Se reabre correctamente.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">Canal.java completo</span><span class="code-reveal-note">Crear · enum de origen del mensaje</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/Canal.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+public enum Canal {
+    WHATSAPP,
+    CORREO,
+    CHAT_WEB
+}</code></pre></div></div></details>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">Prioridad.java completo</span><span class="code-reveal-note">Crear · valor asignado por el sistema</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/Prioridad.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+public enum Prioridad {
+    BAJA,
+    MEDIA,
+    ALTA,
+    URGENTE
+}</code></pre></div></div></details>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">EstadoTicket.java completo</span><span class="code-reveal-note">Crear · la tabla de la SPEC convertida en código</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/EstadoTicket.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+public enum EstadoTicket {
+    ABIERTO,
+    EN_PROCESO,
+    RESUELTO,
+    CERRADO;
+
+    public boolean puedeCambiarA(EstadoTicket destino) {
+        return switch (this) {
+            case ABIERTO -&gt; destino == EN_PROCESO || destino == CERRADO;
+            case EN_PROCESO -&gt; destino == RESUELTO;
+            case RESUELTO -&gt; destino == CERRADO || destino == EN_PROCESO;
+            case CERRADO -&gt; false;
+        };
+    }
+}</code></pre></div></div></details>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">Ticket.java completo</span><span class="code-reveal-note">Crear · entidad JPA con fechas automáticas</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/Ticket.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;tickets&quot;)
+public class Ticket {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String clienteNombre;
+
+    @Column(nullable = false, length = 120)
+    private String clienteContacto;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Canal canal;
+
+    @Column(nullable = false, length = 2000)
+    private String mensaje;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private EstadoTicket estado;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Prioridad prioridad;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
+
+    @Column(nullable = false)
+    private LocalDateTime fechaActualizacion;
+
+    @PrePersist
+    void alCrear() {
+        fechaCreacion = LocalDateTime.now();
+        fechaActualizacion = fechaCreacion;
+    }
+
+    @PreUpdate
+    void alActualizar() {
+        fechaActualizacion = LocalDateTime.now();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getClienteNombre() {
+        return clienteNombre;
+    }
+
+    public void setClienteNombre(String clienteNombre) {
+        this.clienteNombre = clienteNombre;
+    }
+
+    public String getClienteContacto() {
+        return clienteContacto;
+    }
+
+    public void setClienteContacto(String clienteContacto) {
+        this.clienteContacto = clienteContacto;
+    }
+
+    public Canal getCanal() {
+        return canal;
+    }
+
+    public void setCanal(Canal canal) {
+        this.canal = canal;
+    }
+
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
+    public EstadoTicket getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoTicket estado) {
+        this.estado = estado;
+    }
+
+    public Prioridad getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(Prioridad prioridad) {
+        this.prioridad = prioridad;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public LocalDateTime getFechaActualizacion() {
+        return fechaActualizacion;
+    }
+}</code></pre></div></div></details>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">TicketRepository.java completo</span><span class="code-reveal-note">Crear · consulta por estado en orden descendente</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/TicketRepository.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TicketRepository extends JpaRepository&lt;Ticket, Long&gt; {
+
+    List&lt;Ticket&gt; findAllByOrderByFechaCreacionDesc();
+
+    List&lt;Ticket&gt; findByEstadoOrderByFechaCreacionDesc(EstadoTicket estado);
+}</code></pre></div></div></details>
+          </div>
+        </section>
+
+        <section class="section view" id="s7" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Construir · contratos</span>
+            <h2 class="sec-t">La API recibe un contrato pequeño y devuelve uno estable</h2>
+            <p class="sec-s">Los records separan entrada y salida; el mapper evita exponer la entidad; el advice unifica errores.</p>
+          </div>
+          <div class="body">
+            <div class="pipeline" role="group" aria-label="Contrato de entrada y salida del ticket">
+              <div class="pipe-step"><span class="component-label">Entrada</span><h3>TicketRequest</h3><ul><li>nombre</li><li>contacto</li><li>canal</li><li>mensaje</li></ul></div>
+              <div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+              <div class="pipe-step" data-emphasis><span class="component-label">Dominio</span><h3>TicketMapper</h3><ul><li>entidad ↔ DTO</li><li>sin librerías</li></ul></div>
+              <div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+              <div class="pipe-step"><span class="component-label">Salida</span><h3>TicketResponse</h3><ul><li>estado</li><li>prioridad</li><li>fechas</li></ul></div>
+            </div>
+
+            <div class="cards">
+              <div class="card"><b>400</b><p>El request no cumple las validaciones.</p></div>
+              <div class="card"><b>404</b><p>El ticket solicitado no existe.</p></div>
+              <div class="card"><b>409</b><p>La transición contradice el negocio.</p></div>
+            </div>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">TicketRequest.java completo</span><span class="code-reveal-note">Crear en ticket/dto · validación de entrada</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/dto/TicketRequest.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket.dto;
+
+import com.devsenior.atiende.ticket.Canal;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public record TicketRequest(
+
+        @NotBlank(message = &quot;El nombre del cliente es obligatorio&quot;)
+        @Size(max = 100, message = &quot;El nombre no puede superar 100 caracteres&quot;)
+        String clienteNombre,
+
+        @NotBlank(message = &quot;El contacto del cliente es obligatorio&quot;)
+        @Size(max = 120, message = &quot;El contacto no puede superar 120 caracteres&quot;)
+        String clienteContacto,
+
+        @NotNull(message = &quot;El canal es obligatorio&quot;)
+        Canal canal,
+
+        @NotBlank(message = &quot;El mensaje es obligatorio&quot;)
+        @Size(max = 2000, message = &quot;El mensaje no puede superar 2000 caracteres&quot;)
+        String mensaje
+) {
+}</code></pre></div></div></details>
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">TicketResponse.java completo</span><span class="code-reveal-note">Crear en ticket/dto · contrato de salida</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/dto/TicketResponse.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket.dto;
+
+import com.devsenior.atiende.ticket.Canal;
+import com.devsenior.atiende.ticket.EstadoTicket;
+import com.devsenior.atiende.ticket.Prioridad;
+import java.time.LocalDateTime;
+
+public record TicketResponse(
+        Long id,
+        String clienteNombre,
+        String clienteContacto,
+        Canal canal,
+        String mensaje,
+        EstadoTicket estado,
+        Prioridad prioridad,
+        LocalDateTime fechaCreacion,
+        LocalDateTime fechaActualizacion
+) {
+}</code></pre></div></div></details>
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">CambioEstadoRequest.java completo</span><span class="code-reveal-note">Crear en ticket/dto · PATCH mínimo</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/dto/CambioEstadoRequest.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket.dto;
+
+import com.devsenior.atiende.ticket.EstadoTicket;
+import jakarta.validation.constraints.NotNull;
+
+public record CambioEstadoRequest(
+
+        @NotNull(message = &quot;El nuevo estado es obligatorio&quot;)
+        EstadoTicket estado
+) {
+}</code></pre></div></div></details>
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">TicketMapper.java completo</span><span class="code-reveal-note">Crear en ticket · mapeo explícito</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/TicketMapper.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import com.devsenior.atiende.ticket.dto.TicketRequest;
+import com.devsenior.atiende.ticket.dto.TicketResponse;
+import org.springframework.stereotype.Component;
+
+@Component
+public class TicketMapper {
+
+    public Ticket toEntity(TicketRequest request) {
+        Ticket ticket = new Ticket();
+        ticket.setClienteNombre(request.clienteNombre());
+        ticket.setClienteContacto(request.clienteContacto());
+        ticket.setCanal(request.canal());
+        ticket.setMensaje(request.mensaje());
+        return ticket;
+    }
+
+    public TicketResponse toResponse(Ticket ticket) {
+        return new TicketResponse(
+                ticket.getId(),
+                ticket.getClienteNombre(),
+                ticket.getClienteContacto(),
+                ticket.getCanal(),
+                ticket.getMensaje(),
+                ticket.getEstado(),
+                ticket.getPrioridad(),
+                ticket.getFechaCreacion(),
+                ticket.getFechaActualizacion()
+        );
+    }
+}</code></pre></div></div></details>
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">TransicionInvalidaException.java completo</span><span class="code-reveal-note">Crear en ticket · conflicto de negocio</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/TransicionInvalidaException.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+public class TransicionInvalidaException extends RuntimeException {
+
+    public TransicionInvalidaException(EstadoTicket actual, EstadoTicket destino) {
+        super(&quot;No se puede pasar un ticket de &quot; + actual + &quot; a &quot; + destino);
+    }
+}</code></pre></div></div></details>
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">RecursoNoEncontradoException.java completo</span><span class="code-reveal-note">Crear en compartido · recurso inexistente</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/compartido/RecursoNoEncontradoException.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.compartido;
+
+public class RecursoNoEncontradoException extends RuntimeException {
+
+    public RecursoNoEncontradoException(String mensaje) {
+        super(mensaje);
+    }
+}</code></pre></div></div></details>
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">ErrorResponse.java completo</span><span class="code-reveal-note">Crear en compartido · formato único de error</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/compartido/ErrorResponse.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.compartido;
+
+import java.time.LocalDateTime;
+
+public record ErrorResponse(
+        int codigo,
+        String error,
+        String mensaje,
+        LocalDateTime fecha
+) {
+}</code></pre></div></div></details>
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">GlobalExceptionHandler.java completo</span><span class="code-reveal-note">Crear en compartido · 400, 404 y 409 coherentes</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/compartido/GlobalExceptionHandler.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.compartido;
+
+import com.devsenior.atiende.ticket.TransicionInvalidaException;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; manejarNoEncontrado(RecursoNoEncontradoException ex) {
+        return construir(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(TransicionInvalidaException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; manejarTransicionInvalida(TransicionInvalidaException ex) {
+        return construir(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; manejarValidacion(MethodArgumentNotValidException ex) {
+        String mensaje = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -&gt; error.getField() + &quot;: &quot; + error.getDefaultMessage())
+                .sorted()
+                .collect(Collectors.joining(&quot;; &quot;));
+        return construir(HttpStatus.BAD_REQUEST, mensaje);
+    }
+
+    private ResponseEntity&lt;ErrorResponse&gt; construir(HttpStatus status, String mensaje) {
+        ErrorResponse cuerpo = new ErrorResponse(
+                status.value(),
+                status.getReasonPhrase(),
+                mensaje,
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(status).body(cuerpo);
+    }
+}</code></pre></div></div></details>
+          </div>
+        </section>
+
+        <section class="section view" id="s8" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Ejecutar y revisar el diff</span>
+            <h2 class="sec-t">Un mensaje atraviesa siete fronteras antes de volver como respuesta</h2>
+            <p class="sec-s">Revisamos el código en el orden real de ejecución y rechazamos cualquier lógica de negocio dentro del Controller.</p>
+          </div>
+          <div class="body">
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Orden de revisión</span><span class="code-file">Viaje de punta a punta</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">JSON del cliente
+↓
+TicketRequest (DTO de entrada, validado)
+↓
+TicketController
+↓
+TicketService (reglas de negocio)
+↓
+TicketRepository → MySQL (tabla tickets)
+↓
+TicketMapper → TicketResponse (DTO de salida)
+↓
+JSON de respuesta</code></pre></div>
+
+            <div class="sin-ia"><span class="sin-ia-icono" aria-hidden="true"></span><div><h3>Revisa el diff, no la confianza del agente</h3><p>No aceptes una línea que no puedas explicar. Si el resultado se desvía mucho, vuelve al plan; no apiles parches sobre un enfoque equivocado.</p></div></div>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">TicketService.java · versión 1 completa</span><span class="code-reveal-note">Código inicial del agente · contiene un bug temporal que Postman revelará</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/TicketService.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import com.devsenior.atiende.compartido.RecursoNoEncontradoException;
+import com.devsenior.atiende.ticket.dto.TicketRequest;
+import com.devsenior.atiende.ticket.dto.TicketResponse;
+import java.util.List;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class TicketService {
+
+    private final TicketRepository ticketRepository;
+    private final TicketMapper ticketMapper;
+
+    public TicketService(TicketRepository ticketRepository, TicketMapper ticketMapper) {
+        this.ticketRepository = ticketRepository;
+        this.ticketMapper = ticketMapper;
+    }
+
+    @Transactional
+    public TicketResponse crear(TicketRequest request) {
+        Ticket ticket = ticketMapper.toEntity(request);
+        ticket.setEstado(EstadoTicket.ABIERTO);
+        ticket.setPrioridad(Prioridad.MEDIA);
+        return ticketMapper.toResponse(ticketRepository.save(ticket));
+    }
+
+    @Transactional(readOnly = true)
+    public List&lt;TicketResponse&gt; listar(EstadoTicket estado) {
+        List&lt;Ticket&gt; tickets = (estado == null)
+                ? ticketRepository.findAllByOrderByFechaCreacionDesc()
+                : ticketRepository.findByEstadoOrderByFechaCreacionDesc(estado);
+        return tickets.stream()
+                .map(ticketMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public TicketResponse buscarPorId(Long id) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -&gt; new RecursoNoEncontradoException(&quot;No existe el ticket con id &quot; + id));
+        return ticketMapper.toResponse(ticket);
+    }
+
+    @Transactional
+    public TicketResponse cambiarEstado(Long id, EstadoTicket nuevoEstado) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -&gt; new RecursoNoEncontradoException(&quot;No existe el ticket con id &quot; + id));
+        if (!ticket.getEstado().puedeCambiarA(nuevoEstado)) {
+            throw new TransicionInvalidaException(ticket.getEstado(), nuevoEstado);
+        }
+        ticket.setEstado(nuevoEstado);
+        return ticketMapper.toResponse(ticketRepository.save(ticket));
+    }
+}</code></pre></div></div></details>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">TicketController.java completo</span><span class="code-reveal-note">Crear · rutas HTTP sin lógica de negocio</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/TicketController.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import com.devsenior.atiende.ticket.dto.CambioEstadoRequest;
+import com.devsenior.atiende.ticket.dto.TicketRequest;
+import com.devsenior.atiende.ticket.dto.TicketResponse;
+import jakarta.validation.Valid;
+import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api/tickets&quot;)
+public class TicketController {
+
+    private final TicketService ticketService;
+
+    public TicketController(TicketService ticketService) {
+        this.ticketService = ticketService;
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;TicketResponse&gt; crear(@Valid @RequestBody TicketRequest request) {
+        TicketResponse creado = ticketService.crear(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+    }
+
+    @GetMapping
+    public List&lt;TicketResponse&gt; listar(@RequestParam(required = false) EstadoTicket estado) {
+        return ticketService.listar(estado);
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public TicketResponse buscarPorId(@PathVariable Long id) {
+        return ticketService.buscarPorId(id);
+    }
+
+    @PatchMapping(&quot;/{id}/estado&quot;)
+    public TicketResponse cambiarEstado(@PathVariable Long id,
+                                        @Valid @RequestBody CambioEstadoRequest request) {
+        return ticketService.cambiarEstado(id, request.estado());
+    }
+}</code></pre></div></div></details>
+
+            <div class="twin">
+              <div class="panel"><span class="component-label">Arrancar</span><h3>Aplicación</h3><div class="consola"><div class="consola-head">Terminal</div><pre><code class="language-bash">./mvnw spring-boot:run
+# Windows PowerShell
+.\mvnw spring-boot:run</code></pre></div></div>
+              <div class="panel"><span class="component-label">Cerrar el bloque</span><h3>Commit pequeño</h3><div class="consola"><div class="consola-head">Terminal</div><pre><code class="language-bash">git add .
+git commit -m "Dominio ticket construido con el agente"</code></pre></div></div>
+            </div>
+
+            <div class="callout" data-variant="warning"><span class="component-label">Si no arranca</span><h3>Lee la primera causa, no el último síntoma.</h3><p><code>Communications link failure</code> apunta a MySQL apagado; <code>Access denied</code>, a credenciales. El mensaje posterior de Hibernate sobre JDBC metadata es consecuencia de esa conexión fallida.</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s9" data-accent="1" data-layout="canvas" data-escena="prueba" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Verificar con Postman</span>
+            <h2 class="sec-t">“Compila y arranca” no es un criterio de aceptación</h2>
+            <p class="sec-s">Nueve peticiones, en una base limpia y en orden, prueban los siete criterios de la SPEC. La sexta descubre que una respuesta puede mentir aunque la base quede bien.</p>
+          </div>
+          <div class="body">
+            <div class="sin-ia"><span class="sin-ia-icono" aria-hidden="true"></span><div><h3>Sin IA aquí</h3><p>La verificación la hace una persona contra la SPEC. Pedirle al agente “verifica que todo funcione” no produce evidencia independiente.</p></div></div>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption>Secuencia de Postman</caption>
+                <thead><tr><th>#</th><th>Petición</th><th>Resultado observado</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>POST · Laura</td><td>201 · ABIERTO · MEDIA.</td></tr>
+                  <tr><td>2</td><td>POST · Andrés</td><td>201 · segundo ticket.</td></tr>
+                  <tr><td>3</td><td>POST con estado y prioridad</td><td>El sistema los ignora: ABIERTO · MEDIA.</td></tr>
+                  <tr><td>4</td><td>POST con mensaje vacío</td><td>400 · error uniforme.</td></tr>
+                  <tr><td>5</td><td>GET /99</td><td>404 · ticket inexistente.</td></tr>
+                  <tr><td>6</td><td>PATCH Laura → EN_PROCESO</td><td data-emphasis>200, pero la fecha de actualización no cambia.</td></tr>
+                  <tr><td>7</td><td>PATCH ABIERTO → RESUELTO</td><td>409 · transición bloqueada.</td></tr>
+                  <tr><td>8</td><td>GET ?estado=ABIERTO</td><td>Filtra y ordena del más reciente.</td></tr>
+                  <tr><td>9</td><td>GET Laura</td><td>La fecha sí cambió en la base.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="compare">
+              <div class="compare-card" data-side="negative"><h3>Respuesta del PATCH</h3><p><code>fechaActualizacion</code> sigue igual a <code>fechaCreacion</code>.</p><p>El panel cree que nadie tocó el ticket.</p></div>
+              <div class="compare-card" data-side="positive"><h3>GET posterior</h3><p><code>fechaActualizacion</code> ya es distinta.</p><p>La base sí guardó; la respuesta se armó demasiado pronto.</p></div>
+            </div>
+
+            <div class="cards">
+              <div class="card"><b>Entrada de Laura</b><p>POST válido y respuesta 201.</p><details class="micro-reveal"><summary>Ver JSON</summary><div class="code-block"><pre><code class="language-json">{
+  &quot;clienteNombre&quot;: &quot;Laura G&#243;mez&quot;,
+  &quot;clienteContacto&quot;: &quot;+57 300 123 4567&quot;,
+  &quot;canal&quot;: &quot;WHATSAPP&quot;,
+  &quot;mensaje&quot;: &quot;Ped&#237; el pedido 1045 hace 8 d&#237;as y no llega, es un regalo para el s&#225;bado&quot;
+}</code></pre></div></details></div>
+              <div class="card"><b>Autorasignación ignorada</b><p>Estado y prioridad no pertenecen al request.</p><details class="micro-reveal"><summary>Ver JSON</summary><div class="code-block"><pre><code class="language-json">{
+  &quot;clienteNombre&quot;: &quot;Pedro&quot;,
+  &quot;clienteContacto&quot;: &quot;p@x.com&quot;,
+  &quot;canal&quot;: &quot;CHAT_WEB&quot;,
+  &quot;mensaje&quot;: &quot;URGENTE!!&quot;,
+  &quot;estado&quot;: &quot;CERRADO&quot;,
+  &quot;prioridad&quot;: &quot;URGENTE&quot;
+}</code></pre></div></details></div>
+              <div class="card"><b>Validación 400</b><p>El formato de error permanece estable.</p><details class="micro-reveal"><summary>Ver JSON</summary><div class="code-block"><pre><code class="language-json">{&quot;codigo&quot;:400,&quot;error&quot;:&quot;Bad Request&quot;,&quot;mensaje&quot;:&quot;mensaje: El mensaje es obligatorio&quot;,&quot;fecha&quot;:&quot;2026-09-26T10:51:58.887244476&quot;}</code></pre></div></details></div>
+              <div class="card"><b>Recurso 404</b><p>El id 99 no existe.</p><details class="micro-reveal"><summary>Ver JSON</summary><div class="code-block"><pre><code class="language-json">{&quot;codigo&quot;:404,&quot;error&quot;:&quot;Not Found&quot;,&quot;mensaje&quot;:&quot;No existe el ticket con id 99&quot;,&quot;fecha&quot;:&quot;2026-09-26T10:51:58.984050098&quot;}</code></pre></div></details></div>
+              <div class="card"><b>Transición 409</b><p>ABIERTO no salta a RESUELTO.</p><details class="micro-reveal"><summary>Ver JSON</summary><div class="code-block"><pre><code class="language-json">{&quot;codigo&quot;:409,&quot;error&quot;:&quot;Conflict&quot;,&quot;mensaje&quot;:&quot;No se puede pasar un ticket de ABIERTO a RESUELTO&quot;,&quot;fecha&quot;:&quot;2026-09-26T10:51:59.037428827&quot;}</code></pre></div></details></div>
+              <div class="card"><b>Prueba temporal</b><p>PATCH y GET muestran fechas distintas.</p><details class="micro-reveal"><summary>Comparar respuestas</summary><div class="code-block"><div class="code-head"><div><span class="code-context">PATCH · respuesta antigua</span><span class="code-file">Petición 6</span></div></div><pre><code class="language-json">{&quot;id&quot;:1,&quot;clienteNombre&quot;:&quot;Laura G&#243;mez&quot;,&quot;clienteContacto&quot;:&quot;+57 300 123 4567&quot;,&quot;canal&quot;:&quot;WHATSAPP&quot;,&quot;mensaje&quot;:&quot;Ped&#237; el pedido 1045 hace 8 d&#237;as y no llega, es un regalo para el s&#225;bado&quot;,&quot;estado&quot;:&quot;EN_PROCESO&quot;,&quot;prioridad&quot;:&quot;MEDIA&quot;,&quot;fechaCreacion&quot;:&quot;2026-09-26T10:51:58.792633&quot;,&quot;fechaActualizacion&quot;:&quot;2026-09-26T10:51:58.792633&quot;}</code></pre></div><div class="code-block"><div class="code-head"><div><span class="code-context">GET · valor persistido</span><span class="code-file">Petición 9</span></div></div><pre><code class="language-json">{&quot;id&quot;:1,&quot;clienteNombre&quot;:&quot;Laura G&#243;mez&quot;,&quot;clienteContacto&quot;:&quot;+57 300 123 4567&quot;,&quot;canal&quot;:&quot;WHATSAPP&quot;,&quot;mensaje&quot;:&quot;Ped&#237; el pedido 1045 hace 8 d&#237;as y no llega, es un regalo para el s&#225;bado&quot;,&quot;estado&quot;:&quot;EN_PROCESO&quot;,&quot;prioridad&quot;:&quot;MEDIA&quot;,&quot;fechaCreacion&quot;:&quot;2026-09-26T10:51:58.792633&quot;,&quot;fechaActualizacion&quot;:&quot;2026-09-26T10:51:59.00777&quot;}</code></pre></div></details></div>
+            </div>
+
+            <div class="checkpoint"><span class="component-label">Semáforo de aceptación</span><h3>6 verdes · 1 rojo</h3><p>Todo cumple excepto “la respuesta del PATCH ya trae la nueva <code>fechaActualizacion</code>”. Ese criterio abre el bloque de depuración.</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s10" data-accent="1" data-layout="canvas" data-escena="prueba" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Debugging asistido</span>
+            <h2 class="sec-t">El bug no está en el dato: está en el momento de observarlo</h2>
+            <p class="sec-s">Primero formulamos una hipótesis; después el agente instrumenta, reproduce y compara soluciones.</p>
+          </div>
+          <div class="body">
+            <div class="sin-ia"><span class="sin-ia-icono" aria-hidden="true"></span><div><h3>Hipótesis primero</h3><p>Treinta segundos de razonamiento propio antes de abrir Debug mode: “el mapper arma la respuesta antes de que el flush ejecute <code>@PreUpdate</code>”.</p></div></div>
+
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Traza de ejecución</span><span class="code-file">PATCH /api/tickets/1/estado</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">PATCH /api/tickets/1/estado  {&quot;estado&quot;:&quot;EN_PROCESO&quot;}
+↓
+@Transactional abre la transacci&#243;n
+↓
+findById(1) → Ticket{estado=ABIERTO, fechaActualizacion=10:51:58.79}
+↓
+puedeCambiarA(EN_PROCESO) → true
+↓
+setEstado(EN_PROCESO)          (solo en memoria)
+↓
+save(ticket)                   (entidad ya existe: el UPDATE queda pendiente)
+↓
+toResponse(ticket) → copia fechaActualizacion=10:51:58.79   ← el dato viejo
+↓
+el m&#233;todo termina → commit → flush
+↓
+@PreUpdate → fechaActualizacion=10:51:59.00 → UPDATE en MySQL
+↓
+el JSON que sale ya ten&#237;a la fecha vieja</code></pre></div>
+
+            <div class="momento-ia">
+              <div class="momento-ia-head"><span class="momento-ia-titulo">Momento IA</span><span class="ia-nivel">Nivel 3 · Agente</span><span class="ia-herramienta">Cursor · Debug mode</span></div>
+              <div class="momento-ia-body">
+                <p class="ia-porque">El fallo depende del orden real de ejecución, no de una línea con sintaxis incorrecta.</p>
+                <div class="ia-grid"><div><span class="component-label">Primero razonas tú</span><p>Pasos de reproducción, esperado, observado e hipótesis.</p></div><div class="ia-no-delega"><span class="component-label">No se delega</span><p>Elegir el arreglo final y exigir evidencia.</p></div></div>
+                <div class="code-block" data-tipo="prompt"><div class="code-head"><div><span class="code-context">Prompt sugerido</span><span class="code-file">Cursor · Debug</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">@TicketService.java @Ticket.java Bug: al hacer PATCH /api/tickets/{id}/estado, la respuesta trae fechaActualizacion igual a fechaCreacion. Si después hago GET /api/tickets/{id}, la fecha sí aparece actualizada. Esperado: la respuesta del PATCH ya debe traer la fecha nueva. Pasos para reproducir: crear un ticket con POST y luego cambiarlo a EN_PROCESO con PATCH. Mi hipótesis: la respuesta se arma antes de que se ejecute el UPDATE.</code></pre></div>
+                <div><span class="component-label">Cómo validar</span><ul class="checklist"><li>La explicación conecta mapper, flush y callback.</li><li>El arreglo se prueba repitiendo PATCH y GET.</li><li>Los logs temporales se eliminan.</li></ul></div>
+              </div>
+            </div>
+
+            <div class="table-wrap"><table class="data-table"><caption>Tres propuestas, una elección basada en evidencia</caption><thead><tr><th>Propuesta</th><th>¿Arregla?</th><th>Decisión</th></tr></thead><tbody><tr><td><code>@UpdateTimestamp</code></td><td>No; también se ejecuta en el flush.</td><td>Rechazar tras probar.</td></tr><tr><td>Asignar la fecha en el Service</td><td>Sí.</td><td>Evitar: duplica responsabilidad.</td></tr><tr><td><code>saveAndFlush</code></td><td>Sí.</td><td data-emphasis>Fuerza la actualización antes de mapear.</td></tr></tbody></table></div>
+
+            <div class="socratica"><span class="component-label">Criterio profesional</span><p class="socratica-q">La IA recomienda <code>@UpdateTimestamp</code> con total seguridad. ¿Cómo sabes si funciona?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Probándolo.</p><p>La seguridad del modelo no es evidencia. Con <code>@UpdateTimestamp</code> la respuesta seguía vieja; con <code>saveAndFlush</code> cambió antes del mapper.</p></div></details></div>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">TicketService.java · versión 2 completa</span><span class="code-reveal-note">Editar · arreglo de save a saveAndFlush</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Editar</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/TicketService.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import com.devsenior.atiende.compartido.RecursoNoEncontradoException;
+import com.devsenior.atiende.ticket.dto.TicketRequest;
+import com.devsenior.atiende.ticket.dto.TicketResponse;
+import java.util.List;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class TicketService {
+
+    private final TicketRepository ticketRepository;
+    private final TicketMapper ticketMapper;
+
+    public TicketService(TicketRepository ticketRepository, TicketMapper ticketMapper) {
+        this.ticketRepository = ticketRepository;
+        this.ticketMapper = ticketMapper;
+    }
+
+    @Transactional
+    public TicketResponse crear(TicketRequest request) {
+        Ticket ticket = ticketMapper.toEntity(request);
+        ticket.setEstado(EstadoTicket.ABIERTO);
+        ticket.setPrioridad(Prioridad.MEDIA);
+        return ticketMapper.toResponse(ticketRepository.save(ticket));
+    }
+
+    @Transactional(readOnly = true)
+    public List&lt;TicketResponse&gt; listar(EstadoTicket estado) {
+        List&lt;Ticket&gt; tickets = (estado == null)
+                ? ticketRepository.findAllByOrderByFechaCreacionDesc()
+                : ticketRepository.findByEstadoOrderByFechaCreacionDesc(estado);
+        return tickets.stream()
+                .map(ticketMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public TicketResponse buscarPorId(Long id) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -&gt; new RecursoNoEncontradoException(&quot;No existe el ticket con id &quot; + id));
+        return ticketMapper.toResponse(ticket);
+    }
+
+    @Transactional
+    public TicketResponse cambiarEstado(Long id, EstadoTicket nuevoEstado) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -&gt; new RecursoNoEncontradoException(&quot;No existe el ticket con id &quot; + id));
+        if (!ticket.getEstado().puedeCambiarA(nuevoEstado)) {
+            throw new TransicionInvalidaException(ticket.getEstado(), nuevoEstado);
+        }
+        ticket.setEstado(nuevoEstado);
+        return ticketMapper.toResponse(ticketRepository.saveAndFlush(ticket));
+    }
+}</code></pre></div></div></details>
+
+            <div class="checkpoint"><span class="component-label">Verificación</span><h3>PATCH ya devuelve una fecha nueva</h3><p><code>fechaCreacion: 10:54:11</code> · <code>fechaActualizacion: 10:54:13</code>. Los siete criterios quedan verdes.</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s11" data-accent="1" data-layout="canvas" data-escena="prueba" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Concepto central 3 · tests como contrato</span>
+            <h2 class="sec-t">Cuando generar tarda segundos, verificar a mano se vuelve el cuello de botella</h2>
+            <p class="sec-s">La tabla de transiciones de la SPEC se transforma literalmente en datos de prueba.</p>
+          </div>
+          <div class="body">
+            <div class="definicion"><div class="def-tecnica"><span class="component-label">Test unitario</span><p class="def-termino">Una unidad aislada</p><p>Ejecuta un método o clase y compara automáticamente el resultado real con el esperado.</p></div><div class="def-vida"><span class="component-label">Mock + test parametrizado</span><p>El mock es el simulador del repositorio; el test parametrizado usa la misma inspección con muchas combinaciones.</p></div></div>
+
+            <div class="sin-ia"><span class="sin-ia-icono" aria-hidden="true"></span><div><h3>Los casos los decide el estudiante</h3><p>Elegir qué probar es elegir qué importa del negocio. El agente escribirá el código después, pero no definirá la lista.</p></div></div>
+
+            <div class="twin">
+              <div class="panel"><span class="component-label">Enum · 11 casos</span><h3>5 permitidas + 6 bloqueadas</h3><ul class="checklist"><li>ABIERTO → RESUELTO.</li><li>EN_PROCESO → ABIERTO.</li><li>EN_PROCESO → CERRADO.</li><li>RESUELTO → ABIERTO.</li><li>CERRADO → ABIERTO.</li><li>CERRADO → EN_PROCESO.</li></ul></div>
+              <div class="panel"><span class="component-label">Service · 4 casos</span><h3>Reglas y efectos</h3><ul class="checklist"><li>Crear asigna ABIERTO y MEDIA.</li><li>Id inexistente lanza 404 de dominio.</li><li>Permitida cambia estado.</li><li>Bloqueada no llama a <code>saveAndFlush</code>.</li></ul></div>
+            </div>
+
+            <div class="momento-ia">
+              <div class="momento-ia-head"><span class="momento-ia-titulo">Momento IA</span><span class="ia-nivel">Nivel 3 · Agente</span><span class="ia-herramienta">Cursor · Agent</span></div>
+              <div class="momento-ia-body">
+                <p class="ia-porque">Los casos ya están decididos; traducirlos a JUnit 5 y Mockito es trabajo mecánico y verificable.</p>
+                <div class="ia-grid"><div><span class="component-label">Primero razonas tú</span><p>La matriz de transiciones y los cuatro comportamientos del Service.</p></div><div class="ia-no-delega"><span class="component-label">No se delega</span><p>La lista de casos ni la decisión sobre qué contrato proteger.</p></div></div>
+                <div class="code-block" data-tipo="prompt"><div class="code-head"><div><span class="code-context">Prompt sugerido</span><span class="code-file">Cursor · Agent</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">@SPEC.md @EstadoTicket.java @TicketService.java Escribe tests unitarios con JUnit 5 y Mockito, sin levantar Spring. (1) EstadoTicketTest: un test parametrizado con @CsvSource para las 5 transiciones permitidas de la SPEC y otro para estas bloqueadas: ABIERTO→RESUELTO, EN_PROCESO→ABIERTO, EN_PROCESO→CERRADO, RESUELTO→ABIERTO, CERRADO→ABIERTO, CERRADO→EN_PROCESO. (2) TicketServiceTest con el repositorio como mock para: crear asigna ABIERTO y MEDIA; buscar id inexistente lanza RecursoNoEncontradoException; transición permitida cambia el estado; transición bloqueada lanza TransicionInvalidaException y nunca llama a saveAndFlush. Nombres de método: metodo_escenario_resultado. No modifiques código de producción.</code></pre></div>
+                <div><span class="component-label">Cómo validar</span><ul class="checklist"><li>Cada fila decidida aparece en el test.</li><li>El diff solo toca <code>src/test</code>.</li><li>No se levanta Spring en los tests unitarios.</li></ul></div>
+              </div>
+            </div>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">EstadoTicketTest.java completo</span><span class="code-reveal-note">Crear · 11 ejecuciones parametrizadas</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/test/java/com/devsenior/atiende/ticket/EstadoTicketTest.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+class EstadoTicketTest {
+
+    @ParameterizedTest(name = &quot;{0} -&gt; {1} est&#225; permitido&quot;)
+    @CsvSource({
+            &quot;ABIERTO, EN_PROCESO&quot;,
+            &quot;ABIERTO, CERRADO&quot;,
+            &quot;EN_PROCESO, RESUELTO&quot;,
+            &quot;RESUELTO, CERRADO&quot;,
+            &quot;RESUELTO, EN_PROCESO&quot;
+    })
+    void transicionesPermitidas(EstadoTicket origen, EstadoTicket destino) {
+        assertTrue(origen.puedeCambiarA(destino));
+    }
+
+    @ParameterizedTest(name = &quot;{0} -&gt; {1} est&#225; bloqueado&quot;)
+    @CsvSource({
+            &quot;ABIERTO, RESUELTO&quot;,
+            &quot;EN_PROCESO, ABIERTO&quot;,
+            &quot;EN_PROCESO, CERRADO&quot;,
+            &quot;RESUELTO, ABIERTO&quot;,
+            &quot;CERRADO, ABIERTO&quot;,
+            &quot;CERRADO, EN_PROCESO&quot;
+    })
+    void transicionesBloqueadas(EstadoTicket origen, EstadoTicket destino) {
+        assertFalse(origen.puedeCambiarA(destino));
+    }
+}</code></pre></div></div></details>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">TicketServiceTest.java completo</span><span class="code-reveal-note">Crear · Mockito sin contexto Spring</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/test/java/com/devsenior/atiende/ticket/TicketServiceTest.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.devsenior.atiende.compartido.RecursoNoEncontradoException;
+import com.devsenior.atiende.ticket.dto.TicketRequest;
+import com.devsenior.atiende.ticket.dto.TicketResponse;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class TicketServiceTest {
+
+    @Mock
+    private TicketRepository ticketRepository;
+
+    private TicketService ticketService;
+
+    @BeforeEach
+    void setUp() {
+        ticketService = new TicketService(ticketRepository, new TicketMapper());
+    }
+
+    @Test
+    void crear_asignaEstadoAbiertoYPrioridadMedia() {
+        TicketRequest request = new TicketRequest(
+                &quot;Laura G&#243;mez&quot;, &quot;+57 300 123 4567&quot;, Canal.WHATSAPP,
+                &quot;Ped&#237; el pedido 1045 hace 8 d&#237;as y no llega&quot;);
+        when(ticketRepository.save(any(Ticket.class)))
+                .thenAnswer(invocacion -&gt; invocacion.getArgument(0));
+
+        TicketResponse respuesta = ticketService.crear(request);
+
+        assertEquals(EstadoTicket.ABIERTO, respuesta.estado());
+        assertEquals(Prioridad.MEDIA, respuesta.prioridad());
+    }
+
+    @Test
+    void buscarPorId_inexistente_lanzaRecursoNoEncontrado() {
+        when(ticketRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(RecursoNoEncontradoException.class,
+                () -&gt; ticketService.buscarPorId(99L));
+    }
+
+    @Test
+    void cambiarEstado_transicionPermitida_actualizaEstado() {
+        Ticket ticket = ticketConEstado(EstadoTicket.ABIERTO);
+        when(ticketRepository.findById(1L)).thenReturn(Optional.of(ticket));
+        when(ticketRepository.saveAndFlush(ticket)).thenReturn(ticket);
+
+        TicketResponse respuesta = ticketService.cambiarEstado(1L, EstadoTicket.EN_PROCESO);
+
+        assertEquals(EstadoTicket.EN_PROCESO, respuesta.estado());
+    }
+
+    @Test
+    void cambiarEstado_transicionBloqueada_lanzaExcepcionYNoGuarda() {
+        Ticket ticket = ticketConEstado(EstadoTicket.CERRADO);
+        when(ticketRepository.findById(1L)).thenReturn(Optional.of(ticket));
+
+        assertThrows(TransicionInvalidaException.class,
+                () -&gt; ticketService.cambiarEstado(1L, EstadoTicket.ABIERTO));
+        verify(ticketRepository, never()).saveAndFlush(any());
+    }
+
+    private Ticket ticketConEstado(EstadoTicket estado) {
+        Ticket ticket = new Ticket();
+        ticket.setId(1L);
+        ticket.setClienteNombre(&quot;Laura G&#243;mez&quot;);
+        ticket.setClienteContacto(&quot;+57 300 123 4567&quot;);
+        ticket.setCanal(Canal.WHATSAPP);
+        ticket.setMensaje(&quot;Ped&#237; el pedido 1045 hace 8 d&#237;as y no llega&quot;);
+        ticket.setEstado(estado);
+        ticket.setPrioridad(Prioridad.MEDIA);
+        return ticket;
+    }
+}</code></pre></div></div></details>
+
+            <div class="bars" role="img" aria-label="16 pruebas exitosas: 11 del enum, 4 del servicio y una de contexto">
+              <div class="bar-row"><div class="bar-label">EstadoTicketTest</div><div class="bar-track"><div class="bar-fill" data-target="100"></div></div><div class="bar-value">11 · 0,16 s</div></div>
+              <div class="bar-row"><div class="bar-label">TicketServiceTest</div><div class="bar-track"><div class="bar-fill" data-target="36"></div></div><div class="bar-value">4 · 1,19 s</div></div>
+              <div class="bar-row"><div class="bar-label">contextLoads</div><div class="bar-track"><div class="bar-fill" data-target="9"></div></div><div class="bar-value">1 · 4,65 s</div></div>
+            </div>
+
+            <div class="consola"><div class="consola-head">./mvnw test</div><pre><code class="language-plaintext">Tests run: 4, Failures: 0, Errors: 0, Skipped: 0 -- in com.devsenior.atiende.ticket.TicketServiceTest
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0 -- in com.devsenior.atiende.ticket.EstadoTicketTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0 -- in com.devsenior.atiende.AtiendeApplicationTests
+Tests run: 16, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS</code></pre></div>
+            <div class="callout" data-variant="warning"><span class="component-label">Contexto completo</span><h3><code>AtiendeApplicationTests</code> necesita MySQL.</h3><p>Si ese único test falla con la base apagada, no falló la regla del dominio; falló la conexión que levanta <code>@SpringBootTest</code>.</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s12" data-accent="1" data-layout="canvas" data-escena="pregunta" hidden>
+          <div class="sec-head">
+            <span class="sec-n">El test rojo</span>
+            <h2 class="sec-t">Un test que falla contra la SPEC es una pregunta de negocio</h2>
+            <p class="sec-s">Julián permitió cerrar un ticket EN_PROCESO sin pasar por RESUELTO. El agente no estuvo en la reunión y no puede decidir qué verdad cambió.</p>
+          </div>
+          <div class="body">
+            <div class="code-block"><div class="code-head"><div><span class="code-context">Cambio intencional</span><span class="code-file">EstadoTicket.java</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-java">case EN_PROCESO -&gt; destino == RESUELTO || destino == CERRADO;</code></pre></div>
+
+            <div class="compare">
+              <div class="compare-card" data-side="negative"><h3>Resultado</h3><p><code>Tests run: 16, Failures: 1</code></p><p><code>expected: &lt;false&gt; but was: &lt;true&gt;</code></p></div>
+              <div class="compare-card" data-side="positive"><h3>Lectura correcta</h3><p>El test esperaba bloqueo; el código permitió la transición.</p><p>Eso aún no dice cuál debe cambiar.</p></div>
+            </div>
+
+            <div class="callout" data-variant="warning"><span class="component-label">Prompt peligroso</span><h3>“Los tests están fallando, arréglalos.”</h3><p>No aporta SPEC, decisión de negocio ni restricción. Invita al agente a adivinar.</p></div>
+
+            <div class="socratica"><span class="component-label">Para pensar</span><p class="socratica-q">¿Debe arreglar el código o el test?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Ninguno puede decidirlo el agente.</p><p>Si el negocio aprobó la transición, cambian SPEC y test. Si no, se revierte el código. Primero se consulta la fuente de verdad.</p></div></details></div>
+
+            <div class="table-wrap"><table class="data-table"><caption>Cómo leer el diff del agente</caption><thead><tr><th>Acción</th><th>Señal</th><th>Qué significa</th></tr></thead><tbody><tr><td>Borra la fila del test</td><td>Modifica <code>src/test</code></td><td data-emphasis>Silenció la alarma.</td></tr><tr><td>Revierte el código</td><td>Toca <code>EstadoTicket.java</code></td><td>Adivinó bien, pero adivinó.</td></tr><tr><td>Pregunta qué es correcto</td><td>No hay diff</td><td>Comportamiento profesional.</td></tr></tbody></table></div>
+
+            <div class="checkpoint"><span class="component-label">Decisión de Grano Alto Café</span><h3>No se cierra sin pasar por RESUELTO</h3><p>Se conserva la métrica de tickets realmente resueltos. Ejecuta <code>git restore src/main/java/com/devsenior/atiende/ticket/EstadoTicket.java</code> y vuelven los 16 verdes.</p></div>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">AGENTS.md · versión 2 completa</span><span class="code-reveal-note">Editar · incorpora la lección del test rojo</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Editar</span><span class="code-file">AGENTS.md</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-markdown"># Atiende &#183; instrucciones para el agente
+
+## Contexto
+Backend de atenci&#243;n al cliente de Grano Alto Caf&#233;.
+Antes de cambiar reglas de negocio, lee `SPEC.md`: es la fuente de verdad.
+
+## Stack
+- Java 17, Spring Boot 4.1, Maven, MySQL.
+- Configuraci&#243;n solo en `application.properties`. Nunca `application.yml` ni perfiles.
+
+## Arquitectura
+- Paquete base `com.devsenior.atiende`, organizado por dominio: `ticket/`, `compartido/`.
+- Capas: Controller → Service → Repository. El Controller no tiene l&#243;gica de negocio.
+- DTOs como `record` en `&lt;dominio&gt;/dto`. Nunca expongas entidades JPA en la API.
+- Un mapper propio por dominio (`@Component`), sin librer&#237;as de mapeo.
+- Inyecci&#243;n por constructor. Nunca `@Autowired` sobre atributos.
+- Enums persistidos con `@Enumerated(EnumType.STRING)`.
+- Errores con excepciones propias y un `@RestControllerAdvice` en `compartido/`.
+
+## C&#243;digo
+- Clases, m&#233;todos y variables en espa&#241;ol.
+- Sin Lombok: getters y setters expl&#237;citos.
+- Validaci&#243;n de entrada con Jakarta Validation en los DTO de request.
+
+## Tests
+- JUnit 5 + Mockito. Los tests del Service no levantan Spring.
+- Nunca modifiques un test para que pase. Si un test falla, expl&#237;came si la causa est&#225; en el test o en el c&#243;digo y espera mi decisi&#243;n.
+- Un test rojo contra la SPEC es una pregunta de negocio: no la resuelvas t&#250;.
+
+## L&#237;mites
+- No agregues dependencias al `pom.xml` sin preguntarme.
+- No modifiques `application.properties` salvo que te lo pida.
+- Si algo de la SPEC es ambiguo, pregunta antes de suponer.</code></pre></div></div></details>
+          </div>
+        </section>
+
+        <section class="section view" id="s13" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Refactor guiado por IA</span>
+            <h2 class="sec-t">Los tests permiten mejorar estructura sin cambiar comportamiento</h2>
+            <p class="sec-s">Ask propone; la persona filtra; Agent aplica una sola decisión; los tests confirman que el menú sigue sabiendo igual.</p>
+          </div>
+          <div class="body">
+            <div class="momento-ia">
+              <div class="momento-ia-head"><span class="momento-ia-titulo">Momento IA</span><span class="ia-nivel">Nivel 3 · Agente</span><span class="ia-herramienta">Cursor · Ask</span></div>
+              <div class="momento-ia-body">
+                <p class="ia-porque">La IA como revisora detecta patrones rápido; Ask conserva los archivos intactos.</p>
+                <div class="ia-grid"><div><span class="component-label">Primero razonas tú</span><p>Lees el Service y localizas la búsqueda repetida.</p></div><div class="ia-no-delega"><span class="component-label">No se delega</span><p>Decidir qué sugerencias aportan hoy.</p></div></div>
+                <div class="code-block" data-tipo="prompt"><div class="code-head"><div><span class="code-context">Prompt sugerido</span><span class="code-file">Cursor · Ask</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">@TicketService.java Revisa este servicio como un revisor senior. Dame máximo 3 mejoras concretas, ordenadas por impacto, explicando el beneficio de cada una. No cambies código.</code></pre></div>
+                <div><span class="component-label">Cómo validar</span><ul class="checklist"><li>Cada mejora resuelve un problema de este proyecto.</li><li>Ninguna agrega complejidad por prestigio.</li><li>Ask no generó un diff.</li></ul></div>
+              </div>
+            </div>
+
+            <div class="table-wrap"><table class="data-table"><caption>Filtrar sugerencias por beneficio presente</caption><thead><tr><th>Sugerencia</th><th>Decisión</th><th>Por qué</th></tr></thead><tbody><tr><td>Extraer <code>obtenerTicket</code></td><td data-emphasis>Aceptar</td><td>Elimina una duplicación real.</td></tr><tr><td>Interfaz + implementación</td><td>Rechazar por ahora</td><td>Solo existe una implementación.</td></tr><tr><td>Caché</td><td>Rechazar</td><td>No hay problema de rendimiento medido.</td></tr><tr><td>Mover regla a la entidad</td><td>Discutir</td><td>Es válido, pero cambia la SPEC.</td></tr></tbody></table></div>
+
+            <div class="socratica"><span class="component-label">YAGNI</span><p class="socratica-q">Las tres mejoras suenan profesionales. ¿Por qué no aplicarlas todas?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Porque cada abstracción también cuesta.</p><p>Una mejora para un problema que aún no existe es complejidad gratuita. El criterio sigue siendo humano.</p></div></details></div>
+
+            <div class="code-block" data-tipo="prompt"><div class="code-head"><div><span class="code-context">Prompt acotado</span><span class="code-file">Cursor · Agent</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">Aplica solo la mejora de extraer la b&#250;squeda repetida a un m&#233;todo privado obtenerTicket(Long id) en TicketService. No cambies nada m&#225;s.</code></pre></div>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">TicketService.java · versión 3 final</span><span class="code-reveal-note">Editar · búsqueda extraída, comportamiento intacto</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Versión final</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/TicketService.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import com.devsenior.atiende.compartido.RecursoNoEncontradoException;
+import com.devsenior.atiende.ticket.dto.TicketRequest;
+import com.devsenior.atiende.ticket.dto.TicketResponse;
+import java.util.List;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class TicketService {
+
+    private final TicketRepository ticketRepository;
+    private final TicketMapper ticketMapper;
+
+    public TicketService(TicketRepository ticketRepository, TicketMapper ticketMapper) {
+        this.ticketRepository = ticketRepository;
+        this.ticketMapper = ticketMapper;
+    }
+
+    @Transactional
+    public TicketResponse crear(TicketRequest request) {
+        Ticket ticket = ticketMapper.toEntity(request);
+        ticket.setEstado(EstadoTicket.ABIERTO);
+        ticket.setPrioridad(Prioridad.MEDIA);
+        return ticketMapper.toResponse(ticketRepository.save(ticket));
+    }
+
+    @Transactional(readOnly = true)
+    public List&lt;TicketResponse&gt; listar(EstadoTicket estado) {
+        List&lt;Ticket&gt; tickets = (estado == null)
+                ? ticketRepository.findAllByOrderByFechaCreacionDesc()
+                : ticketRepository.findByEstadoOrderByFechaCreacionDesc(estado);
+        return tickets.stream()
+                .map(ticketMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public TicketResponse buscarPorId(Long id) {
+        return ticketMapper.toResponse(obtenerTicket(id));
+    }
+
+    @Transactional
+    public TicketResponse cambiarEstado(Long id, EstadoTicket nuevoEstado) {
+        Ticket ticket = obtenerTicket(id);
+        if (!ticket.getEstado().puedeCambiarA(nuevoEstado)) {
+            throw new TransicionInvalidaException(ticket.getEstado(), nuevoEstado);
+        }
+        ticket.setEstado(nuevoEstado);
+        return ticketMapper.toResponse(ticketRepository.saveAndFlush(ticket));
+    }
+
+    private Ticket obtenerTicket(Long id) {
+        return ticketRepository.findById(id)
+                .orElseThrow(() -&gt; new RecursoNoEncontradoException(&quot;No existe el ticket con id &quot; + id));
+    }
+}</code></pre></div></div></details>
+
+            <div class="checkpoint"><span class="component-label">Red de seguridad</span><h3><code>./mvnw test</code> · 16/16</h3><p>El refactor cambió estructura interna y preservó el contrato observable.</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s14" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Documentar y trabajar con economía</span>
+            <h2 class="sec-t">La IA resume rápido; la persona comprueba que el README diga la verdad</h2>
+            <p class="sec-s">La productividad no es más prompts: es gastar el agente donde aporta y automatizar la verificación.</p>
+          </div>
+          <div class="body">
+            <div class="momento-ia">
+              <div class="momento-ia-head"><span class="momento-ia-titulo">Momento IA</span><span class="ia-nivel">Nivel 3 · Agente</span><span class="ia-herramienta">Cursor · Agent</span></div>
+              <div class="momento-ia-body">
+                <p class="ia-porque">Resumir código existente en documentación es una tarea mecánica de lenguaje.</p>
+                <div class="ia-grid"><div><span class="component-label">Primero razonas tú</span><p>Qué necesita alguien que clona el repositorio mañana.</p></div><div class="ia-no-delega"><span class="component-label">No se delega</span><p>Ejecutar un curl y cotejar endpoints contra el Controller.</p></div></div>
+                <div class="code-block" data-tipo="prompt"><div class="code-head"><div><span class="code-context">Prompt sugerido</span><span class="code-file">Cursor · Agent</span></div><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">@SPEC.md @TicketController.java @application.properties Genera un README.md en español con: qué es el proyecto, requisitos, cómo ejecutarlo, tabla de endpoints, un ejemplo curl para crear un ticket y otro para cambiar estado, tabla de transiciones, formato de error y cómo correr los tests. Usa solo información que exista en el código o en la SPEC.</code></pre></div>
+                <div><span class="component-label">Cómo validar</span><ul class="checklist"><li>Ejecutar al menos un curl tal cual.</li><li>Comparar la tabla con el Controller.</li><li>No mencionar secretos bloqueados.</li></ul></div>
+              </div>
+            </div>
+
+            <details class="code-reveal"><summary><span><span class="code-reveal-title">README.md completo</span><span class="code-reveal-note">Crear en la raíz · curl verificados</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">README.md</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-markdown"># Atiende
+
+Backend de atenci&#243;n al cliente de **Grano Alto Caf&#233;**.
+Centraliza en tickets los mensajes que llegan por WhatsApp, correo y chat web.
+
+## Requisitos
+
+- Java 17
+- Maven (o el wrapper `mvnw` incluido)
+- MySQL 8 corriendo en `localhost:3306`
+
+## C&#243;mo ejecutar
+
+1. Revisa usuario y contrase&#241;a de MySQL en `src/main/resources/application.properties`.
+2. Desde la ra&#237;z del proyecto:
+
+```bash
+./mvnw spring-boot:run
+```
+
+La base `atiende_db` se crea sola la primera vez.
+
+## Endpoints
+
+| M&#233;todo | Ruta | Descripci&#243;n |
+|---|---|---|
+| POST | `/api/tickets` | Registra un mensaje entrante como ticket |
+| GET | `/api/tickets` | Lista tickets (filtro opcional `?estado=`) |
+| GET | `/api/tickets/{id}` | Consulta un ticket |
+| PATCH | `/api/tickets/{id}/estado` | Cambia el estado de un ticket |
+
+### Crear un ticket
+
+```bash
+curl -X POST http://localhost:8080/api/tickets \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;clienteNombre&quot;:&quot;Laura G&#243;mez&quot;,&quot;clienteContacto&quot;:&quot;+57 300 123 4567&quot;,&quot;canal&quot;:&quot;WHATSAPP&quot;,&quot;mensaje&quot;:&quot;Ped&#237; el pedido 1045 hace 8 d&#237;as y no llega&quot;}&#39;
+```
+
+Respuesta `201 Created` con `estado: ABIERTO` y `prioridad: MEDIA`.
+
+### Cambiar estado
+
+```bash
+curl -X PATCH http://localhost:8080/api/tickets/1/estado \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;estado&quot;:&quot;EN_PROCESO&quot;}&#39;
+```
+
+Transiciones permitidas:
+
+| Desde | Hacia |
+|---|---|
+| ABIERTO | EN_PROCESO, CERRADO |
+| EN_PROCESO | RESUELTO |
+| RESUELTO | CERRADO, EN_PROCESO |
+| CERRADO | — (estado final) |
+
+Una transici&#243;n no permitida responde `409 Conflict`.
+
+## Errores
+
+Todas las respuestas de error tienen la forma:
+
+```json
+{ &quot;codigo&quot;: 404, &quot;error&quot;: &quot;Not Found&quot;, &quot;mensaje&quot;: &quot;No existe el ticket con id 99&quot;, &quot;fecha&quot;: &quot;...&quot; }
+```
+
+## Tests
+
+```bash
+./mvnw test
+```
+
+`AtiendeApplicationTests` necesita MySQL encendido; los dem&#225;s tests son unitarios.</code></pre></div></div></details>
+
+            <div class="table-wrap"><table class="data-table"><caption>Quién hace qué y dónde se gasta Cursor</caption><thead><tr><th>Tarea</th><th>Responsable</th><th>Costo</th></tr></thead><tbody><tr><td>Entender y escribir SPEC</td><td>Tú + chat gratuito</td><td>0</td></tr><tr><td>Crear proyecto</td><td>Spring Initializr</td><td>0</td></tr><tr><td>Plan de implementación</td><td>Plan mode</td><td>1 petición bien gastada</td></tr><tr><td>Construir varios archivos</td><td>Agent</td><td data-emphasis>Lo más caro; aquí vale</td></tr><tr><td>Getters, imports, renombrar</td><td>Acciones del IDE</td><td>0</td></tr><tr><td>Entender o revisar</td><td>Ask</td><td>Bajo</td></tr><tr><td>Decidir casos</td><td>Tú</td><td>0</td></tr><tr><td>Verificar</td><td>Tú + Postman + tests</td><td>0</td></tr></tbody></table></div>
+
+            <div class="twin">
+              <div class="panel"><span class="component-label">Principio 1</span><h3>“La IA más cara es la que usas para lo que el IDE hace gratis.”</h3><p>Source Action y Refactor ya resuelven mecánica local sin gastar contexto.</p></div>
+              <div class="panel"><span class="component-label">Principio 2</span><h3>“Un prompt con contexto vale por cinco sin contexto.”</h3><p>Cada corrección posterior es otra petición y otro diff que revisar.</p></div>
+            </div>
+
+            <ol class="stepper">
+              <li class="step-item"><span class="step-num">1</span><div><b>Aclara la tarea</b><p>Si no está clara, vuelve a la SPEC.</p></div></li>
+              <li class="step-item"><span class="step-num">2</span><div><b>Chat nuevo y contexto justo</b><p>Menciona con <code>@</code> solo lo necesario.</p></div></li>
+              <li class="step-item"><span class="step-num">3</span><div><b>Plan para más de un archivo</b><p>Revisa antes de construir.</p></div></li>
+              <li class="step-item"><span class="step-num">4</span><div><b>Diff completo</b><p>Entiende carpetas y líneas tocadas.</p></div></li>
+              <li class="step-item"><span class="step-num">5</span><div><b>Criterios y tests</b><p>Ejecuta, prueba y conserva 16 verdes.</p></div></li>
+              <li class="step-item"><span class="step-num">6</span><div><b>Commit pequeño</b><p>Si falla dos veces, vuelve al plan.</p></div></li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="section view" id="s15" data-accent="1" data-layout="canvas" data-escena="cierre" hidden>
+          <div class="sec-head">
+            <span class="sec-n">Cierre</span>
+            <h2 class="sec-t">El Java AI Engineer decide y responde por el resultado</h2>
+            <p class="sec-s">El prompt es una pieza pequeña. El trabajo profesional es traducir, limitar, revisar, probar y tomar las decisiones que el agente no puede tomar.</p>
+          </div>
+          <div class="body">
+            <ol class="ideas">
+              <li><span><strong>Contexto:</strong> SPEC para el qué, <code>AGENTS.md</code> para el cómo y <code>.cursorignore</code> para lo que el agente no debe leer.</span></li>
+              <li><span><strong>Planear → ejecutar → verificar:</strong> el plan se revisa antes del código; el resultado se mide contra la SPEC.</span></li>
+              <li><span><strong>Los tests son el contrato:</strong> una SPEC ejecutable; un rojo es una pregunta de negocio, no un obstáculo que silenciar.</span></li>
+            </ol>
+
+            <div class="checkpoint"><span class="component-label">Decisión técnica importante</span><h3>Evidencia antes que autoridad</h3><p>No aceptamos <code>@UpdateTimestamp</code> por la seguridad del modelo. Lo probamos, no arreglaba el momento de la respuesta y elegimos <code>saveAndFlush</code>.</p></div>
+
+            <div class="socratica"><span class="component-label">Pregunta final</span><p class="socratica-q">Si el agente escribe el código, ¿qué hace entonces un Java AI Engineer?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Decide y responde por el resultado.</p><p>Traduce negocio a SPEC, pone límites, revisa, verifica, encuentra bugs temporales y resuelve decisiones que no caben en un prompt.</p></div></details></div>
+
+            <div class="compare">
+              <div class="compare-card" data-side="positive"><h3>Lo que Atiende ya hace</h3><ol><li>Centraliza los mensajes.</li><li>Protege las transiciones.</li><li>Responde con contratos y errores estables.</li></ol></div>
+              <div class="compare-card" data-side="negative"><h3>Lo que todavía no hace</h3><ol><li>El ticket de Laura sigue en MEDIA.</li><li>No entiende intención ni urgencia.</li><li>No clasifica ni redacta respuestas.</li></ol></div>
+            </div>
+
+            <div class="micro-task"><span class="component-label">Puente a Clase 18</span><p class="micro-task-q">Hoy la IA ayudó a construir Atiende. ¿Qué cambia cuando la IA vive dentro del producto?</p><details class="micro-reveal"><summary>Descubrir el puente</summary><p class="micro-answer"><strong>Conectaremos OpenAI y Claude desde Spring Boot, con fallback.</strong> Atiende empezará a leer el mensaje de Laura; las llaves vivirán en <code>secrets.properties</code>, fuera del contexto del agente.</p></details></div>
+
+            <div class="papel"><span class="component-label">Mapa final</span><p>Quedan completos <code>SPEC.md</code>, <code>AGENTS.md</code> v2, <code>.cursorignore</code>, <code>README.md</code>, la configuración, 15 archivos Java de producción, dos tests unitarios y los dos archivos generados por Initializr sin cambios.</p><p>Fuentes técnicas: documentación de Cursor sobre Agent, Plan, Debug, Rules e ignore files; Spring Initializr; compatibilidad OpenAI de Gemini; y verificación propia con Spring Boot 4.1.1, Hibernate 7.4.5, MySQL 8.0 y 16 tests verdes.</p></div>
+
+            <p class="doc-foot">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack</p>
+          </div>
+        </section>
+      </div>
+
+      <nav class="view-controls" id="viewControls" aria-label="Navegación entre secciones">
+        <button class="view-btn" id="prevView" type="button" aria-label="Sección anterior">←</button>
+        <span class="view-position" id="viewPosition" aria-live="polite">Portada</span>
+        <button class="view-btn" id="nextView" type="button" aria-label="Sección siguiente">→</button>
+      </nav>
+    </main>
+  </div>
+
+  <div class="watermark" aria-hidden="true">© 2026 ANA ALVARADO</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+  <script src="anaclase-v12.js"></script>
+</body>
+</html>
