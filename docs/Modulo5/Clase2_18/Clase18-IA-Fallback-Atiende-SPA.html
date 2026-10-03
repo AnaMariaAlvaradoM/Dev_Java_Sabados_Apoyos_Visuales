@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="es" data-tema="oscuro" data-tema-base="oscuro" data-empresa="dev-senior" data-paleta="galaxia">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Ana Alvarado">
+  <meta name="copyright" content="© 2026 Ana Alvarado — Todos los derechos reservados">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <title>Clase 18 · IA con fallback en Atiende · Ana Alvarado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&amp;family=Inter:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+  <link rel="stylesheet" href="anaestilos-v12.css">
+</head>
+<body>
+  <a class="skip-link" href="#s1">Saltar al contenido</a>
+  <div class="topline" id="topline" aria-hidden="true"></div>
+  <div class="controls" aria-label="Controles">
+    <button class="ctrl" id="temaBtn" type="button" aria-label="Cambiar tema">☀</button>
+    <button class="ctrl" id="fullscreenBtn" type="button" aria-label="Pantalla completa">⛶</button>
+  </div>
+
+  <div class="shell" id="shell" data-collapsed="false">
+    <aside class="sidebar" aria-label="Índice de la clase">
+      <div class="sb-top"><span class="brand-mark">A</span><div class="sb-title"><b>Java AI Engineer</b><span>Clase 18 · 120 min</span></div></div>
+      <button class="sb-toggle" id="collapseBtn" type="button" aria-label="Colapsar menú">‹</button>
+      <nav class="sb-nav" id="nav" aria-label="Secciones">
+        <a class="nav-item active" href="#portada"><span class="nav-index">00</span><span class="nav-label">Portada</span></a>
+        <span class="nav-group">Problema</span>
+        <a class="nav-item" href="#s1"><span class="nav-index">01</span><span class="nav-label">El viernes crítico</span></a>
+        <a class="nav-item" href="#s2"><span class="nav-index">02</span><span class="nav-label">Tokens y factura</span></a>
+        <span class="nav-group">Preparar</span>
+        <a class="nav-item" href="#s3"><span class="nav-index">03</span><span class="nav-label">Llaves seguras</span></a>
+        <a class="nav-item" href="#s4"><span class="nav-index">04</span><span class="nav-label">JSON real</span></a>
+        <a class="nav-item" href="#s5"><span class="nav-index">05</span><span class="nav-label">El enchufe</span></a>
+        <span class="nav-group">Construir</span>
+        <a class="nav-item" href="#s6"><span class="nav-index">06</span><span class="nav-label">SPEC y agente</span></a>
+        <a class="nav-item" href="#s7"><span class="nav-index">07</span><span class="nav-label">Contrato común</span></a>
+        <a class="nav-item" href="#s8"><span class="nav-index">08</span><span class="nav-label">Formato OpenAI</span></a>
+        <a class="nav-item" href="#s9"><span class="nav-index">09</span><span class="nav-label">Formato Claude</span></a>
+        <a class="nav-item" href="#s10"><span class="nav-index">10</span><span class="nav-label">Fallback</span></a>
+        <a class="nav-item" href="#s11"><span class="nav-index">11</span><span class="nav-label">Validar sentimiento</span></a>
+        <a class="nav-item" href="#s12"><span class="nav-index">12</span><span class="nav-label">Endpoint y errores</span></a>
+        <span class="nav-group">Probar</span>
+        <a class="nav-item" href="#s13"><span class="nav-index">13</span><span class="nav-label">Romper a propósito</span></a>
+        <a class="nav-item" href="#s14"><span class="nav-index">14</span><span class="nav-label">38 tests</span></a>
+        <a class="nav-item" href="#s15"><span class="nav-index">15</span><span class="nav-label">Operar y costear</span></a>
+        <span class="nav-group">Cerrar</span>
+        <a class="nav-item" href="#s16"><span class="nav-index">16</span><span class="nav-label">Cierre y mapa</span></a>
+      </nav>
+      <div class="sb-prog"><div class="lbl"><span>Progreso</span><span id="progPct">0%</span></div><div class="track"><div class="fill" id="progFill"></div></div></div>
+    </aside>
+
+    <main class="main">
+      <header class="hero view" id="portada" data-accent="1">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <span class="eyebrow">Dev Senior · Módulo 5 · Clase 18</span>
+            <h1 class="hero-title">La IA entra a Atiende con fallback y factura</h1>
+            <p class="hero-lead">Conectaremos dos formatos de API, mantendremos el servicio activo cuando un proveedor falle y validaremos cada respuesta antes de usarla.</p>
+            <div class="meta"><span class="pill" data-hot>120 minutos</span><span class="pill">Java 17 + Spring Boot 4.1.1</span><span class="pill">38 tests en verde</span></div>
+          </div>
+          <figure class="hero-visual">
+            <img src="img/grano-alto-fallback.png" alt="Un ticket de soporte de café puede viajar por un proveedor en la nube o por un modelo local y regresar como una respuesta">
+            <figcaption class="hero-note">Una petición, dos rutas posibles y una respuesta común. Ilustración original generada para esta clase.</figcaption>
+          </figure>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="section view" id="s1" data-accent="1" data-layout="canvas" data-escena="apertura" hidden>
+          <div class="sec-head"><span class="sec-n">El problema</span><h2 class="sec-t">La dueña quiere IA, pero exige servicio continuo y costo conocido</h2><p class="sec-s">Laura espera un regalo que debía llegar. Grano Alto Café recibe 300 mensajes al día y no puede revisar cada uno a mano.</p></div>
+          <div class="body">
+            <figure class="figura"><div class="figura-stage">
+              <svg viewBox="0 0 700 260" role="img" aria-label="Ticket de Laura con demora de ocho días y dos preguntas de negocio">
+                <rect x="55" y="24" width="590" height="210" rx="18" fill="var(--paper-2)" stroke="var(--paper-line)" stroke-width="2"/>
+                <circle cx="105" cy="76" r="23" fill="var(--a1-papel)"/><text x="105" y="83" text-anchor="middle" font-family="Bricolage Grotesque, Inter" font-size="22" font-weight="700" fill="white">L</text>
+                <text x="145" y="68" font-family="Inter" font-size="17" font-weight="600" fill="var(--paper-ink)">Ticket de Laura · prioridad MEDIA</text>
+                <text x="145" y="96" font-family="IBM Plex Mono" font-size="15" fill="var(--paper-soft)">Pedido 1045 · 8 días sin llegar</text>
+                <path d="M90 126 H610" stroke="var(--paper-line)" stroke-width="2"/>
+                <text x="90" y="160" font-family="Inter" font-size="18" fill="var(--paper-ink)">¿Cuánto cuesta analizar 300 mensajes al día?</text>
+                <text x="90" y="198" font-family="Inter" font-size="18" fill="var(--paper-ink)">¿Qué ocurre si el proveedor falla un viernes?</text>
+              </svg>
+            </div><figcaption>La tecnología aparece porque el negocio necesita priorizar sin quedarse a oscuras.</figcaption></figure>
+            <div class="socratica"><span class="component-label">Para pensar</span><p class="socratica-q">Si hoy usamos un plan gratuito, ¿la IA es gratis para el negocio?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">El plan gratuito sirve para aprender, no para asumir costo cero en producción.</p><p>Tiene límites de uso y condiciones de datos. Un producto real mide tokens, estima gasto y evita enviar información sensible sin una decisión explícita.</p></div></details></div>
+            <div class="callout" data-tone="info"><span class="callout-icon">i</span><div><h3>Qué cambia respecto a la Clase 17</h3><p>Antes la IA ayudaba a construir Atiende. Desde hoy la IA vive dentro del producto y el equipo responde por su costo, sus fallas y la calidad de sus respuestas.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s2" data-accent="1" data-layout="canvas" data-escena="concepto" hidden>
+          <div class="sec-head"><span class="sec-n">Comprender · costo</span><h2 class="sec-t">Una petición HTTP se cobra por tokens de entrada y salida</h2><p class="sec-s">El mensaje, las instrucciones y el formato consumen entrada. La respuesta y el razonamiento consumen salida.</p></div>
+          <div class="body">
+            <div class="definicion"><div class="def-tecnica"><span class="component-label">Definición técnica</span><p class="def-termino">Token</p><p>Unidad en la que cada modelo divide el texto antes de procesarlo. Puede ser una palabra, un fragmento, un signo o parte de un emoji.</p><span class="def-fuente">Mediciones de la guía con qwen3:1.7b</span></div><div class="def-vida"><span class="component-label">Modelo mental</span><p>Son fichas de un juego: el cobro depende de cuántas fichas necesita la petición, no del número visible de palabras.</p></div></div>
+            <div class="socratica"><span class="component-label">Predice</span><p class="socratica-q">¿Una palabra siempre equivale a un token?</p><details class="reveal"><summary>Comprobar</summary><div class="reveal-body"><p class="lead-answer">No. El tokenizador y el “sobre” fijo de la conversación cambian el conteo.</p></div></details></div>
+            <div class="databox"><div class="chart-title">Tokens de entrada medidos</div><div class="bars">
+              <div class="bar-row"><span class="bar-label">hola</span><div class="bar-track"><div class="bar-fill" data-target="39"></div></div><span class="bar-value">12</span></div>
+              <div class="bar-row"><span class="bar-label">Pedido en español</span><div class="bar-track"><div class="bar-fill" data-target="87"></div></div><span class="bar-value">27</span></div>
+              <div class="bar-row"><span class="bar-label">Pedido en inglés</span><div class="bar-track"><div class="bar-fill" data-target="84"></div></div><span class="bar-value">26</span></div>
+              <div class="bar-row"><span class="bar-label">Pedido + 3 emojis</span><div class="bar-track"><div class="bar-fill" data-target="100"></div></div><span class="bar-value">31</span></div>
+            </div></div>
+            <div class="table-wrap"><table class="data-table"><caption>Precios de referencia de la guía · USD por millón de tokens</caption><thead><tr><th>Modelo</th><th class="num">Entrada</th><th class="num">Salida</th></tr></thead><tbody><tr><td>Gemini 3.5 Flash-Lite</td><td class="num">0,30</td><td class="num">2,50</td></tr><tr><td>Gemini 3.8 Flash</td><td class="num">0,75</td><td class="num">3,75</td></tr><tr><td>Claude Haiku 4.5</td><td class="num">1,00</td><td class="num">5,00</td></tr></tbody></table></div>
+            <div class="code-block">
+    <div class="code-head"><div><span class="code-context">Fórmula</span><span class="code-file">Costo estimado</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-plaintext">costo = (tokensEntrada × precioEntrada + tokensSalida × precioSalida) ÷ 1.000.000</code></pre>
+  </div>
+            <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>El razonamiento también se cobra</h3><p>En la medición de la guía, una salida de 5 tokens pasó a 214 al dejar el razonamiento automático: 43 veces más para devolver una sola palabra.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s3" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head"><span class="sec-n">Preparar · secretos</span><h2 class="sec-t">La llave queda fuera del código, de Git y del alcance del agente</h2><p class="sec-s">El proyecto conserva una plantilla compartible y carga el valor real desde la raíz al iniciar.</p></div>
+          <div class="body">
+            <div class="dos-col"><div><div class="panel"><h3>Antes de clase · Gemini</h3><p>En <code>https://aistudio.google.com</code>, crear una llave gratuita desde <strong>Get API key</strong> y guardarla sin pegarla en chats ni repositorios.</p></div></div><div><div class="panel"><h3>Antes de clase · Ollama</h3><p>Instalar Ollama y preparar el modelo local que actuará como respaldo.</p></div><div class="code-block" data-tipo="terminal">
+    <div class="code-head"><div><span class="code-context">Tarea previa</span><span class="code-file">Terminal</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-bash">ollama pull qwen3:1.7b
+ollama run qwen3:1.7b "Responde solo: hola"</code></pre>
+  </div></div></div>
+            <div class="socratica"><span class="component-label">Para pensar</span><p class="socratica-q">Si una llave llegó a un commit y luego la borramos, ¿ya está segura?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">No. Git conserva la historia.</p><p>Hay que revocar la llave expuesta y crear una nueva. Borrarla en un commit posterior no elimina el secreto anterior.</p></div></details></div>
+            <div class="cards"><div class="card"><b>Archivo aparte</b><p><code>secrets.properties</code> vive en la raíz y nunca dentro del JAR.</p></div><div class="card"><b>Git lo ignora</b><p><code>.gitignore</code> evita que llegue al repositorio.</p></div><div class="card"><b>El agente no lo lee</b><p><code>.cursorignore</code> ya lo bloquea desde la Clase 17.</p></div><div class="card"><b>El equipo sí sabe</b><p><code>secrets.example.properties</code> documenta la clave sin revelar el valor.</p></div></div>
+            <div class="sin-ia"><span class="sin-ia-icono" aria-hidden="true"></span><div><h3>Sin IA aquí</h3><p>El estudiante crea el archivo real a mano. Nunca se pega una llave en el chat ni se le pide al agente que la edite.</p></div></div>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">.gitignore · líneas nuevas</span><span class="code-reveal-note">Editar en la raíz · Gitignore</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Editar</span><span class="code-file">.gitignore</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-gitignore">### Secretos ###
+/secrets.properties</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">secrets.example.properties completo</span><span class="code-reveal-note">Crear en la raíz · sí se sube</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">secrets.example.properties</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-properties"># Copia este archivo como secrets.properties (en esta misma carpeta) y pon tu llave.
+# secrets.properties NUNCA se sube a GitHub: está en .gitignore y en .cursorignore.
+atiende.ia.openai.llave=PEGA_AQUI_TU_LLAVE_DE_GEMINI</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">secrets.properties</span><span class="code-reveal-note">Crear a mano en la raíz · nunca se sube</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">secrets.properties</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-properties">atiende.ia.openai.llave=LA_LLAVE_REAL_DE_GEMINI</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">application.properties completo</span><span class="code-reveal-note">Reemplazar en src/main/resources/ · configuración final</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Reemplazar</span><span class="code-file">src/main/resources/application.properties</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-properties">spring.application.name=atiende
+
+spring.datasource.url=jdbc:mysql://localhost:3306/atiende_db?createDatabaseIfNotExist=true
+spring.datasource.username=root
+spring.datasource.password=root
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.open-in-view=false
+
+spring.config.import=optional:file:./secrets.properties
+
+atiende.ia.timeout-segundos=30
+atiende.ia.max-tokens=1024
+
+atiende.ia.openai.url=https://generativelanguage.googleapis.com/v1beta/openai
+atiende.ia.openai.modelo=gemini-3.5-flash-lite
+atiende.ia.openai.llave=sin-configurar
+atiende.ia.openai.precio-entrada-millon=0.30
+atiende.ia.openai.precio-salida-millon=2.50
+
+atiende.ia.claude.url=http://localhost:11434
+atiende.ia.claude.modelo=qwen3:1.7b
+atiende.ia.claude.llave=ollama
+atiende.ia.claude.precio-entrada-millon=0
+atiende.ia.claude.precio-salida-millon=0</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">Dependencia HTTP Client</span><span class="code-reveal-note">Agregar dentro de dependencies · luego Java: Reload Projects</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Agregar</span><span class="code-file">pom.xml</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-markup">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-restclient&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+  </div></div>
+  </details>
+            <div class="checkpoint"><span class="component-label">Checkpoint</span><h3>La aplicación arranca aunque falte la llave</h3><p><code>optional:file:./secrets.properties</code> permite iniciar. El valor real, cuando existe, reemplaza <code>sin-configurar</code>.</p></div>
+            <div class="code-block" data-tipo="terminal">
+    <div class="code-head"><div><span class="code-context">Guardar avance</span><span class="code-file">Terminal · raíz del proyecto</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-bash">git add .
+git commit -m "Configuración segura de llaves de IA"</code></pre>
+  </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s4" data-accent="1" data-layout="canvas" data-escena="prueba" hidden>
+          <div class="sec-head"><span class="sec-n">Observar · HTTP</span><h2 class="sec-t">Primero vemos el JSON real; después permitimos que el agente escriba Java</h2><p class="sec-s">Los dos proveedores resuelven la misma tarea, pero autentican, reciben instrucciones y reportan uso de forma distinta.</p></div>
+          <div class="body">
+            <div class="sin-ia"><span class="sin-ia-icono" aria-hidden="true"></span><div><h3>Sin IA aquí</h3><p>Esta inspección visual crea el criterio para detectar URLs, headers, campos y supuestos inventados.</p></div></div>
+            <div class="dos-col"><div>
+              <div class="panel"><h3>Formato OpenAI contra Gemini</h3><p><code>POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions</code><br><code>Authorization: Bearer LLAVE</code><br><code>Content-Type: application/json</code></p></div>
+              <div class="code-block">
+    <div class="code-head"><div><span class="code-context">Petición</span><span class="code-file">Postman · Gemini</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-json">{
+  "model": "gemini-3.5-flash-lite",
+  "max_tokens": 1024,
+  "temperature": 0,
+  "messages": [
+    { "role": "system", "content": "Clasifica el sentimiento. Responde SOLO con una palabra: MOLESTO, NEUTRAL o CONTENTO." },
+    { "role": "user", "content": "Pedí el pedido 1045 hace 8 días y no llega" }
+  ]
+}</code></pre>
+  </div>
+              <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">Forma esperada de la respuesta OpenAI</span><span class="code-reveal-note">choices + usage · valores de ejemplo</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Observar</span><span class="code-file">Respuesta JSON</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-json">{
+  "choices": [
+    { "index": 0, "message": { "role": "assistant", "content": "MOLESTO" }, "finish_reason": "stop" }
+  ],
+  "usage": { "prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0 }
+}</code></pre>
+  </div></div>
+  </details>
+            </div><div>
+              <div class="panel"><h3>Formato Claude contra Ollama</h3><p><code>POST http://localhost:11434/v1/messages</code><br><code>x-api-key: ollama</code><br><code>anthropic-version: 2023-06-01</code><br><code>Content-Type: application/json</code></p></div>
+              <div class="code-block">
+    <div class="code-head"><div><span class="code-context">Petición</span><span class="code-file">Postman · Ollama</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-json">{
+  "model": "qwen3:1.7b",
+  "max_tokens": 1024,
+  "temperature": 0,
+  "thinking": { "type": "disabled" },
+  "system": "Clasifica el sentimiento. Responde SOLO con una palabra: MOLESTO, NEUTRAL o CONTENTO.",
+  "messages": [
+    { "role": "user", "content": "Pedí el pedido 1045 hace 8 días y no llega" }
+  ]
+}</code></pre>
+  </div>
+              <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">Respuesta verificada de Ollama</span><span class="code-reveal-note">content por bloques + usage</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Observar</span><span class="code-file">Respuesta JSON</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-json">{
+  "id": "msg_d5fea7ea0662c5d19b363c43",
+  "type": "message",
+  "role": "assistant",
+  "model": "qwen3:1.7b",
+  "content": [ { "type": "text", "text": "MOLESTO" } ],
+  "stop_reason": "end_turn",
+  "usage": { "input_tokens": 62, "cache_read_input_tokens": 3, "output_tokens": 5 }
+}</code></pre>
+  </div></div>
+  </details>
+            </div></div>
+            <div class="table-wrap"><table class="data-table"><caption>La misma intención, contratos diferentes</caption><thead><tr><th>Aspecto</th><th>OpenAI</th><th>Claude</th></tr></thead><tbody><tr><td>Autenticación</td><td><code>Authorization: Bearer</code></td><td><code>x-api-key</code> + versión</td></tr><tr><td>Instrucciones</td><td>Mensaje <code>system</code></td><td>Campo <code>system</code></td></tr><tr><td>Texto</td><td><code>choices[0].message.content</code></td><td>Bloque de tipo <code>text</code></td></tr><tr><td>Uso</td><td><code>prompt_tokens</code> / <code>completion_tokens</code></td><td><code>input_tokens</code> / <code>output_tokens</code></td></tr></tbody></table></div>
+            <div class="micro-task"><span class="component-label">Experimento · 60 segundos</span><p class="micro-task-q">Quita <code>thinking: disabled</code> de la petición Claude. ¿Qué cambia?</p><details class="micro-reveal"><summary>Comprobar</summary><p class="micro-answer"><strong>Aparece un bloque de tipo thinking antes del texto.</strong> La salida medida pasó de 5 a 214 tokens. Leer siempre <code>content[0]</code> rompe el cliente.</p></details></div>
+            <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>El error también tiene contrato</h3><p>Con una llave inválida, Gemini devolvió HTTP 400 y Claude real HTTP 401. El cliente clasifica por código HTTP, no por el texto cambiante del mensaje.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s5" data-accent="1" data-layout="canvas" data-escena="concepto" hidden>
+          <div class="sec-head"><span class="sec-n">Diseñar · SOLID</span><h2 class="sec-t">El negocio conoce un enchufe; los proveedores quedan detrás</h2><p class="sec-s">SentimientoService no debería saber si responde Gemini, Ollama, OpenAI o Claude.</p></div>
+          <div class="body">
+            <div class="definicion"><div class="def-tecnica"><span class="component-label">Inversión de dependencias</span><p class="def-termino">ProveedorIA</p><p>El código de negocio depende de una abstracción común, no de una implementación concreta.</p></div><div class="def-vida"><span class="component-label">Modelo mental</span><p>Como un enchufe: el aparato conoce la forma del conector, no la planta que produjo la energía.</p></div></div>
+            <div class="sin-ia"><span class="sin-ia-icono" aria-hidden="true"></span><div><h3>Sin IA aquí</h3><p>La interfaz y la política de fallback son decisiones de diseño. Se acuerdan antes de abrir el agente.</p></div></div>
+            <div class="pipeline" role="group" aria-label="Flujo del fallback"><div class="pipe-step"><span class="component-label">Petición</span><h3>Atiende</h3><ul><li>instrucciones</li><li>mensaje</li></ul></div><div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pipe-step" data-emphasis><span class="component-label">Proveedor 1</span><h3>OpenAI · Gemini</h3><ul><li>si responde: termina</li><li>si falla: continúa</li></ul></div><div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pipe-step"><span class="component-label">Proveedor 2</span><h3>Claude · Ollama</h3><ul><li>si falla: 503</li></ul></div></div>
+            <div class="socratica"><span class="component-label">Decisión</span><p class="socratica-q">Si la llave principal está mal, ¿intentamos el respaldo?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Sí: el cliente no tiene la culpa de nuestra configuración.</p><p>El servicio sigue, pero el log registra ERROR para que el equipo lo corrija. El fallback no convierte un error de configuración en algo aceptable.</p></div></details></div>
+            <div class="table-wrap"><table class="data-table"><caption>Política de fallas</caption><thead><tr><th>Señal</th><th>Tipo</th><th>Acción</th><th>Log</th></tr></thead><tbody><tr><td>HTTP 400, 401, 403, 404</td><td>Configuración</td><td>Fallback</td><td data-emphasis>ERROR</td></tr><tr><td>HTTP 429, 500, 503, 529</td><td>Temporal</td><td>Fallback</td><td>WARN</td></tr><tr><td>Sin conexión, timeout o vacío</td><td>Temporal</td><td>Fallback</td><td>WARN</td></tr><tr><td>Todos fallan</td><td>Sin proveedor</td><td data-emphasis>503</td><td>ERROR + WARN</td></tr></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s6" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head"><span class="sec-n">Construir · especificar</span><h2 class="sec-t">El agente implementa después de recibir decisiones verificables</h2><p class="sec-s">La SPEC define el resultado y AGENTS.md limita cómo debe construirlo.</p></div>
+          <div class="body">
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">SPEC.md · Fase 2 completa</span><span class="code-reveal-note">Agregar al final · raíz · Markdown</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Agregar</span><span class="code-file">SPEC.md</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-markdown"># SPEC · Atiende · Fase 2: la IA entra al producto
+
+## Problema
+El equipo de soporte no sabe qué clientes están molestos hasta leer cada mensaje.
+Antes de automatizar más (Fase 3), necesitamos que Atiende pueda hablar con un modelo de IA de forma confiable, segura y con costo conocido.
+
+## Objetivo de la fase 2
+Detectar el sentimiento de un ticket (MOLESTO, NEUTRAL, CONTENTO) usando IA, con respaldo automático si el proveedor principal falla.
+
+## Fuera de alcance (llega después)
+- Guardar el sentimiento en la base de datos.
+- Clasificación por categoría, prioridad automática, borradores de respuesta y chatbot.
+- Autenticación (deuda técnica declarada: este endpoint consume créditos).
+
+## Proveedores
+| Orden | Nombre | Formato de API | Servicio en clase | Servicio en producción |
+|---|---|---|---|---|
+| 1 | openai | Chat Completions (OpenAI) | Gemini, plan gratuito | OpenAI |
+| 2 | claude | Messages (Anthropic) | Ollama local | Claude |
+
+## Reglas
+1. Si un proveedor falla, se intenta el siguiente. Si todos fallan: 503.
+2. Errores HTTP 400, 401, 403 y 404 son de configuración: se registran como ERROR. Los demás (429, 5xx, sin conexión, tiempo agotado, respuesta vacía) son temporales: WARN.
+3. La respuesta del modelo se valida: si no es uno de los tres sentimientos, se responde 502.
+4. Las llaves viven solo en `secrets.properties` (raíz del proyecto), nunca en el código ni en Git.
+5. Cada análisis informa proveedor, modelo, tokens de entrada y salida, costo estimado en USD y milisegundos.
+6. En los logs nunca se escribe el mensaje del cliente ni una llave.
+7. Límites: tiempo máximo de espera y tokens máximos de salida, configurables.
+
+## Endpoint
+| Método | Ruta | Respuestas |
+|---|---|---|
+| POST | /api/tickets/{id}/sentimiento | 200 análisis · 404 ticket no existe · 502 respuesta inválida de la IA · 503 IA no disponible |
+
+## Criterios de aceptación
+- [ ] Con Gemini configurado, el análisis del ticket de Laura devuelve MOLESTO y `proveedor: openai`.
+- [ ] Con una llave inválida, el análisis sigue funcionando con `proveedor: claude` y el log muestra un ERROR.
+- [ ] Con Ollama apagado y llave inválida, la respuesta es 503.
+- [ ] Una respuesta del modelo fuera de los tres valores produce 502.
+- [ ] `secrets.properties` no aparece en `git status`.</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">AGENTS.md · versión 3 completa</span><span class="code-reveal-note">Reemplazar en la raíz · Markdown</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Reemplazar</span><span class="code-file">AGENTS.md</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-markdown"># Atiende · instrucciones para el agente
+
+## Contexto
+Backend de atención al cliente de Grano Alto Café.
+Antes de cambiar reglas de negocio, lee `SPEC.md`: es la fuente de verdad.
+
+## Stack
+- Java 17, Spring Boot 4.1, Maven, MySQL.
+- Configuración solo en `application.properties`. Nunca `application.yml` ni perfiles.
+
+## Arquitectura
+- Paquete base `com.devsenior.atiende`, organizado por dominio: `ticket/`, `compartido/`.
+- Capas: Controller → Service → Repository. El Controller no tiene lógica de negocio.
+- DTOs como `record` en `&lt;dominio&gt;/dto`. Nunca expongas entidades JPA en la API.
+- Un mapper propio por dominio (`@Component`), sin librerías de mapeo.
+- Inyección por constructor. Nunca `@Autowired` sobre atributos.
+- Enums persistidos con `@Enumerated(EnumType.STRING)`.
+- Errores con excepciones propias y un `@RestControllerAdvice` en `compartido/`.
+
+## Código
+- Clases, métodos y variables en español.
+- Sin Lombok: getters y setters explícitos.
+- Validación de entrada con Jakarta Validation en los DTO de request.
+
+## Tests
+- JUnit 5 + Mockito. Los tests del Service no levantan Spring.
+- Nunca modifiques un test para que pase. Si un test falla, explícame si la causa está en el test o en el código y espera mi decisión.
+- Un test rojo contra la SPEC es una pregunta de negocio: no la resuelvas tú.
+
+## IA (desde la Fase 2)
+- Todo proveedor de IA implementa la interfaz `ProveedorIA` en el paquete `ia/`.
+- Las llamadas HTTP se hacen con `RestClient`. Sin SDKs de proveedores ni Spring AI.
+- Nunca escribas llaves en el código ni en `application.properties`: van en `secrets.properties`, que no puedes leer.
+- Antes de usar una URL, un header, un parámetro o un nombre de modelo de una API de IA, verifícalo en la documentación oficial actual. Tu conocimiento puede estar desactualizado.
+- Nunca registres en logs el mensaje del cliente ni las llaves.
+
+## Límites
+- No agregues dependencias al `pom.xml` sin preguntarme.
+- No modifiques `application.properties` salvo que te lo pida.
+- Si algo de la SPEC es ambiguo, pregunta antes de suponer.</code></pre>
+  </div></div>
+  </details>
+            <div class="momento-ia"><div class="momento-ia-head"><span class="momento-ia-titulo">Momento IA</span><span class="ia-nivel">Nivel 3 · Agente</span><span class="ia-herramienta">Cursor · Plan → Agent</span></div><div class="momento-ia-body"><p class="ia-porque">El diseño ya está decidido. El agente puede escribir clientes HTTP, records y manejo de errores, siempre bajo revisión.</p><div class="ia-grid"><div><span class="component-label">Primero razonas tú</span><p>La interfaz, el orden de proveedores y la tabla de errores.</p></div><div class="ia-no-delega"><span class="component-label">No se delega</span><p>La política de fallback ni la revisión de URLs, headers y modelos.</p></div></div><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Prompt sugerido</span><span class="code-file">Cursor · Chat</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-plaintext">@SPEC.md @AGENTS.md Implementa la Fase 2 de SPEC.md. Crea el paquete ia con: la interfaz ProveedorIA (métodos nombre() y completar(instrucciones, mensaje)), un record RespuestaIA con texto, proveedor, modelo, tokens de entrada y salida, costo estimado y milisegundos, la configuración tipada en IaProperties con el prefijo atiende.ia (ya está en application.properties), ProveedorOpenAi para el formato Chat Completions y ProveedorClaude para el formato Messages de Anthropic, y AsistenteIA con el fallback de la SPEC. Formato OpenAI: https://ai.google.dev/gemini-api/docs/openai. Formato Claude: https://platform.claude.com/docs/en/api/messages/create. En el formato Claude envía thinking disabled y toma el texto de los bloques de tipo text. Antes de escribir código, muéstrame el plan.</code></pre>
+  </div><div><span class="component-label">Cómo validar la respuesta</span><ul class="checklist"><li>Contrastar rutas y headers con los JSON vistos en Postman.</li><li>Confirmar que el nombre del modelo viene de configuración.</li><li>Buscar el bloque Claude por tipo <code>text</code>, no por posición.</li><li>Rechazar SDKs, dependencias nuevas o llaves en código.</li></ul></div></div></div>
+            <div class="callout" data-tone="warning"><span class="callout-icon">!</span><div><h3>Error frecuente del agente</h3><p><code>content().get(0).text()</code> puede tomar un bloque de razonamiento con texto nulo. El mensaje se interpreta como una suposición de posición que la API no prometió.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s7" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head"><span class="sec-n">Construir · contrato común</span><h2 class="sec-t">Configuración tipada, factura común y errores clasificables</h2><p class="sec-s">Estas piezas impiden que cada proveedor invente su propia forma de integrarse con el resto de Atiende.</p></div>
+          <div class="body">
+            <div class="active-build"><div class="build-step"><span class="build-step-index">01</span><div class="build-step-copy"><h3 class="build-step-title">Spring registra la configuración</h3><p class="build-step-purpose"><code>@ConfigurationPropertiesScan</code> permite inyectar un objeto tipado con timeout, modelos, llaves y precios.</p></div></div><div class="build-step"><span class="build-step-index">02</span><div class="build-step-copy"><h3 class="build-step-title">Todos devuelven la misma factura</h3><p class="build-step-purpose"><code>RespuestaIA</code> normaliza texto, proveedor, tokens, costo y tiempo.</p></div></div><div class="build-step"><span class="build-step-index">03</span><div class="build-step-copy"><h3 class="build-step-title">Las fallas conservan su significado</h3><p class="build-step-purpose">Una excepción distingue configuración de falla temporal, y el timeout permite que el fallback avance.</p></div></div></div>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">AtiendeApplication.java completo</span><span class="code-reveal-note">Modificar en com/devsenior/atiende/ · Java</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Modificar</span><span class="code-file">src/main/java/com/devsenior/atiende/AtiendeApplication.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+
+@SpringBootApplication
+@ConfigurationPropertiesScan
+public class AtiendeApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(AtiendeApplication.class, args);
+	}
+
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">IaProperties.java completo</span><span class="code-reveal-note">Crear en ia/ · Java · BigDecimal para dinero</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/IaProperties.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = "atiende.ia")
+public record IaProperties(
+        int timeoutSegundos,
+        int maxTokens,
+        Proveedor openai,
+        Proveedor claude
+) {
+
+    public record Proveedor(
+            String url,
+            String modelo,
+            String llave,
+            BigDecimal precioEntradaMillon,
+            BigDecimal precioSalidaMillon
+    ) {
+
+        private static final BigDecimal UN_MILLON = BigDecimal.valueOf(1_000_000);
+
+        public BigDecimal calcularCosto(int tokensEntrada, int tokensSalida) {
+            BigDecimal entrada = precioEntradaMillon.multiply(BigDecimal.valueOf(tokensEntrada));
+            BigDecimal salida = precioSalidaMillon.multiply(BigDecimal.valueOf(tokensSalida));
+            return entrada.add(salida).divide(UN_MILLON, 6, RoundingMode.HALF_UP);
+        }
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">RespuestaIA.java completo</span><span class="code-reveal-note">Crear en ia/ · Java</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/RespuestaIA.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia;
+
+import java.math.BigDecimal;
+
+public record RespuestaIA(
+        String texto,
+        String proveedor,
+        String modelo,
+        int tokensEntrada,
+        int tokensSalida,
+        BigDecimal costoEstimadoUsd,
+        long milisegundos
+) {
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">ProveedorIA.java completo</span><span class="code-reveal-note">Crear en ia/ · interfaz Java</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/ProveedorIA.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia;
+
+public interface ProveedorIA {
+
+    String nombre();
+
+    RespuestaIA completar(String instrucciones, String mensaje);
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">ProveedorIAException.java completo</span><span class="code-reveal-note">Crear en ia/ · clasifica códigos HTTP</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/ProveedorIAException.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia;
+
+import java.util.Set;
+
+public class ProveedorIAException extends RuntimeException {
+
+    private static final Set&lt;Integer&gt; ERRORES_DE_CONFIGURACION = Set.of(400, 401, 403, 404);
+
+    private final boolean errorDeConfiguracion;
+
+    public ProveedorIAException(String proveedor, String motivo, boolean errorDeConfiguracion) {
+        super(proveedor + ": " + motivo);
+        this.errorDeConfiguracion = errorDeConfiguracion;
+    }
+
+    public static ProveedorIAException desdeEstadoHttp(String proveedor, int estadoHttp) {
+        boolean deConfiguracion = ERRORES_DE_CONFIGURACION.contains(estadoHttp);
+        return new ProveedorIAException(proveedor, "respondió HTTP " + estadoHttp, deConfiguracion);
+    }
+
+    public boolean isErrorDeConfiguracion() {
+        return errorDeConfiguracion;
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">IaNoDisponibleException.java completo</span><span class="code-reveal-note">Crear en ia/ · representa el 503</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/IaNoDisponibleException.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia;
+
+public class IaNoDisponibleException extends RuntimeException {
+
+    public IaNoDisponibleException() {
+        super("Ningún proveedor de IA está disponible en este momento");
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">FabricaHttp.java completo</span><span class="code-reveal-note">Crear en ia/ · timeout de conexión y lectura</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/FabricaHttp.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia;
+
+import java.net.http.HttpClient;
+import java.time.Duration;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
+
+public final class FabricaHttp {
+
+    private FabricaHttp() {
+    }
+
+    public static ClientHttpRequestFactory conTimeout(int segundos) {
+        Duration limite = Duration.ofSeconds(segundos);
+        HttpClient httpClient = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .connectTimeout(limite)
+                .build();
+        JdkClientHttpRequestFactory fabrica = new JdkClientHttpRequestFactory(httpClient);
+        fabrica.setReadTimeout(limite);
+        return fabrica;
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <div class="checkpoint"><span class="component-label">Checkpoint</span><h3>El negocio ya no depende del JSON de un proveedor</h3><p>El resto de Atiende recibe <code>RespuestaIA</code> y conoce solo la interfaz <code>ProveedorIA</code>.</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s8" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head"><span class="sec-n">Construir · OpenAI</span><h2 class="sec-t">El cliente principal habla Chat Completions y hoy apunta a Gemini</h2><p class="sec-s">El formato JSON queda encapsulado en un paquete. El resto de Atiende nunca toca <code>choices</code> ni <code>usage</code>.</p></div>
+          <div class="body">
+            <div class="micro-task"><span class="component-label">Revisa · 45 segundos</span><p class="micro-task-q">¿Dónde deberían aparecer el header, la ruta y el manejo de HTTP 4xx/5xx?</p><details class="micro-reveal"><summary>Comprobar</summary><p class="micro-answer"><strong>En el proveedor, no en el Service de negocio.</strong> El constructor fija <code>Authorization</code>; <code>enviar</code> usa <code>/chat/completions</code> y traduce fallas a <code>ProveedorIAException</code>.</p></details></div>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">OpenAiFormato.java completo</span><span class="code-reveal-note">Crear en ia/openai/ · records del JSON</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/openai/OpenAiFormato.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia.openai;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+
+final class OpenAiFormato {
+
+    private OpenAiFormato() {
+    }
+
+    record Peticion(
+            String model,
+            List&lt;Mensaje&gt; messages,
+            @JsonProperty("max_tokens") int maxTokens,
+            double temperature
+    ) {
+    }
+
+    record Mensaje(String role, String content) {
+    }
+
+    record Respuesta(List&lt;Opcion&gt; choices, Uso usage) {
+    }
+
+    record Opcion(Mensaje message, @JsonProperty("finish_reason") String finishReason) {
+    }
+
+    record Uso(
+            @JsonProperty("prompt_tokens") int promptTokens,
+            @JsonProperty("completion_tokens") int completionTokens
+    ) {
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">ProveedorOpenAi.java completo</span><span class="code-reveal-note">Crear en ia/openai/ · proveedor principal</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/openai/ProveedorOpenAi.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia.openai;
+
+import com.devsenior.atiende.ia.FabricaHttp;
+import com.devsenior.atiende.ia.IaProperties;
+import com.devsenior.atiende.ia.ProveedorIA;
+import com.devsenior.atiende.ia.ProveedorIAException;
+import com.devsenior.atiende.ia.RespuestaIA;
+import java.util.List;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
+
+@Component
+@Order(1)
+public class ProveedorOpenAi implements ProveedorIA {
+
+    private final IaProperties.Proveedor config;
+    private final int maxTokens;
+    private final RestClient restClient;
+
+    public ProveedorOpenAi(RestClient.Builder builder, IaProperties propiedades) {
+        this.config = propiedades.openai();
+        this.maxTokens = propiedades.maxTokens();
+        this.restClient = builder
+                .baseUrl(config.url())
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + config.llave())
+                .requestFactory(FabricaHttp.conTimeout(propiedades.timeoutSegundos()))
+                .build();
+    }
+
+    @Override
+    public String nombre() {
+        return "openai";
+    }
+
+    @Override
+    public RespuestaIA completar(String instrucciones, String mensaje) {
+        OpenAiFormato.Peticion peticion = new OpenAiFormato.Peticion(
+                config.modelo(),
+                List.of(new OpenAiFormato.Mensaje("system", instrucciones),
+                        new OpenAiFormato.Mensaje("user", mensaje)),
+                maxTokens,
+                0.0);
+
+        long inicio = System.currentTimeMillis();
+        OpenAiFormato.Respuesta respuesta = enviar(peticion);
+        long milisegundos = System.currentTimeMillis() - inicio;
+
+        String texto = extraerTexto(respuesta);
+        int tokensEntrada = respuesta.usage() == null ? 0 : respuesta.usage().promptTokens();
+        int tokensSalida = respuesta.usage() == null ? 0 : respuesta.usage().completionTokens();
+
+        return new RespuestaIA(texto, nombre(), config.modelo(), tokensEntrada, tokensSalida,
+                config.calcularCosto(tokensEntrada, tokensSalida), milisegundos);
+    }
+
+    private OpenAiFormato.Respuesta enviar(OpenAiFormato.Peticion peticion) {
+        try {
+            return restClient.post()
+                    .uri("/chat/completions")
+                    .body(peticion)
+                    .retrieve()
+                    .body(OpenAiFormato.Respuesta.class);
+        } catch (RestClientResponseException ex) {
+            throw ProveedorIAException.desdeEstadoHttp(nombre(), ex.getStatusCode().value());
+        } catch (ResourceAccessException ex) {
+            throw new ProveedorIAException(nombre(), "sin conexión o tiempo agotado", false);
+        }
+    }
+
+    private String extraerTexto(OpenAiFormato.Respuesta respuesta) {
+        if (respuesta == null || respuesta.choices() == null || respuesta.choices().isEmpty()) {
+            throw new ProveedorIAException(nombre(), "respuesta sin opciones", false);
+        }
+        String texto = respuesta.choices().get(0).message().content();
+        if (texto == null || texto.isBlank()) {
+            throw new ProveedorIAException(nombre(), "respuesta vacía", false);
+        }
+        return texto.strip();
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <div class="checkpoint"><span class="component-label">Qué comprobar</span><h3><code>Bearer</code>, <code>/chat/completions</code> y dos tipos de falla</h3><p>Un error HTTP conserva su código. Un fallo de red o timeout se clasifica como temporal.</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s9" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head"><span class="sec-n">Construir · Claude</span><h2 class="sec-t">El proveedor de respaldo busca texto por tipo de bloque</h2><p class="sec-s">Claude y Ollama pueden mezclar bloques de razonamiento, texto y herramientas en la misma lista.</p></div>
+          <div class="body">
+            <div class="code-block" data-role="fragment">
+    <div class="code-head"><div><span class="code-context">Fragmento</span><span class="code-file">ProveedorClaude.java · fragmento</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">String texto = respuesta.content().stream()
+        .filter(bloque -&gt; "text".equals(bloque.type()))
+        .map(ClaudeFormato.Bloque::text)
+        .collect(Collectors.joining());</code></pre>
+  </div>
+            <div class="callout" data-tone="success"><span class="callout-icon">✓</span><div><h3>Por tipo, no por posición</h3><p>El orden de los bloques puede cambiar. Filtrar por <code>type="text"</code> expresa el contrato que realmente necesitamos.</p></div></div>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">ClaudeFormato.java completo</span><span class="code-reveal-note">Crear en ia/claude/ · records del JSON</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/claude/ClaudeFormato.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia.claude;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+
+final class ClaudeFormato {
+
+    private ClaudeFormato() {
+    }
+
+    record Peticion(
+            String model,
+            @JsonProperty("max_tokens") int maxTokens,
+            String system,
+            List&lt;Mensaje&gt; messages,
+            double temperature,
+            Pensamiento thinking
+    ) {
+    }
+
+    record Mensaje(String role, String content) {
+    }
+
+    record Pensamiento(String type) {
+    }
+
+    record Respuesta(
+            List&lt;Bloque&gt; content,
+            @JsonProperty("stop_reason") String stopReason,
+            Uso usage
+    ) {
+    }
+
+    record Bloque(String type, String text) {
+    }
+
+    record Uso(
+            @JsonProperty("input_tokens") int inputTokens,
+            @JsonProperty("cache_read_input_tokens") int cacheReadInputTokens,
+            @JsonProperty("output_tokens") int outputTokens
+    ) {
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">ProveedorClaude.java completo</span><span class="code-reveal-note">Crear en ia/claude/ · proveedor de respaldo</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/claude/ProveedorClaude.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia.claude;
+
+import com.devsenior.atiende.ia.FabricaHttp;
+import com.devsenior.atiende.ia.IaProperties;
+import com.devsenior.atiende.ia.ProveedorIA;
+import com.devsenior.atiende.ia.ProveedorIAException;
+import com.devsenior.atiende.ia.RespuestaIA;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
+
+@Component
+@Order(2)
+public class ProveedorClaude implements ProveedorIA {
+
+    private static final String VERSION_API = "2023-06-01";
+
+    private final IaProperties.Proveedor config;
+    private final int maxTokens;
+    private final RestClient restClient;
+
+    public ProveedorClaude(RestClient.Builder builder, IaProperties propiedades) {
+        this.config = propiedades.claude();
+        this.maxTokens = propiedades.maxTokens();
+        this.restClient = builder
+                .baseUrl(config.url())
+                .defaultHeader("x-api-key", config.llave())
+                .defaultHeader("anthropic-version", VERSION_API)
+                .requestFactory(FabricaHttp.conTimeout(propiedades.timeoutSegundos()))
+                .build();
+    }
+
+    @Override
+    public String nombre() {
+        return "claude";
+    }
+
+    @Override
+    public RespuestaIA completar(String instrucciones, String mensaje) {
+        ClaudeFormato.Peticion peticion = new ClaudeFormato.Peticion(
+                config.modelo(),
+                maxTokens,
+                instrucciones,
+                List.of(new ClaudeFormato.Mensaje("user", mensaje)),
+                0.0,
+                new ClaudeFormato.Pensamiento("disabled"));
+
+        long inicio = System.currentTimeMillis();
+        ClaudeFormato.Respuesta respuesta = enviar(peticion);
+        long milisegundos = System.currentTimeMillis() - inicio;
+
+        String texto = extraerTexto(respuesta);
+        int tokensEntrada = respuesta.usage() == null ? 0
+                : respuesta.usage().inputTokens() + respuesta.usage().cacheReadInputTokens();
+        int tokensSalida = respuesta.usage() == null ? 0 : respuesta.usage().outputTokens();
+
+        return new RespuestaIA(texto, nombre(), config.modelo(), tokensEntrada, tokensSalida,
+                config.calcularCosto(tokensEntrada, tokensSalida), milisegundos);
+    }
+
+    private ClaudeFormato.Respuesta enviar(ClaudeFormato.Peticion peticion) {
+        try {
+            return restClient.post()
+                    .uri("/v1/messages")
+                    .body(peticion)
+                    .retrieve()
+                    .body(ClaudeFormato.Respuesta.class);
+        } catch (RestClientResponseException ex) {
+            throw ProveedorIAException.desdeEstadoHttp(nombre(), ex.getStatusCode().value());
+        } catch (ResourceAccessException ex) {
+            throw new ProveedorIAException(nombre(), "sin conexión o tiempo agotado", false);
+        }
+    }
+
+    private String extraerTexto(ClaudeFormato.Respuesta respuesta) {
+        if (respuesta == null || respuesta.content() == null) {
+            throw new ProveedorIAException(nombre(), "respuesta sin contenido", false);
+        }
+        String texto = respuesta.content().stream()
+                .filter(bloque -&gt; "text".equals(bloque.type()))
+                .map(ClaudeFormato.Bloque::text)
+                .collect(Collectors.joining());
+        if (texto.isBlank()) {
+            throw new ProveedorIAException(nombre(), "respuesta vacía", false);
+        }
+        return texto.strip();
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <div class="checkpoint"><span class="component-label">Checkpoint</span><h3>El proveedor suma entrada normal y caché</h3><p><code>inputTokens + cacheReadInputTokens</code> evita subestimar el consumo que Ollama reporta en dos campos.</p></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s10" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head"><span class="sec-n">Construir · fallback</span><h2 class="sec-t">AsistenteIA recorre una lista ordenada y se detiene en la primera respuesta</h2><p class="sec-s">Spring entrega todos los proveedores por la interfaz. <code>@Order</code> decide cuál se intenta primero.</p></div>
+          <div class="body">
+            <div class="active-build"><div class="build-step"><span class="build-step-index">01</span><div class="build-step-copy"><h3 class="build-step-title">Llamar al proveedor actual</h3><p class="build-step-purpose">Si responde, se registra la factura y se devuelve el resultado de inmediato.</p></div></div><div class="build-step"><span class="build-step-index">02</span><div class="build-step-copy"><h3 class="build-step-title">Clasificar la falla</h3><p class="build-step-purpose">ERROR señala configuración; WARN señala un problema temporal. En ambos casos el ciclo continúa.</p></div></div><div class="build-step"><span class="build-step-index">03</span><div class="build-step-copy"><h3 class="build-step-title">Declarar indisponibilidad</h3><p class="build-step-purpose">Si la lista termina sin respuesta, una excepción propia se convierte después en 503.</p></div></div></div>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">AsistenteIA.java completo</span><span class="code-reveal-note">Crear en ia/ · Service de fallback</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/AsistenteIA.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia;
+
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AsistenteIA {
+
+    private static final Logger log = LoggerFactory.getLogger(AsistenteIA.class);
+
+    private final List&lt;ProveedorIA&gt; proveedores;
+
+    public AsistenteIA(List&lt;ProveedorIA&gt; proveedores) {
+        this.proveedores = proveedores;
+    }
+
+    public RespuestaIA completar(String instrucciones, String mensaje) {
+        for (ProveedorIA proveedor : proveedores) {
+            try {
+                RespuestaIA respuesta = proveedor.completar(instrucciones, mensaje);
+                log.info("IA ok proveedor={} modelo={} tokens={}/{} costoUsd={} ms={}",
+                        respuesta.proveedor(), respuesta.modelo(),
+                        respuesta.tokensEntrada(), respuesta.tokensSalida(),
+                        respuesta.costoEstimadoUsd(), respuesta.milisegundos());
+                return respuesta;
+            } catch (ProveedorIAException ex) {
+                if (ex.isErrorDeConfiguracion()) {
+                    log.error("IA falló por configuración, se intenta el siguiente. {}", ex.getMessage());
+                } else {
+                    log.warn("IA falló temporalmente, se intenta el siguiente. {}", ex.getMessage());
+                }
+            }
+        }
+        throw new IaNoDisponibleException();
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <div class="socratica"><span class="component-label">Criterio senior</span><p class="socratica-q">¿Por qué el catch no atrapa <code>Exception</code>?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Porque el fallback cubre fallas esperadas del proveedor, no errores de programación.</p><p>Ocultar una <code>NullPointerException</code> detrás del respaldo haría más difícil encontrar un defecto real del código.</p></div></details></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s11" data-accent="1" data-layout="canvas" data-escena="concepto" hidden>
+          <div class="sec-head"><span class="sec-n">Construir · dominio</span><h2 class="sec-t">La salida de la IA se trata como entrada externa</h2><p class="sec-s">Un prompt puede pedir una palabra exacta, pero un modelo no garantiza obediencia.</p></div>
+          <div class="body">
+            <figure class="figura"><div class="figura-stage"><img src="img/validacion-respuesta-ia.png" alt="Una máquina de IA produce varias respuestas; una compuerta acepta una y desvía las respuestas deformes"></div><figcaption>La validación evita que un error probable se convierta en un dato de negocio silenciosamente incorrecto.<span class="figura-credito">Ilustración original generada para esta clase.</span></figcaption></figure>
+            <div class="socratica"><span class="component-label">Para pensar</span><p class="socratica-q">Si el prompt dice “responde SOLO con una palabra”, ¿todavía hace falta validar?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Sí. Un modelo genera texto probable, no un valor garantizado.</p><p>En pruebas reales aparecieron <code>CONTENO</code>, <code>MOLEYSTO</code> y <code>NEGATIVO</code>. El dominio acepta solo MOLESTO, NEUTRAL o CONTENTO.</p></div></details></div>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">Sentimiento.java completo</span><span class="code-reveal-note">Crear en ticket/ · enum y validación</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/Sentimiento.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Optional;
+
+public enum Sentimiento {
+    MOLESTO,
+    NEUTRAL,
+    CONTENTO;
+
+    public static Optional&lt;Sentimiento&gt; desdeTextoIA(String texto) {
+        if (texto == null) {
+            return Optional.empty();
+        }
+        String limpio = texto.toUpperCase(Locale.ROOT).replaceAll("[^A-Z]", "");
+        return Arrays.stream(values())
+                .filter(sentimiento -&gt; sentimiento.name().equals(limpio))
+                .findFirst();
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">RespuestaIAInvalidaException.java completo</span><span class="code-reveal-note">Crear en ia/ · representa respuesta no válida</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ia/RespuestaIAInvalidaException.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia;
+
+public class RespuestaIAInvalidaException extends RuntimeException {
+
+    public RespuestaIAInvalidaException(String proveedor, String textoRecibido) {
+        super("La IA (" + proveedor + ") respondió un valor no válido: " + textoRecibido);
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">AnalisisSentimientoResponse.java completo</span><span class="code-reveal-note">Crear en ticket/dto/ · DTO de salida</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/dto/AnalisisSentimientoResponse.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket.dto;
+
+import com.devsenior.atiende.ticket.Sentimiento;
+import java.math.BigDecimal;
+
+public record AnalisisSentimientoResponse(
+        Long ticketId,
+        Sentimiento sentimiento,
+        String proveedor,
+        String modelo,
+        int tokensEntrada,
+        int tokensSalida,
+        BigDecimal costoEstimadoUsd,
+        long milisegundos
+) {
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">SentimientoService.java completo</span><span class="code-reveal-note">Crear en ticket/ · une ticket, IA y validación</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/SentimientoService.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import com.devsenior.atiende.ia.AsistenteIA;
+import com.devsenior.atiende.ia.RespuestaIA;
+import com.devsenior.atiende.ia.RespuestaIAInvalidaException;
+import com.devsenior.atiende.ticket.dto.AnalisisSentimientoResponse;
+import com.devsenior.atiende.ticket.dto.TicketResponse;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SentimientoService {
+
+    private static final String INSTRUCCIONES = """
+            Eres analista de atención al cliente de una tienda online de café.
+            Clasifica el sentimiento del mensaje del cliente:
+            - MOLESTO: queja, reclamo, retraso o frustración.
+            - NEUTRAL: pregunta o solicitud de información.
+            - CONTENTO: agradecimiento o elogio.
+            Responde SOLO con una palabra: MOLESTO, NEUTRAL o CONTENTO.
+            """;
+
+    private final TicketService ticketService;
+    private final AsistenteIA asistenteIA;
+
+    public SentimientoService(TicketService ticketService, AsistenteIA asistenteIA) {
+        this.ticketService = ticketService;
+        this.asistenteIA = asistenteIA;
+    }
+
+    public AnalisisSentimientoResponse analizar(Long ticketId) {
+        TicketResponse ticket = ticketService.buscarPorId(ticketId);
+        RespuestaIA respuesta = asistenteIA.completar(INSTRUCCIONES, ticket.mensaje());
+
+        Sentimiento sentimiento = Sentimiento.desdeTextoIA(respuesta.texto())
+                .orElseThrow(() -&gt; new RespuestaIAInvalidaException(
+                        respuesta.proveedor(), respuesta.texto()));
+
+        return new AnalisisSentimientoResponse(
+                ticketId,
+                sentimiento,
+                respuesta.proveedor(),
+                respuesta.modelo(),
+                respuesta.tokensEntrada(),
+                respuesta.tokensSalida(),
+                respuesta.costoEstimadoUsd(),
+                respuesta.milisegundos());
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <div class="callout" data-tone="info"><span class="callout-icon">i</span><div><h3>Las instrucciones son parte del código</h3><p>Definir cada sentimiento cambió el resultado del modelo local. La calidad del prompt también merece revisión y pruebas.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s12" data-accent="1" data-layout="canvas" data-escena="construccion" hidden>
+          <div class="sec-head"><span class="sec-n">Construir · API</span><h2 class="sec-t">Un POST ejecuta el análisis y los errores explican dónde buscar</h2><p class="sec-s">El endpoint cuesta dinero y puede variar con el tiempo, por eso no se modela como un GET cacheable.</p></div>
+          <div class="body">
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">SentimientoController.java completo</span><span class="code-reveal-note">Crear en ticket/ · endpoint POST</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/main/java/com/devsenior/atiende/ticket/SentimientoController.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import com.devsenior.atiende.ticket.dto.AnalisisSentimientoResponse;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/tickets")
+public class SentimientoController {
+
+    private final SentimientoService sentimientoService;
+
+    public SentimientoController(SentimientoService sentimientoService) {
+        this.sentimientoService = sentimientoService;
+    }
+
+    @PostMapping("/{id}/sentimiento")
+    public AnalisisSentimientoResponse analizar(@PathVariable Long id) {
+        return sentimientoService.analizar(id);
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">GlobalExceptionHandler.java · versión 2 completa</span><span class="code-reveal-note">Reemplazar en compartido/ · agrega 502 y 503</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Reemplazar</span><span class="code-file">src/main/java/com/devsenior/atiende/compartido/GlobalExceptionHandler.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.compartido;
+
+import com.devsenior.atiende.ia.IaNoDisponibleException;
+import com.devsenior.atiende.ia.RespuestaIAInvalidaException;
+import com.devsenior.atiende.ticket.TransicionInvalidaException;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; manejarNoEncontrado(RecursoNoEncontradoException ex) {
+        return construir(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(TransicionInvalidaException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; manejarTransicionInvalida(TransicionInvalidaException ex) {
+        return construir(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(IaNoDisponibleException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; manejarIaNoDisponible(IaNoDisponibleException ex) {
+        return construir(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+    }
+
+    @ExceptionHandler(RespuestaIAInvalidaException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; manejarRespuestaIAInvalida(RespuestaIAInvalidaException ex) {
+        return construir(HttpStatus.BAD_GATEWAY, ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; manejarValidacion(MethodArgumentNotValidException ex) {
+        String mensaje = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -&gt; error.getField() + ": " + error.getDefaultMessage())
+                .sorted()
+                .collect(Collectors.joining("; "));
+        return construir(HttpStatus.BAD_REQUEST, mensaje);
+    }
+
+    private ResponseEntity&lt;ErrorResponse&gt; construir(HttpStatus status, String mensaje) {
+        ErrorResponse cuerpo = new ErrorResponse(
+                status.value(),
+                status.getReasonPhrase(),
+                mensaje,
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(status).body(cuerpo);
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <div class="table-wrap"><table class="data-table"><caption>Contrato del endpoint</caption><thead><tr><th>Método y ruta</th><th>Resultado</th><th>Significado</th></tr></thead><tbody><tr><td><code>POST /api/tickets/{id}/sentimiento</code></td><td>200</td><td>Sentimiento y factura</td></tr><tr><td>Ticket inexistente</td><td>404</td><td>Recurso no encontrado</td></tr><tr><td>Modelo respondió otro valor</td><td data-emphasis>502</td><td>Dependencia respondió inválido</td></tr><tr><td>Ningún proveedor respondió</td><td data-emphasis>503</td><td>Dependencia no disponible</td></tr></tbody></table></div>
+            <div class="code-block" data-tipo="terminal">
+    <div class="code-head"><div><span class="code-context">Commit</span><span class="code-file">Terminal · raíz del proyecto</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-bash">git add .
+git commit -m "Fase 2: IA con fallback y análisis de sentimiento"</code></pre>
+  </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s13" data-accent="1" data-layout="canvas" data-escena="prueba" hidden>
+          <div class="sec-head"><span class="sec-n">Probar · en vivo</span><h2 class="sec-t">Romper el sistema revela si el fallback y la validación son reales</h2><p class="sec-s">Cada falla produce una señal distinta y verificable para el cliente y para el equipo.</p></div>
+          <div class="body">
+            <div class="timeline"><div class="timeline-item"><h3>Camino feliz</h3><p>Con MySQL, Ollama y la llave real: <code>POST http://localhost:8080/api/tickets/1/sentimiento</code> devuelve 200, MOLESTO y <code>proveedor: openai</code>.</p></div><div class="timeline-item"><h3>Llave inválida</h3><p>Gemini responde 400. Atiende registra ERROR, usa Claude/Ollama y devuelve 200 con <code>proveedor: claude</code>.</p></div><div class="timeline-item"><h3>Todo apagado</h3><p>Con llave dañada y Ollama cerrado, el cliente recibe 503 y un mensaje explícito de indisponibilidad.</p></div><div class="timeline-item"><h3>Palabra inventada</h3><p>Con el modelo pequeño que responde <code>CONTENO</code>, Atiende devuelve 502 y no contamina los datos.</p></div></div>
+            <div class="consola"><div class="consola-head">Respuesta verificada con fallback</div><ol><li class="out">HTTP 200 OK</li><li class="out">"sentimiento": <b>"MOLESTO"</b></li><li class="out">"proveedor": <b>"claude"</b></li><li class="out">"tokensEntrada": 136, "tokensSalida": 5</li></ol></div>
+            <div class="socratica"><span class="component-label">Decisión de integridad</span><p class="socratica-q">¿Qué es peor: devolver 502 o adivinar que CONTENO significa CONTENTO?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Adivinar contamina datos y decisiones sin que nadie lo note.</p><p>Un error visible se corrige. Un dato malo silencioso se propaga. El respaldo mantiene disponibilidad, pero puede tener menor calidad.</p></div></details></div>
+            <ul class="checklist"><li>Gemini devuelve MOLESTO y <code>proveedor: openai</code>.</li><li>Llave inválida activa Claude y deja un ERROR en logs.</li><li>Todos apagados devuelven 503.</li><li>Respuesta inventada devuelve 502.</li><li><code>git status</code> no muestra <code>secrets.properties</code>.</li></ul>
+          </div>
+        </section>
+
+        <section class="section view" id="s14" data-accent="1" data-layout="canvas" data-escena="prueba" hidden>
+          <div class="sec-head"><span class="sec-n">Probar · sin tokens</span><h2 class="sec-t">Los mocks prueban el fallback sin esperar una caída real</h2><p class="sec-s">Los casos vienen de la política de errores y de respuestas observadas. Ningún test llama una API externa.</p></div>
+          <div class="body">
+            <div class="momento-ia"><div class="momento-ia-head"><span class="momento-ia-titulo">Momento IA</span><span class="ia-nivel">Nivel 3 · Agente</span><span class="ia-herramienta">Cursor · Agent</span></div><div class="momento-ia-body"><p class="ia-porque">El estudiante decide los casos. El agente implementa el código mecánico de prueba.</p><div class="ia-grid"><div><span class="component-label">Primero razonas tú</span><p>Principal exitoso, fallback por 429, todos fallan, códigos HTTP, valores válidos e inválidos.</p></div><div class="ia-no-delega"><span class="component-label">No se delega</span><p>La lista de casos ni el significado de cada resultado.</p></div></div><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Prompt sugerido</span><span class="code-file">Cursor · Chat</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-plaintext">@AsistenteIA.java @ProveedorIAException.java @Sentimiento.java @SentimientoService.java Escribe tests unitarios con JUnit 5 y Mockito, sin levantar Spring y sin llamar a ninguna API real. Casos: (1) AsistenteIA: el principal responde y el respaldo nunca se llama; el principal falla con 429 y responde el respaldo; todos fallan y se lanza IaNoDisponibleException. (2) ProveedorIAException.desdeEstadoHttp clasifica 400, 401, 403 y 404 como configuración y 429, 500, 503 y 529 como temporales. (3) Sentimiento.desdeTextoIA acepta MOLESTO, molesto, " Neutral." y **CONTENTO**, y rechaza CONTENO, MOLEYSTO, NEGATIVO, "El cliente está molesto" y vacío. (4) SentimientoService: respuesta válida devuelve el sentimiento y el consumo; respuesta CONTENO lanza RespuestaIAInvalidaException. No modifiques código de producción.</code></pre>
+  </div><div><span class="component-label">Cómo validar</span><ul class="checklist"><li>Cada caso solicitado aparece.</li><li>No hay URLs reales dentro de los tests.</li><li>El diff solo toca <code>src/test</code>.</li></ul></div></div></div>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">AsistenteIATest.java completo</span><span class="code-reveal-note">Crear en src/test/.../ia/ · 3 casos</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/test/java/com/devsenior/atiende/ia/AsistenteIATest.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class AsistenteIATest {
+
+    @Mock
+    private ProveedorIA principal;
+
+    @Mock
+    private ProveedorIA respaldo;
+
+    private AsistenteIA asistenteIA;
+
+    @BeforeEach
+    void setUp() {
+        asistenteIA = new AsistenteIA(List.of(principal, respaldo));
+    }
+
+    @Test
+    void completar_principalResponde_noUsaRespaldo() {
+        when(principal.completar(anyString(), anyString())).thenReturn(respuestaDe("openai"));
+
+        RespuestaIA respuesta = asistenteIA.completar("instrucciones", "mensaje");
+
+        assertEquals("openai", respuesta.proveedor());
+        verify(respaldo, never()).completar(anyString(), anyString());
+    }
+
+    @Test
+    void completar_principalFalla_usaRespaldo() {
+        when(principal.completar(anyString(), anyString()))
+                .thenThrow(ProveedorIAException.desdeEstadoHttp("openai", 429));
+        when(respaldo.completar(anyString(), anyString())).thenReturn(respuestaDe("claude"));
+
+        RespuestaIA respuesta = asistenteIA.completar("instrucciones", "mensaje");
+
+        assertEquals("claude", respuesta.proveedor());
+    }
+
+    @Test
+    void completar_todosFallan_lanzaIaNoDisponible() {
+        when(principal.completar(anyString(), anyString()))
+                .thenThrow(ProveedorIAException.desdeEstadoHttp("openai", 400));
+        when(respaldo.completar(anyString(), anyString()))
+                .thenThrow(new ProveedorIAException("claude", "sin conexión o tiempo agotado", false));
+
+        assertThrows(IaNoDisponibleException.class,
+                () -&gt; asistenteIA.completar("instrucciones", "mensaje"));
+    }
+
+    private RespuestaIA respuestaDe(String proveedor) {
+        return new RespuestaIA("MOLESTO", proveedor, "modelo-prueba", 120, 5,
+                BigDecimal.ZERO, 300);
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">ProveedorIAExceptionTest.java completo</span><span class="code-reveal-note">Crear en src/test/.../ia/ · 8 códigos HTTP</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/test/java/com/devsenior/atiende/ia/ProveedorIAExceptionTest.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ia;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+class ProveedorIAExceptionTest {
+
+    @ParameterizedTest(name = "HTTP {0} -&gt; error de configuración: {1}")
+    @CsvSource({
+            "400, true",
+            "401, true",
+            "403, true",
+            "404, true",
+            "429, false",
+            "500, false",
+            "503, false",
+            "529, false"
+    })
+    void desdeEstadoHttp_clasificaElError(int estadoHttp, boolean esDeConfiguracion) {
+        ProveedorIAException ex = ProveedorIAException.desdeEstadoHttp("openai", estadoHttp);
+
+        assertEquals(esDeConfiguracion, ex.isErrorDeConfiguracion());
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">SentimientoTest.java completo</span><span class="code-reveal-note">Crear en src/test/.../ticket/ · 9 entradas</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/test/java/com/devsenior/atiende/ticket/SentimientoTest.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Optional;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+class SentimientoTest {
+
+    @ParameterizedTest(name = "\"{0}\" se reconoce como {1}")
+    @CsvSource({
+            "MOLESTO, MOLESTO",
+            "molesto, MOLESTO",
+            "' Neutral.', NEUTRAL",
+            "**CONTENTO**, CONTENTO"
+    })
+    void desdeTextoIA_textoValido(String texto, Sentimiento esperado) {
+        assertEquals(Optional.of(esperado), Sentimiento.desdeTextoIA(texto));
+    }
+
+    @ParameterizedTest(name = "\"{0}\" se rechaza")
+    @ValueSource(strings = {"CONTENO", "MOLEYSTO", "NEGATIVO", "El cliente está molesto", ""})
+    void desdeTextoIA_textoInvalido(String texto) {
+        assertTrue(Sentimiento.desdeTextoIA(texto).isEmpty());
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">SentimientoServiceTest.java completo</span><span class="code-reveal-note">Crear en src/test/.../ticket/ · validación del Service</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">src/test/java/com/devsenior/atiende/ticket/SentimientoServiceTest.java</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-java">package com.devsenior.atiende.ticket;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import com.devsenior.atiende.ia.AsistenteIA;
+import com.devsenior.atiende.ia.RespuestaIA;
+import com.devsenior.atiende.ia.RespuestaIAInvalidaException;
+import com.devsenior.atiende.ticket.dto.AnalisisSentimientoResponse;
+import com.devsenior.atiende.ticket.dto.TicketResponse;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class SentimientoServiceTest {
+
+    @Mock
+    private TicketService ticketService;
+
+    @Mock
+    private AsistenteIA asistenteIA;
+
+    private SentimientoService sentimientoService;
+
+    @BeforeEach
+    void setUp() {
+        sentimientoService = new SentimientoService(ticketService, asistenteIA);
+        when(ticketService.buscarPorId(1L)).thenReturn(ticketDeLaura());
+    }
+
+    @Test
+    void analizar_respuestaValida_devuelveSentimientoYConsumo() {
+        when(asistenteIA.completar(anyString(), anyString()))
+                .thenReturn(respuestaIA("MOLESTO"));
+
+        AnalisisSentimientoResponse analisis = sentimientoService.analizar(1L);
+
+        assertEquals(Sentimiento.MOLESTO, analisis.sentimiento());
+        assertEquals("openai", analisis.proveedor());
+        assertEquals(136, analisis.tokensEntrada());
+    }
+
+    @Test
+    void analizar_respuestaInvalida_lanzaRespuestaIAInvalida() {
+        when(asistenteIA.completar(anyString(), anyString()))
+                .thenReturn(respuestaIA("CONTENO"));
+
+        assertThrows(RespuestaIAInvalidaException.class,
+                () -&gt; sentimientoService.analizar(1L));
+    }
+
+    private TicketResponse ticketDeLaura() {
+        return new TicketResponse(1L, "Laura Gómez", "+57 300 123 4567", Canal.WHATSAPP,
+                "Pedí el pedido 1045 hace 8 días y no llega", EstadoTicket.ABIERTO,
+                Prioridad.MEDIA, LocalDateTime.now(), LocalDateTime.now());
+    }
+
+    private RespuestaIA respuestaIA(String texto) {
+        return new RespuestaIA(texto, "openai", "gemini-3.5-flash-lite", 136, 5,
+                new BigDecimal("0.000053"), 640);
+    }
+}</code></pre>
+  </div></div>
+  </details>
+            <div class="code-block" data-tipo="terminal">
+    <div class="code-head"><div><span class="code-context">Pruebas</span><span class="code-file">Terminal · raíz del proyecto</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-bash">./mvnw test</code></pre>
+  </div>
+            <details class="code-reveal">
+    <summary><span><span class="code-reveal-title">Salida esperada de Maven</span><span class="code-reveal-note">38 pruebas · cero llamadas externas</span></span></summary>
+    <div class="code-reveal-body"><div class="code-block">
+    <div class="code-head"><div><span class="code-context">Verificar</span><span class="code-file">Terminal</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-plaintext">Tests run: 8, Failures: 0, Errors: 0, Skipped: 0 -- in com.devsenior.atiende.ia.ProveedorIAExceptionTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0 -- in com.devsenior.atiende.ia.AsistenteIATest
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0 -- in com.devsenior.atiende.ticket.SentimientoTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0 -- in com.devsenior.atiende.ticket.TicketServiceTest
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0 -- in com.devsenior.atiende.ticket.EstadoTicketTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0 -- in com.devsenior.atiende.ticket.SentimientoServiceTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0 -- in com.devsenior.atiende.AtiendeApplicationTests
+Tests run: 38, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS</code></pre>
+  </div></div>
+  </details>
+            <div class="metrics"><div class="m"><b>16</b><span>tests heredados de la Clase 17</span></div><div class="m"><b>22</b><span>tests nuevos de IA y sentimiento</span></div><div class="m"><b>0</b><span>tokens gastados por los tests</span></div><div class="m"><b>38</b><span>tests en verde</span></div></div>
+            <div class="code-block" data-tipo="terminal">
+    <div class="code-head"><div><span class="code-context">Commit</span><span class="code-file">Terminal · raíz del proyecto</span></div><button class="copy-btn" type="button">Copiar</button></div>
+    <pre class="line-numbers"><code class="language-bash">git add .
+git commit -m "Tests del fallback y de la validación de sentimiento"</code></pre>
+  </div>
+          </div>
+        </section>
+
+        <section class="section view" id="s15" data-accent="1" data-layout="canvas" data-escena="prueba" hidden>
+          <div class="sec-head"><span class="sec-n">Operar · costo y privacidad</span><h2 class="sec-t">El log explica la operación sin copiar datos del cliente</h2><p class="sec-s">La factura parece pequeña para una palabra, pero cambia rápido con respuestas largas y razonamiento.</p></div>
+          <div class="body">
+            <div class="compare"><div class="compare-card" data-side="positive"><h3>Sí se registra</h3><ol><li>Proveedor y modelo</li><li>Tokens y costo estimado</li><li>Milisegundos</li><li>Motivo técnico de la falla</li></ol></div><div class="compare-card" data-side="negative"><h3>Nunca se registra</h3><ol><li>Mensaje del cliente</li><li>Instrucciones completas</li><li>Llaves</li><li>Nombre y teléfono</li></ol></div></div>
+            <div class="socratica"><span class="component-label">Privacidad</span><p class="socratica-q">¿Por qué no guardar el mensaje del cliente en el log si ayudaría a depurar?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Los logs circulan más que la base de datos.</p><p>Se copian a otras herramientas y los consulta más personal. El contenido del ticket debe leerse donde existe control de acceso.</p></div></details></div>
+            <div class="table-wrap"><table class="data-table"><caption>Costo mensual estimado · 9.000 mensajes</caption><thead><tr><th>Escenario</th><th class="num">Por mensaje USD</th><th class="num">Por mes USD</th></tr></thead><tbody><tr><td>Gemini 3.5 Flash-Lite</td><td class="num">0,0000533</td><td class="num">0,48</td></tr><tr><td>Gemini 3.8 Flash</td><td class="num">0,0001208</td><td class="num">1,09</td></tr><tr><td>Claude Haiku 4.5</td><td class="num">0,000161</td><td class="num">1,45</td></tr><tr><td>Claude Haiku 4.5 con razonamiento</td><td class="num" data-emphasis>0,001206</td><td class="num" data-emphasis>10,85</td></tr></tbody></table></div>
+            <div class="databox"><div class="chart-title">Costo relativo del mes</div><div class="bars"><div class="bar-row"><span class="bar-label">Flash-Lite</span><div class="bar-track"><div class="bar-fill" data-target="4"></div></div><span class="bar-value">$0,48</span></div><div class="bar-row"><span class="bar-label">Flash</span><div class="bar-track"><div class="bar-fill" data-target="10"></div></div><span class="bar-value">$1,09</span></div><div class="bar-row"><span class="bar-label">Haiku</span><div class="bar-track"><div class="bar-fill" data-target="13"></div></div><span class="bar-value">$1,45</span></div><div class="bar-row"><span class="bar-label">Haiku razonando</span><div class="bar-track"><div class="bar-fill" data-target="100"></div></div><span class="bar-value">$10,85</span></div></div></div>
+            <div class="socratica"><span class="component-label">Decisión de producto</span><p class="socratica-q">Si esta clasificación cuesta menos de dos dólares al mes, ¿ya podemos dejar de vigilar el costo?</p><details class="reveal"><summary>Ver respuesta</summary><div class="reveal-body"><p class="lead-answer">Solo esta tarea es barata: entrada corta y una palabra de salida.</p><p>Los borradores de respuesta de la Clase 19 producirán cientos de tokens. Además, una sola opción de razonamiento elevó la estimación mensual de 1,45 a 10,85 dólares.</p></div></details></div>
+            <div class="callout" data-tone="danger"><span class="callout-icon">!</span><div><h3>Deuda técnica declarada</h3><p>El endpoint aún no tiene autenticación. Antes de desplegar necesita JWT y límite de peticiones para evitar consumo abusivo.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section view" id="s16" data-accent="1" data-layout="canvas" data-escena="cierre" hidden>
+          <div class="sec-head"><span class="sec-n">Cierre</span><h2 class="sec-t">Atiende escucha, cambia de proveedor y rechaza respuestas inválidas</h2><p class="sec-s">El proyecto ahora analiza sentimiento con costo visible y falla de forma explícita.</p></div>
+          <div class="body">
+            <ol class="ideas"><li><span>Una llamada a IA es una <strong>petición HTTP pagada por tokens</strong>; por eso medimos consumo, tiempo y costo.</span></li><li><span>El proveedor se conecta mediante una <strong>interfaz con fallback</strong>; el negocio no depende de Gemini ni de Ollama.</span></li><li><span>La respuesta del modelo es <strong>entrada externa</strong>; se valida antes de convertirse en un dato de negocio.</span></li></ol>
+            <div class="pipeline" role="group" aria-label="Estado del proyecto al finalizar"><div class="pipe-step"><span class="component-label">Antes</span><h3>Ticket sin lectura automática</h3><ul><li>prioridad MEDIA</li></ul></div><div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pipe-step" data-emphasis><span class="component-label">Ahora</span><h3>Sentimiento verificable</h3><ul><li>MOLESTO</li><li>tokens + costo</li></ul></div><div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pipe-step"><span class="component-label">Después</span><h3>Respuesta útil</h3><ul><li>categoría</li><li>borrador</li></ul></div></div>
+            <div class="micro-task"><span class="component-label">Puente a la Clase 19</span><p class="micro-task-q">Atiende ya sabe cómo se siente Laura. ¿Qué le falta para ayudarla?</p><details class="micro-reveal"><summary>Descubrir el puente</summary><p class="micro-answer"><strong>Comprender qué necesita y responder con datos reales.</strong> La siguiente clase añade categoría, prioridad, borradores y una base de prompts reutilizable.</p></details></div>
+            <div class="table-wrap"><table class="data-table"><caption>Mapa final de archivos</caption><thead><tr><th>Grupo</th><th>Archivos</th><th>Resultado</th></tr></thead><tbody><tr><td>Configuración</td><td><code>secrets.properties</code>, <code>secrets.example.properties</code>, <code>.gitignore</code>, <code>application.properties</code>, <code>pom.xml</code></td><td>Llaves seguras y cliente HTTP</td></tr><tr><td>Contrato IA</td><td><code>IaProperties</code>, <code>RespuestaIA</code>, <code>ProveedorIA</code>, excepciones, <code>FabricaHttp</code></td><td>Interfaz y factura común</td></tr><tr><td>Proveedores</td><td><code>OpenAiFormato</code>, <code>ProveedorOpenAi</code>, <code>ClaudeFormato</code>, <code>ProveedorClaude</code></td><td>Dos formatos intercambiables</td></tr><tr><td>Orquestación</td><td><code>AsistenteIA</code></td><td>Fallback ordenado</td></tr><tr><td>Negocio</td><td><code>Sentimiento</code>, <code>SentimientoService</code>, <code>SentimientoController</code>, DTO y handler</td><td>Endpoint con 200, 502 y 503</td></tr><tr><td>Pruebas</td><td>4 archivos nuevos de test</td><td>38 pruebas en verde</td></tr></tbody></table></div>
+            <p class="doc-foot">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack</p>
+          </div>
+        </section>
+      </div>
+
+      <nav class="view-controls" id="viewControls" aria-label="Navegación entre secciones"><button class="view-btn" id="prevView" type="button" aria-label="Sección anterior">←</button><span class="view-position" id="viewPosition" aria-live="polite">Portada</span><button class="view-btn" id="nextView" type="button" aria-label="Sección siguiente">→</button></nav>
+    </main>
+  </div>
+  <div class="watermark" aria-hidden="true">© 2026 ANA ALVARADO</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="anaclase-v12.js"></script>
+</body>
+</html>
