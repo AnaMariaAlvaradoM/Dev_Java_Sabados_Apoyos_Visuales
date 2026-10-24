@@ -49,6 +49,7 @@
     var resourceCount = document.querySelector('[data-resource-count]');
     var themeKey = 'ana-portal-tema-' + activeCompany;
     var allowMultipleModules = false;
+    var bulkUntil = 0;
 
     root.dataset.empresa = activeCompany;
 
@@ -201,7 +202,7 @@
     modules.forEach(function (module, index) {
       module.open = index === openIndex;
       module.addEventListener('toggle', function () {
-        if (!module.open || allowMultipleModules || normalize(searchInput && searchInput.value)) return;
+        if (!module.open || allowMultipleModules || Date.now() < bulkUntil || normalize(searchInput && searchInput.value)) return;
         modules.forEach(function (other) {
           if (other !== module) other.open = false;
         });
@@ -287,6 +288,7 @@
       expandButton.addEventListener('click', function () {
         var expand = expandButton.dataset.action === 'expandir';
         allowMultipleModules = expand;
+        bulkUntil = Date.now() + 400;
         modules.forEach(function (module) {
           if (!module.hidden) module.open = expand;
         });

@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+
+<html data-empresa="dev-senior" data-paleta="ambar" data-tema="oscuro" data-tema-base="oscuro" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Ana Alvarado" name="author"/>
+<meta content="© 2026 Ana Alvarado — Todos los derechos reservados" name="copyright"/>
+<meta content="noindex, nofollow, noarchive, noimageindex" name="robots"/>
+<title>Clase 21 · Del encargo al Sprint 0 · Cotiza</title>
+<link href="vendor/fonts.css" rel="stylesheet"/>
+<link href="vendor/prism-line-numbers.min.css" rel="stylesheet"/>
+<link href="anaestilos-v12.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="skip-link" href="#caso">Saltar al contenido</a>
+<div aria-hidden="true" class="topline" id="topline"></div>
+<div aria-label="Controles" class="controls">
+<button aria-label="Cambiar tema" class="ctrl" id="temaBtn" type="button">☀</button>
+<button aria-label="Pantalla completa" class="ctrl" id="fullscreenBtn" type="button">⛶</button>
+</div>
+<div class="shell" data-collapsed="false" id="shell">
+<aside aria-label="Índice de la clase" class="sidebar">
+<div class="sb-top">
+<span class="brand-mark">A</span>
+<div class="sb-title"><b>Java AI Engineer · Módulo 6</b><span>Clase 21 · Cotiza</span></div>
+</div>
+<button aria-label="Colapsar menú" class="sb-toggle" id="collapseBtn" type="button">‹</button>
+<nav aria-label="Secciones" class="sb-nav" id="nav"><a class="nav-item active" href="#portada"><span class="nav-index">00</span><span class="nav-label">Portada</span></a><span class="nav-group">El encargo</span><a class="nav-item" href="#caso"><span class="nav-index">01</span><span class="nav-label">La situación</span></a><a class="nav-item" href="#objetivos"><span class="nav-index">02</span><span class="nav-label">Objetivos de la sesión</span></a><span class="nav-group">Decidir</span><a class="nav-item" href="#alcance"><span class="nav-index">03</span><span class="nav-label">Alcance realista: el MVP</span></a><a class="nav-item" href="#arquitectura"><span class="nav-index">04</span><span class="nav-label">Arquitectura enterprise inicial</span></a><a class="nav-item" href="#datos"><span class="nav-index">05</span><span class="nav-label">Base de datos final</span></a><span class="nav-group">Planificar</span><a class="nav-item" href="#roadmap"><span class="nav-index">06</span><span class="nav-label">Roadmap, sprint y criterios de calidad</span></a><span class="nav-group">Construir</span><a class="nav-item" href="#proyecto"><span class="nav-index">07</span><span class="nav-label">Sprint 0: el proyecto</span></a><a class="nav-item" href="#estado"><span class="nav-index">08</span><span class="nav-label">Una puerta para saber si el sistema vive</span></a><a class="nav-item" href="#reglas"><span class="nav-index">09</span><span class="nav-label">Reglas antes de pedir</span></a><span class="nav-group">Revisar</span><a class="nav-item" href="#agente"><span class="nav-index">10</span><span class="nav-label">El agente construye Clientes</span></a><a class="nav-item" href="#referencia"><span class="nav-index">11</span><span class="nav-label">El código de referencia</span></a><span class="nav-group">Cerrar</span><a class="nav-item" href="#cierre"><span class="nav-index">12</span><span class="nav-label">Cierre</span></a><span class="nav-group">Consultar</span><a class="nav-item" href="#mapa"><span class="nav-index">13</span><span class="nav-label">Mapa de archivos</span></a><a class="nav-item" href="#glosario"><span class="nav-index">14</span><span class="nav-label">Glosario de la clase</span></a><a class="nav-item" href="#documentacion"><span class="nav-index">15</span><span class="nav-label">Documentación para el estudiante</span></a></nav>
+<div class="sb-prog">
+<div class="lbl"><span>Progreso</span><span id="progPct">0%</span></div>
+<div class="track"><div class="fill" id="progFill"></div></div>
+</div>
+</aside>
+<main class="main">
+<header class="hero view" data-accent="1" data-escena="apertura" data-layout="canvas" id="portada"><div class="hero-inner"><div class="hero-copy"><span class="eyebrow">Dev Senior · Java AI Engineer · Clase 21</span><h1 class="hero-title">Del encargo al Sprint 0</h1><p class="hero-lead">Hoy no: llega un cliente con un problema, y el trabajo es convertirlo en un plan antes de escribir código.</p><div class="meta"><span class="pill" data-hot="">Cotiza</span><span class="pill">MVP</span><span class="pill">Monolito modular</span><span class="pill">Sprint 0</span></div></div><figure class="hero-visual"><img alt="Un encargo de muebles se transforma en un plan de trabajo organizado" src="img/encargo-sprint0.png"/><figcaption class="hero-note">Llegó un correo con siete deseos.<span class="figura-credito">Ilustración original creada para la clase.</span></figcaption></figure></div></header>
+<div class="content"><section class="section view" data-accent="1" data-escena="apertura" data-layout="canvas" hidden="" id="caso"><div class="sec-head"><span class="sec-n">El encargo · 01</span><h2 class="sec-t">La situación</h2></div><div class="body"><h3>1.1 · Un correo un lunes</h3>
+<p>Hasta ahora siempre llegamos con el proyecto ya definido.
+Hoy no: llega un cliente con un problema, y el trabajo es convertirlo en un plan antes de escribir código.</p>
+<article class="correo"><div class="correo-head"><span class="correo-avatar">PR</span><div><div class="correo-remitente">Patricia Restrepo · <a href="mailto:patricia@robleypino.co">patricia@robleypino.co</a></div><div class="correo-ruta">Para: Equipo de desarrollo</div></div><span class="correo-fecha">19 oct 2026</span></div><div class="correo-asunto">Se nos van los clientes mientras cotizamos</div><div class="correo-body"><p>Hola, equipo:</p>
+<p>Tenemos un taller de muebles a la medida en Envigado: Roble &amp; Pino. Somos 6 personas.</p>
+<p>Nos llegan unas 40 solicitudes de cotización a la semana por WhatsApp y correo. Mensajes como <em>"quiero un clóset de 2,40 m en melamina blanca con 4 puertas"</em>.</p>
+<p>Yo misma hago cada cotización en Excel. Me demoro entre 1 y 2 días en responder, y el mes pasado perdimos 11 clientes que se fueron con otro taller porque respondió primero.</p>
+<p>Lo que soñamos: que el sistema lea la solicitud, arme un borrador de cotización con nuestros precios, yo lo revise y lo apruebe, y el cliente lo reciba el mismo día. También quisiera saber cuántas cotizaciones se aprueban, ver qué materiales piden más, conectarlo con la contabilidad, una app para los instaladores y que el cliente pague en línea.</p>
+<p>Tenemos presupuesto para empezar con algo pequeño en un mes. ¿Qué nos proponen?</p>
+<p>Patricia</p>
+</div></article>
+<h3>1.2 · Lo que vamos a construir</h3>
+<p>Esto es lo que dice el brochure del módulo: un <strong>producto backend con IA listo para vender</strong>.
+Patricia no nos pidió "un CRUD": nos pidió dejar de perder clientes. Ese es el negocio.</p>
+<div class="micro-task"><span class="component-label">Recuerda</span><p class="micro-task-q">En Atiende, ¿qué hacía el sistema cuando Gemini no respondía?</p><details class="micro-reveal"><summary>Comprobar</summary><p class="micro-answer">Usaba un <strong>fallback</strong>: el ticket seguía su curso aunque la IA fallara. Cotiza necesita lo mismo: si Gemini no responde, Patricia arma la cotización a mano, pero el sistema no se detiene.</p></details></div>
+</div></section>
+<section class="section view" data-accent="1" data-escena="objetivos" data-layout="canvas" hidden="" id="objetivos"><div class="sec-head"><span class="sec-n">El encargo · 02</span><h2 class="sec-t">Objetivos de la sesión</h2></div><div class="body"><p><strong>Antes de hoy:</strong> tenemos un correo con siete deseos y cero código.
+<strong>Al terminar:</strong> Cotiza tiene alcance, arquitectura, modelo de datos, roadmap y un Sprint 0 que corre.</p>
+<ol class="objetivos">
+<li><div><p class="obj-texto"><strong>Decidir</strong> el alcance de un MVP </p><p class="obj-evidencia"> clasificas los pedidos de Patricia con MoSCoW y justificas cada "no ahora".</p></div></li>
+<li><div><p class="obj-texto"><strong>Diseñar</strong> la arquitectura por módulos y su base de datos </p><p class="obj-evidencia"> ubicas cualquier clase nueva en su paquete sin dudar.</p></div></li>
+<li><div><p class="obj-texto"><strong>Construir</strong> el Sprint 0 con el agente guiado por reglas </p><p class="obj-evidencia"> el agente genera el módulo de clientes siguiendo <code>AGENTS.md</code> y lo apruebas contra la Definición de Hecho.</p></div></li>
+</ol>
+</div></section>
+<section class="section view" data-accent="1" data-escena="concepto" data-layout="canvas" hidden="" id="alcance"><div class="sec-head"><span class="sec-n">Decidir · 03</span><h2 class="sec-t">Alcance realista: el MVP</h2></div><div class="body"><h3>3.1 · El error más caro de un proyecto</h3>
+<p>La mayoría de proyectos no fracasan por el código.
+Fracasan porque intentan hacer todo y no terminan nada.</p>
+<h4>Definición técnica</h4>
+<p><strong><button class="termino" data-glosario="mvp" type="button">MVP</button> (Producto Mínimo Viable):</strong> la versión más pequeña del producto que resuelve el problema principal de un usuario real y permite comprobar si vale la pena seguir invirtiendo.</p>
+<h4>En la vida real</h4>
+<p>Un restaurante que abre no arranca con 80 platos.
+Abre con 8 que salen bien, mira cuáles se piden y después amplía la carta.</p>
+<h3>3.2 · La técnica MoSCoW</h3>
+<p>Es una forma de clasificar requisitos en cuatro cajas:</p>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Caja</th>
+<th>Significado</th>
+<th>Pregunta para decidir</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Must</strong></td>
+<td>Debe estar</td>
+<td>¿Sin esto el producto no resuelve el dolor?</td>
+</tr>
+<tr>
+<td><strong>Should</strong></td>
+<td>Debería estar</td>
+<td>¿Es importante, pero se puede vivir una semana sin esto?</td>
+</tr>
+<tr>
+<td><strong>Could</strong></td>
+<td>Podría estar</td>
+<td>¿Es un "qué bueno sería"?</td>
+</tr>
+<tr>
+<td><strong>Won't (por ahora)</strong></td>
+<td>No en esta versión</td>
+<td>¿Es otro producto o otro presupuesto?</td>
+</tr>
+</tbody></table></div>
+<h3>3.3 · Clasificamos el correo de Patricia</h3>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Pedido de Patricia</th>
+<th>Caja</th>
+<th>Por qué</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Registrar clientes y solicitudes</td>
+<td><strong>Must</strong></td>
+<td>Sin esto no hay nada que cotizar</td>
+</tr>
+<tr>
+<td>Catálogo de materiales con precios</td>
+<td><strong>Must</strong></td>
+<td>La IA necesita precios reales; no puede inventarlos</td>
+</tr>
+<tr>
+<td>Borrador de cotización con IA</td>
+<td><strong>Must</strong></td>
+<td>Es lo que reduce de 2 días a minutos</td>
+</tr>
+<tr>
+<td>Patricia revisa y aprueba</td>
+<td><strong>Must</strong></td>
+<td>La IA propone, una persona decide</td>
+</tr>
+<tr>
+<td>Métricas de aprobación y materiales</td>
+<td><strong>Should</strong></td>
+<td>Útil, pero no recupera clientes la primera semana</td>
+</tr>
+<tr>
+<td>Pago en línea</td>
+<td><strong>Could</strong></td>
+<td>Ya lo hicimos con Stripe; se suma después</td>
+</tr>
+<tr>
+<td>Contabilidad y app de instaladores</td>
+<td><strong>Won't (por ahora)</strong></td>
+<td>Son otros productos</td>
+</tr>
+</tbody></table></div>
+<div class="micro-task"><span class="component-label">Para pensar</span><p class="micro-task-q">Si dejas "aprobar la cotización" por fuera y la IA envía el borrador directo al cliente, ¿qué riesgo corres?</p><details class="micro-reveal"><summary>Comprobar</summary><p class="micro-answer">Que el cliente reciba un precio equivocado como si fuera una promesa del taller. Un modelo de lenguaje puede inventar una medida o un material. Por eso la aprobación humana es <strong>Must</strong>, no un adorno.</p></details></div>
+<h4>Criterio de alcance</h4>
+<p>Una regla práctica: si una funcionalidad no aparece en la frase <strong>"solicitud → borrador → aprobación → envío"</strong>, no entra al MVP.</p>
+</div></section>
+<section class="section view" data-accent="1" data-escena="concepto" data-layout="canvas" hidden="" id="arquitectura"><div class="sec-head"><span class="sec-n">Decidir · 04</span><h2 class="sec-t">Arquitectura enterprise inicial</h2></div><div class="body"><figure class="figura"><div class="figura-stage"><img alt="Un edificio único con oficinas separadas, cada una con puerta y llave, y un solo contador de luz" src="img/monolito-modular.png"/></div><figcaption>Un edificio de oficinas: una sola construcción, un solo contador de luz.<span class="figura-credito">Ilustración original creada para la clase.</span></figcaption></figure><h3>4.1 · La decisión grande</h3>
+<p>Ya tenemos el qué. Ahora: ¿cómo organizamos el código para que crezca sin volverse un nudo?</p>
+<h4>Definición técnica</h4>
+<p><strong>Monolito modular:</strong> una sola aplicación que se despliega como una unidad, pero cuyo código se organiza en módulos de negocio con límites claros. Cada módulo es dueño de sus datos y expone solo lo necesario.</p>
+<h4>En la vida real</h4>
+<p>Un edificio de oficinas: una sola construcción, un solo contador de luz.
+Pero cada empresa tiene su piso, su puerta y su llave. Nadie entra a la oficina de otro a mover papeles.</p>
+<h3>4.2 · Paquetes por módulo, no por capa</h3>
+<p>En los Módulos 3 y 4 organizamos por capa: <code>controller</code>, <code>service</code>, <code>repository</code>.
+Desde Atiende cambiamos a <strong>paquetes por funcionalidad</strong>. Hoy lo hacemos con intención desde el primer día.</p>
+<div class="code-block"><div class="code-head"><span class="code-context">Referencia</span><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">com.devsenior.cotiza
+├── cliente        → quién pide
+├── catalogo       → materiales y precios del taller
+├── solicitud      → el mensaje original del cliente
+├── cotizacion     → el borrador, sus ítems y su estado
+├── ia             → conversación con Gemini (con fallback)
+└── comun          → lo que comparten todos (estado, errores)
+</code></pre></div>
+<h4>Por qué así</h4>
+<p>Si mañana cambia la forma de cotizar, todo vive en <code>cotizacion</code>.
+Si cambiamos Gemini por otro modelo, solo se toca <code>ia</code>.
+Eso es el principio de <strong>responsabilidad única</strong> (la "S" de SOLID), aplicado a paquetes.</p>
+<div class="micro-task"><span class="component-label">Para pensar</span><p class="micro-task-q">Mañana Patricia pide guardar el valor del transporte de cada mueble. ¿En qué paquete va?</p><details class="micro-reveal"><summary>Comprobar</summary><p class="micro-answer">En <code>cotizacion</code>: el transporte es un valor de cada cotización, no del catálogo ni algo que compartan todos los módulos.</p></details></div>
+<h3>4.3 · El flujo del MVP</h3>
+<div class="code-block"><div class="code-head"><span class="code-context">Referencia</span><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">Cliente escribe → POST /api/solicitudes
+        ↓
+solicitud guarda el mensaje
+        ↓
+ia arma un borrador con precios de catalogo  (si falla → borrador vacío)
+        ↓
+cotizacion queda en BORRADOR
+        ↓
+Patricia ajusta y aprueba → APROBADA
+        ↓
+Se envía al cliente → ENVIADA
+</code></pre></div>
+</div></section>
+<section class="section view" data-accent="1" data-escena="concepto" data-layout="canvas" hidden="" id="datos"><div class="sec-head"><span class="sec-n">Decidir · 05</span><h2 class="sec-t">Base de datos final</h2></div><div class="body"><h3>5.1 · Diseñar los datos antes del código</h3>
+<p>Las tablas son lo más difícil de cambiar cuando ya hay datos reales.
+Por eso se diseñan antes y se discuten con el cliente.</p>
+<div class="er-lineal"><article class="entity"><div class="entity-name">CLIENTE</div><ul class="entity-fields"><li><span>bigint</span><span>id</span></li><li><span>string</span><span>nombre</span></li><li><span>string</span><span>telefono</span></li><li><span>string</span><span>correo</span></li></ul></article><div class="er-conector"><span class="er-etiqueta">1<br/>envia<br/>0..N</span></div><article class="entity"><div class="entity-name">SOLICITUD</div><ul class="entity-fields"><li><span>bigint</span><span>id</span></li><li><span>text</span><span>mensaje</span></li><li><span>string</span><span>canal</span></li><li><span>datetime</span><span>fecha</span></li></ul></article><div class="er-conector"><span class="er-etiqueta">1<br/>genera<br/>0..1</span></div><article class="entity"><div class="entity-name">COTIZACION</div><ul class="entity-fields"><li><span>bigint</span><span>id</span></li><li><span>string</span><span>estado</span></li><li><span>decimal</span><span>total</span></li><li><span>boolean</span><span>generada_por_ia</span></li></ul></article></div><br/><div class="er-lineal"><article class="entity"><div class="entity-name">COTIZACION</div><ul class="entity-fields"><li><span>bigint</span><span>id</span></li><li><span>string</span><span>estado</span></li><li><span>decimal</span><span>total</span></li><li><span>boolean</span><span>generada_por_ia</span></li></ul></article><div class="er-conector"><span class="er-etiqueta">1<br/>contiene<br/>1..N</span></div><article class="entity"><div class="entity-name">ITEM_COTIZACION</div><ul class="entity-fields"><li><span>bigint</span><span>id</span></li><li><span>int</span><span>cantidad</span></li><li><span>decimal</span><span>precio_unitario</span></li></ul></article><div class="er-conector"><span class="er-etiqueta">0..N<br/>se usa en<br/>1</span></div><article class="entity"><div class="entity-name">MATERIAL</div><ul class="entity-fields"><li><span>bigint</span><span>id</span></li><li><span>string</span><span>nombre</span></li><li><span>string</span><span>unidad</span></li><li><span>decimal</span><span>precio</span></li></ul></article></div>
+<h3>5.2 · Tres decisiones de diseño</h3>
+<p><strong><code>ITEM_COTIZACION</code> guarda su propio <code>precio_unitario</code>.</strong> Si el precio del melamina sube en diciembre, las cotizaciones de octubre no deben cambiar.</p>
+<p><strong><code>generada_por_ia</code> en la cotización.</strong> Así medimos después cuántos borradores de la IA aprueba Patricia sin cambios (es la métrica "Should").</p>
+<p><strong><code>estado</code> con tres valores:</strong> <code>BORRADOR</code>, <code>APROBADA</code>, <code>ENVIADA</code>. Es una máquina de estados como la de los tickets de Atiende.</p>
+</div></section>
+<section class="section view" data-accent="1" data-escena="concepto" data-layout="canvas" hidden="" id="roadmap"><div class="sec-head"><span class="sec-n">Planificar · 06</span><h2 class="sec-t">Roadmap, sprint y criterios de calidad</h2></div><div class="body"><h3>6.1 · Roadmap: el mapa del mes</h3>
+<p><strong>Definición técnica:</strong> un roadmap ordena en el tiempo los entregables del producto, de modo que cada etapa entregue algo que se pueda probar.
+<strong>En la vida real:</strong> construir una casa: primero cimientos, después muros, después acabados. Nadie pinta antes de tener paredes.</p>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Etapa</th>
+<th>Qué entrega</th>
+<th>Cuándo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Sprint 0</strong></td>
+<td>Proyecto, reglas, README y el módulo <code>cliente</code></td>
+<td>Hoy (Clase 21)</td>
+</tr>
+<tr>
+<td><strong>Sprint 1</strong></td>
+<td>Catálogo, solicitudes, borrador con IA, aprobación, tests y deploy</td>
+<td>Clase 22</td>
+</tr>
+<tr>
+<td><strong>Después del curso</strong></td>
+<td>Métricas, pagos con Stripe, envío por WhatsApp</td>
+<td>Backlog</td>
+</tr>
+</tbody></table></div>
+<h3>6.2 · Sprint</h3>
+<p><strong>Definición técnica:</strong> un periodo corto y fijo (normalmente 1 o 2 semanas) en el que el equipo se compromete a terminar un conjunto pequeño de trabajo.
+<strong>En la vida real:</strong> una lista del mercado para esta semana: no compras para todo el año.</p>
+<p><strong>Sprint 0</strong> es el sprint de preparación: dejar el terreno listo para que el trabajo de los siguientes sprints fluya.</p>
+<h3>6.3 · Definición de Hecho (Definition of Done)</h3>
+<p><strong>Definición técnica:</strong> la lista de condiciones que toda funcionalidad debe cumplir para considerarse terminada. Es igual para todas las tareas.
+<strong>En la vida real:</strong> el control de calidad de una fábrica de muebles: ningún clóset sale si no tiene bisagras ajustadas, puertas alineadas y bordes lijados.</p>
+<p>Esta es la de Cotiza. Es nuestro <strong>criterio de calidad</strong> para todo el módulo:</p>
+<div class="checkpoint" data-tone="info"><div><h4>Definición de Hecho de Cotiza</h4><ul class="checklist">
+<li><label><input type="checkbox"/> Compila y la aplicación arranca sin errores.</label></li>
+<li><label><input type="checkbox"/> Respeta los paquetes por módulo.</label></li>
+<li><label><input type="checkbox"/> Las entidades nunca salen por la API: se usan DTOs.</label></li>
+<li><label><input type="checkbox"/> Las entradas se validan y un dato inválido responde 400.</label></li>
+<li><label><input type="checkbox"/> Probado en Postman: caso feliz y al menos un caso de error.</label></li>
+<li><label><input type="checkbox"/> Ningún secreto (contraseña, llave de API) queda en el código que se sube.</label></li>
+<li><label><input type="checkbox"/> Quien la hizo puede explicar cada línea, aunque la haya escrito el agente.</label></li>
+</ul>
+</div></div>
+<h3>6.4 · Organización profesional del trabajo</h3>
+<p>En un equipo real cada tarea vive en un tablero (GitHub Projects, Jira o Trello) con tres columnas: <strong>Por hacer · En progreso · Hecho</strong>.
+Una tarea solo pasa a "Hecho" si cumple la Definición de Hecho.</p>
+</div></section>
+<section class="section view" data-accent="1" data-escena="construccion" data-layout="canvas" hidden="" id="proyecto"><div class="sec-head"><span class="sec-n">Construir · 07</span><h2 class="sec-t">Sprint 0: el proyecto</h2></div><div class="body"><div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Etiqueta</th>
+<th>Quién lo dice</th>
+<th>¿Se puede cambiar?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🟨 Lenguaje</td>
+<td>La sintaxis de Java</td>
+<td>No</td>
+</tr>
+<tr>
+<td>🟩 Plataforma</td>
+<td>La JVM, MySQL</td>
+<td>No, salvo configuración</td>
+</tr>
+<tr>
+<td>🟧 Framework</td>
+<td>Spring Boot, Spring Data, Jakarta</td>
+<td>No: si no se respeta, no funciona</td>
+</tr>
+<tr>
+<td>⬜ Convención</td>
+<td>La comunidad o el equipo</td>
+<td>Sí, aunque conviene respetarla</td>
+</tr>
+<tr>
+<td>🟪 Decisión del proyecto</td>
+<td>Nosotros, por el negocio</td>
+<td>Sí, si cambia el negocio</td>
+</tr>
+</tbody></table></div>
+<h3>7.1 · Paso 1 · Crear el proyecto sin gastar IA</h3>
+<p>Crear el proyecto es mecánico y gratuito. Usar el agente para esto sería gastar peticiones en algo que una página hace mejor.</p>
+<ol>
+<li>Entra a <code>https://start.spring.io</code>.</li>
+<li>Project: <strong>Maven</strong> · Language: <strong>Java</strong> · Spring Boot: <strong>4.1.1</strong>.</li>
+<li>Group: <code>com.devsenior</code> · Artifact: <code>cotiza</code> · Package name: <code>com.devsenior.cotiza</code>.</li>
+<li>Java: <strong>17</strong> · Packaging: <strong>Jar</strong>.</li>
+<li>Dependencias: <strong>Spring Web</strong>, <strong>Spring Data JPA</strong>, <strong>MySQL Driver</strong>, <strong>Validation</strong>.</li>
+<li><strong>Generate</strong>, descomprime y abre la carpeta <code>cotiza</code> en Cursor (<strong>File → Open Folder</strong>).</li>
+</ol>
+<div class="callout" data-tone="warning"><div><h4>Ojo técnico · la versión en el pom.xml</h4><p>Si en <code>pom.xml</code> aparece <code>&lt;version&gt;4.1.1.RELEASE&lt;/version&gt;</code> dentro de <code>&lt;parent&gt;</code>, Maven no encuentra el padre <code>spring-boot-starter-parent</code>. El error se lee: "no existe esa versión exacta en el repositorio".
+Cámbiala por <code>&lt;version&gt;4.1.1&lt;/version&gt;</code> y recarga con <code>Ctrl+Shift+P</code> → <strong>Java: Reload Projects</strong>. Es lo mismo que pasó con Atiende.</p>
+</div></div>
+<h3>7.2 · Paso 2 · Conectar la base de datos</h3>
+<article class="archivo"><div class="archivo-ficha"><span class="archivo-accion">Reemplazar</span><span class="archivo-nombre">application.properties</span><span class="archivo-ruta">src/main/resources/</span></div>
+<div class="lectura"><div class="lectura-head"><span class="lectura-num">1</span><h4 class="lectura-titulo">Conectar la base de datos</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 1–8</span></div></div><pre class="line-numbers" data-start="1"><code class="language-properties">spring.application.name=cotiza
+
+spring.datasource.url=jdbc:mysql://localhost:3306/cotiza_db?createDatabaseIfNotExist=true
+spring.datasource.username=root
+spring.datasource.password=tu_password
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true</code></pre></div><ol class="notas"><li class="nota" data-lineas="1"><div class="nota-cabeza"><span class="nota-lineas">L1</span><span class="nota-codigo"><code>spring.application.name</code></span></div><p>🟧 Spring Boot · Nombre de la aplicación; aparece en los logs. Initializr ya la escribe.</p></li><li class="nota" data-lineas="3"><div class="nota-cabeza"><span class="nota-lineas">L3</span><span class="nota-codigo"><code>spring.datasource.url</code></span></div><p>🟩 MySQL · Dirección de la base. <code>createDatabaseIfNotExist=true</code> le pide al driver de MySQL crear <code>cotiza_db</code> si no existe.</p></li><li class="nota" data-lineas="4-5"><div class="nota-cabeza"><span class="nota-lineas">L4-5</span><span class="nota-codigo">usuario y contraseña</span></div><p>🟪 Decisión del proyecto · Los de tu MySQL. En el deploy de la Clase 22 vendrán de variables de Render, como en CampusFlow.</p></li><li class="nota" data-lineas="7"><div class="nota-cabeza"><span class="nota-lineas">L7</span><span class="nota-codigo"><code>ddl-auto=update</code></span></div><p>🟧 Spring Boot · Hibernate crea y ajusta las tablas a partir de las entidades. Sirve para desarrollo; en un producto con clientes reales se usan migraciones.</p></li><li class="nota" data-lineas="8"><div class="nota-cabeza"><span class="nota-lineas">L8</span><span class="nota-codigo"><code>show-sql=true</code></span></div><p>🟧 Spring Boot · Muestra en consola el SQL que ejecuta Hibernate. Útil para ver qué pasa al guardar un cliente.</p></li></ol></div></div>
+<details class="code-reveal" data-archivo="application.properties"><summary><span><span class="code-reveal-title">application.properties · archivo completo</span><span class="code-reveal-note">8 líneas · listo para copiar</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">application.properties</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-properties">spring.application.name=cotiza
+
+spring.datasource.url=jdbc:mysql://localhost:3306/cotiza_db?createDatabaseIfNotExist=true
+spring.datasource.username=root
+spring.datasource.password=tu_password
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true</code></pre></div></div></details></article></div></section>
+<section class="section view" data-accent="1" data-escena="construccion" data-layout="canvas" hidden="" id="estado"><div class="sec-head"><span class="sec-n">Construir · 08</span><h2 class="sec-t">Una puerta para saber si el sistema vive</h2></div><div class="body"><p><strong>Necesidad:</strong> antes de construir nada, necesitamos comprobar que la aplicación arranca y responde. En producción, Render y cualquier monitor hacen exactamente esto: preguntar "¿estás vivo?".</p>
+<article class="archivo"><div class="archivo-ficha"><span class="archivo-accion">Crear</span><span class="archivo-nombre">EstadoController.java</span><span class="archivo-ruta">src/main/java/com/devsenior/cotiza/comun/</span></div><p class="archivo-intro"><strong>Dónde va:</strong> clic derecho sobre <code>src/main/java/com/devsenior/cotiza</code> → <strong>New Folder</strong> → <code>comun</code>. Dentro de <code>comun</code>, <strong>New File</strong> → <code>EstadoController.java</code>.</p>
+<div class="lectura"><div class="lectura-head"><span class="lectura-num">1</span><h4 class="lectura-titulo">Una puerta para saber si el sistema vive</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 1–11</span></div></div><pre class="line-numbers" data-start="1"><code class="language-java">package com.devsenior.cotiza.comun;
+
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/estado")
+public class EstadoController {</code></pre></div><ol class="notas"><li class="nota" data-lineas="1"><div class="nota-cabeza"><span class="nota-lineas">L1</span><span class="nota-codigo"><code>package …comun;</code></span></div><p>🟨 Java · Ubica la clase en el paquete <code>comun</code> 🟪, porque saber si el sistema vive no pertenece a ningún módulo de negocio.</p></li><li class="nota" data-lineas="3"><div class="nota-cabeza"><span class="nota-lineas">L3</span><span class="nota-codigo"><code>import java.util.Map;</code></span></div><p>🟨 Java · Traemos <code>Map</code>, el tipo que guarda pares clave-valor. Lo usamos en las líneas 14 y 15.</p></li><li class="nota" data-lineas="5-7"><div class="nota-cabeza"><span class="nota-lineas">L5-7</span><span class="nota-codigo">imports de Spring</span></div><p>🟧 Spring Web · Las tres anotaciones que convierten esta clase en una puerta HTTP.</p></li><li class="nota" data-lineas="9"><div class="nota-cabeza"><span class="nota-lineas">L9</span><span class="nota-codigo"><code>@RestController</code></span></div><p>🟧 Spring · Le pide a Spring crear un objeto de esta clase y convertir lo que devuelvan sus métodos en JSON.</p></li><li class="nota" data-lineas="10"><div class="nota-cabeza"><span class="nota-lineas">L10</span><span class="nota-codigo"><code>@RequestMapping("/api/estado")</code></span></div><p>🟧 Spring · La ruta base. El prefijo <code>/api</code> es ⬜ convención: separa la API de cualquier otra cosa que sirva la aplicación.</p></li></ol></div></div><div class="lectura"><div class="lectura-head"><span class="lectura-num">2</span><h4 class="lectura-titulo">Map.of(…)</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 12–21</span></div></div><pre class="line-numbers" data-start="12"><code class="language-java">
+    @GetMapping
+    public Map&lt;String, String&gt; estado() {
+        return Map.of(
+                "servicio", "cotiza",
+                "version", "0.1.0",
+                "estado", "OK"
+        );
+    }
+}</code></pre></div><ol class="notas"><li class="nota" data-lineas="13"><div class="nota-cabeza"><span class="nota-lineas">L13</span><span class="nota-codigo"><code>@GetMapping</code></span></div><p>🟧 Spring · Este método responde a <code>GET /api/estado</code>.</p></li><li class="nota" data-lineas="14"><div class="nota-cabeza"><span class="nota-lineas">L14</span><span class="nota-codigo"><code>public Map&lt;String, String&gt; estado()</code></span></div><p>🟨 Java · Devuelve un mapa de texto a texto. No creamos un DTO porque son tres datos fijos que nadie más usa 🟪.</p></li><li class="nota" data-lineas="15-19"><div class="nota-cabeza"><span class="nota-lineas">L15-19</span><span class="nota-codigo"><code>Map.of(…)</code></span></div><p>🟨 Java · Crea un mapa que <strong>no se puede modificar</strong> con tres pares. La versión <code>0.1.0</code> es 🟪 nuestra: marca que estamos en Sprint 0.</p></li></ol></div></div>
+<p><strong>▶️ Pruébalo</strong></p>
+<p>Ejecuta <code>CotizaApplication.java</code> (botón <strong>Run</strong> sobre el <code>main</code>) y abre en el navegador:</p>
+<div class="code-block"><div class="code-head"><span class="code-context">Referencia</span><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">Entrada: GET http://localhost:8080/api/estado
+Salida esperada (el orden de las claves puede variar):
+{"version":"0.1.0","servicio":"cotiza","estado":"OK"}
+</code></pre></div>
+<details class="code-reveal" data-archivo="EstadoController.java"><summary><span><span class="code-reveal-title">EstadoController.java · archivo completo</span><span class="code-reveal-note">21 líneas · listo para copiar</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">EstadoController.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers" data-start="1"><code class="language-java">package com.devsenior.cotiza.comun;
+
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/estado")
+public class EstadoController {
+
+    @GetMapping
+    public Map&lt;String, String&gt; estado() {
+        return Map.of(
+                "servicio", "cotiza",
+                "version", "0.1.0",
+                "estado", "OK"
+        );
+    }
+}</code></pre></div></div></details>
+</article></div></section>
+<section class="section view" data-accent="1" data-escena="construccion" data-layout="canvas" hidden="" id="reglas"><div class="sec-head"><span class="sec-n">Construir · 09</span><h2 class="sec-t">Reglas antes de pedir</h2></div><div class="body"><h3>9.1 · El problema que ya vivimos</h3>
+<p>En el Módulo 5, cada vez que abríamos un chat nuevo con el agente teníamos que repetirle el contexto: Java 17, paquetes por módulo, DTOs con <code>record</code>…
+Y a veces se le olvidaba y generaba <code>@Autowired</code> en atributos o devolvía entidades.</p>
+<h4>Definición técnica</h4>
+<p><strong><code>AGENTS.md</code>:</strong> archivo Markdown en la raíz del proyecto con instrucciones para los agentes de IA. Cursor lo lee automáticamente; es texto plano, sin configuración especial.</p>
+<h4>En la vida real</h4>
+<p>El manual de bienvenida de un restaurante: cómo se emplata, qué no se sirve, cómo se saluda. El cocinero nuevo no pregunta lo mismo cada día.</p>
+<h3>9.2 · Paso 4 · Escribir las reglas del proyecto</h3>
+<article class="archivo"><div class="archivo-ficha"><span class="archivo-accion">Crear</span><span class="archivo-nombre">AGENTS.md</span><span class="archivo-ruta">cotiza/</span></div>
+<div class="lectura"><div class="lectura-head"><span class="lectura-num">1</span><h4 class="lectura-titulo">Producto · Stack</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 1–11</span></div></div><pre class="line-numbers" data-start="1"><code class="language-markdown"># Reglas del proyecto Cotiza
+
+## Producto
+Backend de cotizaciones para Roble &amp; Pino, taller de muebles a la medida.
+Flujo del MVP: solicitud → borrador con IA → aprobación de Patricia → envío.
+La IA solo PROPONE. Ninguna cotización se envía sin aprobación humana.
+
+## Stack
+- Java 17, Spring Boot 4.1.1, Maven, MySQL.
+- Configuración en application.properties (nunca application.yml).
+- Sin Lombok.
+</code></pre></div><ol class="notas"><li class="nota" data-lineas="3-7"><div class="nota-cabeza"><span class="nota-lineas">L3-7</span><span class="nota-codigo">Producto</span></div><p>🟪 Le da al agente el <strong>porqué</strong>. Un agente que sabe que la IA solo propone no va a generar un endpoint que envíe cotizaciones sin aprobación.</p></li><li class="nota" data-lineas="8-12"><div class="nota-cabeza"><span class="nota-lineas">L8-12</span><span class="nota-codigo">Stack</span></div><p>🟪 Evita que proponga Gradle, <code>application.yml</code> o Lombok: decisiones que ya tomamos.</p></li></ol></div></div><div class="lectura"><div class="lectura-head"><span class="lectura-num">2</span><h4 class="lectura-titulo">Arquitectura · Reglas de código</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 13–24</span></div></div><pre class="line-numbers" data-start="13"><code class="language-markdown">## Arquitectura
+Paquetes por módulo dentro de com.devsenior.cotiza:
+cliente, catalogo, solicitud, cotizacion, ia, comun.
+Cada módulo tiene su entidad, repositorio, servicio, controlador y carpeta dto.
+
+## Reglas de código
+- Inyección por constructor. Nunca @Autowired en atributos.
+- Los controladores reciben y devuelven DTOs (record). Nunca entidades.
+- Validar la entrada con @Valid y anotaciones de Jakarta Validation.
+- Las reglas de negocio van en el servicio, no en el controlador.
+- Nombres de clases, métodos y variables en español.
+- Comentarios solo cuando expliquen una decisión.
+</code></pre></div><ol class="notas"><li class="nota" data-lineas="13-17"><div class="nota-cabeza"><span class="nota-lineas">L13-17</span><span class="nota-codigo">Arquitectura</span></div><p>🟪 Los paquetes por módulo del momento 3. Sin esta lista, el agente tiende a crear <code>controller/</code>, <code>service/</code>.</p></li><li class="nota" data-lineas="18-25"><div class="nota-cabeza"><span class="nota-lineas">L18-25</span><span class="nota-codigo">Reglas de código</span></div><p>⬜ y 🟪 Buenas prácticas que ya usamos desde el Módulo 3: inyección por constructor, DTOs con <code>record</code>, validación en la entrada.</p></li></ol></div></div><div class="lectura"><div class="lectura-head"><span class="lectura-num">3</span><h4 class="lectura-titulo">Lo que NO haces · Definición de Hecho</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 26–33</span></div></div><pre class="line-numbers" data-start="26"><code class="language-markdown">## Lo que NO haces
+- No escribes contraseñas ni llaves de API en el código.
+- No modificas módulos que no se mencionen en la tarea.
+- No agregas dependencias al pom.xml sin preguntar.
+
+## Definición de Hecho
+Antes de terminar, revisa: compila, respeta los paquetes, usa DTOs,
+valida la entrada (400 si es inválida) y lista los archivos que creaste o cambiaste.</code></pre></div><ol class="notas"><li class="nota" data-lineas="26-30"><div class="nota-cabeza"><span class="nota-lineas">L26-30</span><span class="nota-codigo">Lo que no hace</span></div><p>🟪 Los límites. Proteger secretos y no tocar módulos sin pedirlo son las reglas que más errores evitan.</p></li><li class="nota" data-lineas="31-33"><div class="nota-cabeza"><span class="nota-lineas">L31-33</span><span class="nota-codigo">Definición de Hecho</span></div><p>🟪 La misma del momento 5. El agente la usa para revisarse antes de entregar.</p></li></ol></div></div>
+<details class="code-reveal" data-archivo="AGENTS.md"><summary><span><span class="code-reveal-title">AGENTS.md · archivo completo</span><span class="code-reveal-note">33 líneas · listo para copiar</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">AGENTS.md</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-markdown"># Reglas del proyecto Cotiza
+
+## Producto
+Backend de cotizaciones para Roble &amp; Pino, taller de muebles a la medida.
+Flujo del MVP: solicitud → borrador con IA → aprobación de Patricia → envío.
+La IA solo PROPONE. Ninguna cotización se envía sin aprobación humana.
+
+## Stack
+- Java 17, Spring Boot 4.1.1, Maven, MySQL.
+- Configuración en application.properties (nunca application.yml).
+- Sin Lombok.
+
+## Arquitectura
+Paquetes por módulo dentro de com.devsenior.cotiza:
+cliente, catalogo, solicitud, cotizacion, ia, comun.
+Cada módulo tiene su entidad, repositorio, servicio, controlador y carpeta dto.
+
+## Reglas de código
+- Inyección por constructor. Nunca @Autowired en atributos.
+- Los controladores reciben y devuelven DTOs (record). Nunca entidades.
+- Validar la entrada con @Valid y anotaciones de Jakarta Validation.
+- Las reglas de negocio van en el servicio, no en el controlador.
+- Nombres de clases, métodos y variables en español.
+- Comentarios solo cuando expliquen una decisión.
+
+## Lo que NO haces
+- No escribes contraseñas ni llaves de API en el código.
+- No modificas módulos que no se mencionen en la tarea.
+- No agregas dependencias al pom.xml sin preguntar.
+
+## Definición de Hecho
+Antes de terminar, revisa: compila, respeta los paquetes, usa DTOs,
+valida la entrada (400 si es inválida) y lista los archivos que creaste o cambiaste.</code></pre></div></div></details></article><h3>9.3 · Paso 5 · El README inicial</h3>
+<p><strong>Necesidad:</strong> el README es lo primero que ve un reclutador o un cliente en GitHub. En la Clase 23 lo volvemos profesional; hoy dejamos el esqueleto honesto.</p>
+<article class="archivo"><div class="archivo-ficha"><span class="archivo-accion">Crear</span><span class="archivo-nombre">README.md</span><span class="archivo-ruta">cotiza/</span></div>
+<details class="code-reveal" data-archivo="README.md"><summary><span><span class="code-reveal-title">README.md · archivo completo</span><span class="code-reveal-note">29 líneas · listo para copiar</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">README.md</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers"><code class="language-markdown"># Cotiza
+
+Backend de cotizaciones con IA para talleres de muebles a la medida.
+
+**Estado:** 🚧 Sprint 0 · versión 0.1.0
+
+## El problema
+Roble &amp; Pino tarda 1 o 2 días en responder cada cotización y pierde clientes.
+Cotiza arma un borrador con IA usando los precios del taller; una persona lo revisa y lo envía el mismo día.
+
+## Stack
+Java 17 · Spring Boot 4.1.1 · Maven · MySQL · Gemini
+
+## Cómo ejecutarlo
+1. Crea un usuario de MySQL y pon sus datos en `src/main/resources/application.properties`.
+2. Ejecuta `CotizaApplication`.
+3. Abre `http://localhost:8080/api/estado`.
+
+## Endpoints disponibles
+| Método | Ruta | Qué hace |
+|---|---|---|
+| GET | `/api/estado` | Confirma que el servicio está activo |
+| POST | `/api/clientes` | Registra un cliente |
+| GET | `/api/clientes` | Lista los clientes |
+| GET | `/api/clientes/{id}` | Busca un cliente |
+
+## Roadmap
+- [x] Sprint 0: proyecto, reglas y clientes
+- [ ] Sprint 1: catálogo, solicitudes, borrador con IA, aprobación y deploy</code></pre></div></div></details></article></div></section>
+<section class="section view" data-accent="1" data-escena="prueba" data-layout="canvas" hidden="" id="agente"><div class="sec-head"><span class="sec-n">Revisar · 10</span><h2 class="sec-t">El agente construye Clientes</h2></div><div class="body"><h3>10.1 · Pedir con una especificación, no con un deseo</h3>
+<div class="momento-ia"><div class="momento-ia-head"><span class="momento-ia-titulo">Momento IA</span><span class="ia-nivel">Nivel 3</span><span class="ia-herramienta">Agente de Cursor</span></div><div class="momento-ia-body"><p><strong>Qué razonas primero tú:</strong> los campos del cliente, qué es obligatorio y qué respuesta esperas en cada caso.</p>
+<div class="code-block" data-tipo="prompt"><div class="code-head"><span class="code-context">Prompt sugerido</span><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">Lee AGENTS.md. Crea el módulo `cliente`: entidad Cliente (nombre obligatorio de máx. 120 caracteres, teléfono obligatorio de 10 dígitos y único, correo opcional pero válido, fecha de creación automática), repositorio, DTOs ClienteRequest y ClienteResponse como record, servicio y controlador con POST /api/clientes (201), GET /api/clientes y GET /api/clientes/{id} (404 si no existe). Si el teléfono ya existe, responde 409. No toques otros paquetes. Al terminar, dime qué archivos creaste.</code></pre></div>
+<p><strong>Cómo validar la respuesta:</strong> recorre la Definición de Hecho punto por punto (abajo) y prueba en Postman los cinco casos de la tabla.
+<strong>Qué NO se delega:</strong> decidir qué es obligatorio, que el teléfono sea único, ni aprobar el resultado.</p>
+</div></div>
+<h3>10.2 · Revisión contra la Definición de Hecho</h3>
+<p>El agente puede escribir código distinto al de esta guía y estar bien. <strong>La referencia no es el texto exacto: es la lista.</strong></p>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Criterio</th>
+<th>Qué revisar en lo que generó</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Paquetes por módulo</td>
+<td>Todo dentro de <code>cliente/</code> y <code>cliente/dto/</code></td>
+</tr>
+<tr>
+<td>Sin entidades en la API</td>
+<td>El controlador recibe y devuelve <code>ClienteRequest</code> / <code>ClienteResponse</code></td>
+</tr>
+<tr>
+<td>Validación → 400</td>
+<td><code>@Valid</code> en el controlador y anotaciones en el <code>record</code></td>
+</tr>
+<tr>
+<td>Inyección por constructor</td>
+<td>Ningún <code>@Autowired</code> en atributos</td>
+</tr>
+<tr>
+<td>Puedo explicar cada línea</td>
+<td>Si hay algo que no entiendes, pregúntale al agente <strong>por qué</strong>, no que lo cambie</td>
+</tr>
+</tbody></table></div>
+<h3>10.3 ·  Pruébalo en Postman</h3>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>#</th>
+<th>Petición</th>
+<th>Cuerpo</th>
+<th>Código esperado</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>POST /api/clientes</code></td>
+<td><code>{"nombre":"Luis Herrera","telefono":"3104567890","correo":"luis@correo.co"}</code></td>
+<td><strong>201</strong> con <code>id</code> y <code>fechaCreacion</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>POST /api/clientes</code></td>
+<td><code>{"nombre":"Otro","telefono":"3104567890"}</code></td>
+<td><strong>409</strong> (teléfono repetido)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>POST /api/clientes</code></td>
+<td><code>{"nombre":"","telefono":"310"}</code></td>
+<td><strong>400</strong></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>GET /api/clientes/99</code></td>
+<td>—</td>
+<td><strong>404</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>GET /api/clientes</code></td>
+<td>—</td>
+<td><strong>200</strong> con la lista</td>
+</tr>
+</tbody></table></div>
+<p>Salida verificada del caso 1:</p>
+<div class="code-block"><div class="code-head"><span class="code-context">Referencia</span><button class="copy-btn" type="button">Copiar</button></div><pre><code class="language-plaintext">{"id":1,"nombre":"Luis Herrera","telefono":"3104567890","correo":"luis@correo.co","fechaCreacion":"2026-10-24T12:15:58.926985679"}
+</code></pre></div>
+<h3>10.4 · El error que dejamos abierto a propósito</h3>
+<p>Mira la respuesta del caso 3. El código 400 es correcto, pero el cuerpo solo dice <code>"error":"Bad Request"</code>.
+<strong>No dice qué campo falló.</strong> El caso 2 tampoco muestra el mensaje "Ya existe un cliente con ese teléfono".</p>
+<div class="micro-task"><span class="component-label">Para pensar</span><p class="micro-task-q">Mandaste un nombre vacío y un teléfono de 3 dígitos. La API responde 400 sin más detalle. ¿Esto cumple la Definición de Hecho?</p><details class="micro-reveal"><summary>Comprobar</summary><p class="micro-answer">Cumple la letra ("responde 400"), pero no sirve a quien consume la API: no sabe qué corregir. Spring Boot esconde por defecto el detalle de los errores para no filtrar información interna. La solución es un manejador global de errores con un formato propio, y es lo primero del Sprint 1.</p></details></div>
+</div></section>
+<section class="section view" data-accent="1" data-escena="construccion" data-layout="canvas" hidden="" id="referencia"><div class="sec-head"><span class="sec-n">Revisar · 11</span><h2 class="sec-t">El código de referencia</h2></div><div class="body"><p>Es lo que se generó y se verificó para esta guía. Úsalo si el agente se desvía o si alguien se pierde: copia y sigue.</p>
+<h3>11.1 · Cliente.java</h3><article class="archivo"><div class="archivo-ficha"><span class="archivo-accion">Crear</span><span class="archivo-nombre">Cliente.java</span><span class="archivo-ruta">src/main/java/com/devsenior/cotiza/cliente/</span></div>
+<p>Lo nuevo frente a las entidades de CampusFlow y Atiende:</p>
+<ul><li><strong>Sin setters</strong> → 🟪 Por ahora un cliente no se edita. Cuando haga falta, se agrega un método con intención (<code>actualizarContacto</code>), no setters sueltos.</li></ul>
+<div class="lectura"><div class="lectura-head"><span class="lectura-num">1</span><h4 class="lectura-titulo">@Column(nullable = false, updatable = false)</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 29–31</span></div></div><pre class="line-numbers" data-start="29"><code class="language-java">
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
+</code></pre></div><ol class="notas"><li class="nota" data-lineas="30"><div class="nota-cabeza"><span class="nota-lineas">L30</span><span class="nota-codigo"><code>@Column(nullable = false, updatable = false)</code></span></div><p>🟧 JPA · <code>updatable = false</code> impide que Hibernate cambie la fecha de creación en una actualización.</p></li></ol></div></div><div class="lectura"><div class="lectura-head"><span class="lectura-num">2</span><h4 class="lectura-titulo">protected Cliente()</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 32–34</span></div></div><pre class="line-numbers" data-start="32"><code class="language-java">
+    protected Cliente() {
+    }
+</code></pre></div><ol class="notas"><li class="nota" data-lineas="33"><div class="nota-cabeza"><span class="nota-lineas">L33</span><span class="nota-codigo"><code>protected Cliente()</code></span></div><p>🟧 JPA exige un constructor sin argumentos; lo hacemos <code>protected</code> 🟪 para que nadie cree un cliente vacío desde otro paquete.</p></li></ol></div></div><div class="lectura"><div class="lectura-head"><span class="lectura-num">3</span><h4 class="lectura-titulo">@PrePersist</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 41–44</span></div></div><pre class="line-numbers" data-start="41"><code class="language-java">
+    @PrePersist
+    void alCrear() {
+        this.fechaCreacion = LocalDateTime.now();</code></pre></div><ol class="notas"><li class="nota" data-lineas="42"><div class="nota-cabeza"><span class="nota-lineas">L42</span><span class="nota-codigo"><code>@PrePersist</code></span></div><p>🟧 JPA · Hibernate ejecuta <code>alCrear()</code> justo antes del primer <code>INSERT</code>; así la fecha nunca llega del cliente.</p></li></ol></div></div><details class="code-reveal" data-archivo="Cliente.java"><summary><span><span class="code-reveal-title">Cliente.java · archivo completo</span><span class="code-reveal-note">66 líneas · listo para copiar</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">Cliente.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers" data-start="1"><code class="language-java">package com.devsenior.cotiza.cliente;
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "clientes")
+public class Cliente {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 120)
+    private String nombre;
+
+    @Column(nullable = false, length = 20)
+    private String telefono;
+
+    @Column(length = 120)
+    private String correo;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
+
+    protected Cliente() {
+    }
+
+    public Cliente(String nombre, String telefono, String correo) {
+        this.nombre = nombre;
+        this.telefono = telefono;
+        this.correo = correo;
+    }
+
+    @PrePersist
+    void alCrear() {
+        this.fechaCreacion = LocalDateTime.now();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+}</code></pre></div></div></details>
+</article><h3>11.2 · ClienteRepository.java</h3><article class="archivo"><div class="archivo-ficha"><span class="archivo-accion">Crear</span><span class="archivo-nombre">ClienteRepository.java</span><span class="archivo-ruta">src/main/java/com/devsenior/cotiza/cliente/</span></div>
+<div class="lectura"><div class="lectura-head"><span class="lectura-num">1</span><h4 class="lectura-titulo">existsByTelefono</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 6–8</span></div></div><pre class="line-numbers" data-start="6"><code class="language-java">
+    boolean existsByTelefono(String telefono);
+}</code></pre></div><ol class="notas"><li class="nota" data-lineas="7"><div class="nota-cabeza"><span class="nota-lineas">L7</span><span class="nota-codigo"><code>existsByTelefono</code></span></div><p>🟧 Spring Data · Spring escribe la consulta a partir del nombre del método; devuelve <code>true</code> si ya hay un cliente con ese teléfono. Es más barato que traer el cliente completo.</p></li></ol></div></div><details class="code-reveal" data-archivo="ClienteRepository.java"><summary><span><span class="code-reveal-title">ClienteRepository.java · archivo completo</span><span class="code-reveal-note">8 líneas · listo para copiar</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">ClienteRepository.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers" data-start="1"><code class="language-java">package com.devsenior.cotiza.cliente;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ClienteRepository extends JpaRepository&lt;Cliente, Long&gt; {
+
+    boolean existsByTelefono(String telefono);
+}</code></pre></div></div></details>
+</article><h3>11.3 · ClienteRequest.java</h3><article class="archivo"><div class="archivo-ficha"><span class="archivo-accion">Crear</span><span class="archivo-nombre">ClienteRequest.java</span><span class="archivo-ruta">src/main/java/com/devsenior/cotiza/cliente/dto/</span></div>
+<ul><li><strong><code>ClienteResponse</code></strong> → Un <code>record</code> con lo que el cliente de la API puede ver, igual que en Atiende.</li></ul>
+<div class="lectura"><div class="lectura-head"><span class="lectura-num">1</span><h4 class="lectura-titulo">@Pattern(regexp = "\\d{10}")</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 9–12</span></div></div><pre class="line-numbers" data-start="9"><code class="language-java">        @NotBlank @Size(max = 120) String nombre,
+        @NotBlank @Pattern(regexp = "\\d{10}", message = "debe tener 10 dígitos") String telefono,
+        @Email String correo
+) {</code></pre></div><ol class="notas"><li class="nota" data-lineas="10"><div class="nota-cabeza"><span class="nota-lineas">L10</span><span class="nota-codigo"><code>@Pattern(regexp = "\\d{10}")</code></span></div><p>🟧 Jakarta Validation · Exige exactamente 10 dígitos (un celular colombiano). En Java la barra se escribe doble.</p></li></ol></div></div><div class="lectura"><div class="lectura-head"><span class="lectura-num">2</span><h4 class="lectura-titulo">@Email String correo</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 10–13</span></div></div><pre class="line-numbers" data-start="10"><code class="language-java">        @NotBlank @Pattern(regexp = "\\d{10}", message = "debe tener 10 dígitos") String telefono,
+        @Email String correo
+) {
+}</code></pre></div><ol class="notas"><li class="nota" data-lineas="11"><div class="nota-cabeza"><span class="nota-lineas">L11</span><span class="nota-codigo"><code>@Email String correo</code></span></div><p>🟧 · Valida formato solo si viene; un correo vacío (<code>null</code>) pasa, porque es opcional 🟪.</p></li></ol></div></div><details class="code-reveal" data-archivo="ClienteRequest.java"><summary><span><span class="code-reveal-title">ClienteRequest.java · archivo completo</span><span class="code-reveal-note">13 líneas · listo para copiar</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">ClienteRequest.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers" data-start="1"><code class="language-java">package com.devsenior.cotiza.cliente.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+public record ClienteRequest(
+        @NotBlank @Size(max = 120) String nombre,
+        @NotBlank @Pattern(regexp = "\\d{10}", message = "debe tener 10 dígitos") String telefono,
+        @Email String correo
+) {
+}</code></pre></div></div></details>
+</article><h3>11.4 · ClienteResponse.java</h3><article class="archivo"><div class="archivo-ficha"><span class="archivo-accion">Crear</span><span class="archivo-nombre">ClienteResponse.java</span><span class="archivo-ruta">src/main/java/com/devsenior/cotiza/cliente/dto/</span></div><details class="code-reveal" data-archivo="ClienteResponse.java"><summary><span><span class="code-reveal-title">ClienteResponse.java · archivo completo</span><span class="code-reveal-note">12 líneas · listo para copiar</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">ClienteResponse.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers" data-start="1"><code class="language-java">package com.devsenior.cotiza.cliente.dto;
+
+import java.time.LocalDateTime;
+
+public record ClienteResponse(
+        Long id,
+        String nombre,
+        String telefono,
+        String correo,
+        LocalDateTime fechaCreacion
+) {
+}</code></pre></div></div></details></article><h3>11.5 · ClienteService.java</h3><article class="archivo"><div class="archivo-ficha"><span class="archivo-accion">Crear</span><span class="archivo-nombre">ClienteService.java</span><span class="archivo-ruta">src/main/java/com/devsenior/cotiza/cliente/</span></div>
+<div class="lectura"><div class="lectura-head"><span class="lectura-num">1</span><h4 class="lectura-titulo">teléfono repetido</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 21–25</span></div></div><pre class="line-numbers" data-start="21"><code class="language-java">    public ClienteResponse crear(ClienteRequest request) {
+        if (clienteRepository.existsByTelefono(request.telefono())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un cliente con ese teléfono");
+        }
+        Cliente cliente = new Cliente(request.nombre(), request.telefono(), request.correo());</code></pre></div><ol class="notas"><li class="nota" data-lineas="22-23"><div class="nota-cabeza"><span class="nota-lineas">L22-23</span><span class="nota-codigo">teléfono repetido</span></div><p>🟪 La regla de negocio vive en el servicio: si ya existe, lanzamos <code>ResponseStatusException</code> 🟧 con 409 Conflict.</p></li></ol></div></div><div class="lectura"><div class="lectura-head"><span class="lectura-num">2</span><h4 class="lectura-titulo">.orElseThrow(...)</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 37–39</span></div></div><pre class="line-numbers" data-start="37"><code class="language-java">                .map(this::aResponse)
+                .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado"));
+    }
+</code></pre></div><ol class="notas"><li class="nota" data-lineas="38"><div class="nota-cabeza"><span class="nota-lineas">L38</span><span class="nota-codigo"><code>.orElseThrow(...)</code></span></div><p>🟨 Java · Si <code>findById</code> no encontró nada, lanzamos 404.</p></li></ol></div></div><div class="lectura"><div class="lectura-head"><span class="lectura-num">3</span><h4 class="lectura-titulo">aResponse</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 40–43</span></div></div><pre class="line-numbers" data-start="40"><code class="language-java">
+    private ClienteResponse aResponse(Cliente cliente) {
+        return new ClienteResponse(
+                cliente.getId(),</code></pre></div><ol class="notas"><li class="nota" data-lineas="41"><div class="nota-cabeza"><span class="nota-lineas">L41</span><span class="nota-codigo"><code>aResponse</code></span></div><p>🟪 Un método privado convierte entidad en DTO. Si el módulo crece, se pasa a un <code>ClienteMapper</code>, como en Atiende.</p></li></ol></div></div><details class="code-reveal" data-archivo="ClienteService.java"><summary><span><span class="code-reveal-title">ClienteService.java · archivo completo</span><span class="code-reveal-note">50 líneas · listo para copiar</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">ClienteService.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers" data-start="1"><code class="language-java">package com.devsenior.cotiza.cliente;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.devsenior.cotiza.cliente.dto.ClienteRequest;
+import com.devsenior.cotiza.cliente.dto.ClienteResponse;
+
+@Service
+public class ClienteService {
+
+    private final ClienteRepository clienteRepository;
+
+    public ClienteService(ClienteRepository clienteRepository) {
+        this.clienteRepository = clienteRepository;
+    }
+
+    public ClienteResponse crear(ClienteRequest request) {
+        if (clienteRepository.existsByTelefono(request.telefono())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un cliente con ese teléfono");
+        }
+        Cliente cliente = new Cliente(request.nombre(), request.telefono(), request.correo());
+        return aResponse(clienteRepository.save(cliente));
+    }
+
+    public List&lt;ClienteResponse&gt; listar() {
+        return clienteRepository.findAll().stream()
+                .map(this::aResponse)
+                .toList();
+    }
+
+    public ClienteResponse buscarPorId(Long id) {
+        return clienteRepository.findById(id)
+                .map(this::aResponse)
+                .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado"));
+    }
+
+    private ClienteResponse aResponse(Cliente cliente) {
+        return new ClienteResponse(
+                cliente.getId(),
+                cliente.getNombre(),
+                cliente.getTelefono(),
+                cliente.getCorreo(),
+                cliente.getFechaCreacion()
+        );
+    }
+}</code></pre></div></div></details>
+</article><h3>11.6 · ClienteController.java</h3><article class="archivo"><div class="archivo-ficha"><span class="archivo-accion">Crear</span><span class="archivo-nombre">ClienteController.java</span><span class="archivo-ruta">src/main/java/com/devsenior/cotiza/cliente/</span></div>
+<div class="lectura"><div class="lectura-head"><span class="lectura-num">1</span><h4 class="lectura-titulo">@ResponseStatus(HttpStatus.CREATED)</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 29–32</span></div></div><pre class="line-numbers" data-start="29"><code class="language-java">    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ClienteResponse crear(@Valid @RequestBody ClienteRequest request) {
+        return clienteService.crear(request);</code></pre></div><ol class="notas"><li class="nota" data-lineas="30"><div class="nota-cabeza"><span class="nota-lineas">L30</span><span class="nota-codigo"><code>@ResponseStatus(HttpStatus.CREATED)</code></span></div><p>🟧 Spring · Responde 201 en lugar de 200 al crear.</p></li></ol></div></div><div class="lectura"><div class="lectura-head"><span class="lectura-num">2</span><h4 class="lectura-titulo">@Valid @RequestBody</h4></div><div class="lectura-cuerpo"><div class="code-block" data-role="fragment"><div class="code-head"><div><span class="code-context">Líneas 30–33</span></div></div><pre class="line-numbers" data-start="30"><code class="language-java">    @ResponseStatus(HttpStatus.CREATED)
+    public ClienteResponse crear(@Valid @RequestBody ClienteRequest request) {
+        return clienteService.crear(request);
+    }</code></pre></div><ol class="notas"><li class="nota" data-lineas="31"><div class="nota-cabeza"><span class="nota-lineas">L31</span><span class="nota-codigo"><code>@Valid @RequestBody</code></span></div><p>🟧 Spring · Convierte el JSON en <code>ClienteRequest</code> y lo valida antes de entrar al método. Sin <code>@Valid</code>, el nombre vacío se guardaría.</p></li></ol></div></div><details class="code-reveal" data-archivo="ClienteController.java"><summary><span><span class="code-reveal-title">ClienteController.java · archivo completo</span><span class="code-reveal-note">44 líneas · listo para copiar</span></span></summary><div class="code-reveal-body"><div class="code-block"><div class="code-head"><div><span class="code-context">Crear</span><span class="code-file">ClienteController.java</span></div><button class="copy-btn" type="button">Copiar archivo</button></div><pre class="line-numbers" data-start="1"><code class="language-java">package com.devsenior.cotiza.cliente;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.devsenior.cotiza.cliente.dto.ClienteRequest;
+import com.devsenior.cotiza.cliente.dto.ClienteResponse;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api/clientes")
+public class ClienteController {
+
+    private final ClienteService clienteService;
+
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ClienteResponse crear(@Valid @RequestBody ClienteRequest request) {
+        return clienteService.crear(request);
+    }
+
+    @GetMapping
+    public List&lt;ClienteResponse&gt; listar() {
+        return clienteService.listar();
+    }
+
+    @GetMapping("/{id}")
+    public ClienteResponse buscarPorId(@PathVariable Long id) {
+        return clienteService.buscarPorId(id);
+    }
+}</code></pre></div></div></details>
+</article></div></section>
+<section class="section view" data-accent="1" data-escena="cierre" data-layout="canvas" hidden="" id="cierre"><div class="sec-head"><span class="sec-n">Cerrar · 12</span><h2 class="sec-t">Cierre</h2></div><div class="body"><h3>12.1 · Lo que hicimos hoy</h3>
+<p>Llegó un correo con siete deseos. Salimos con:</p>
+<ul>
+<li>un <strong>MVP</strong> que ataca el dolor que cuesta dinero;</li>
+<li>una <strong>arquitectura</strong> por módulos que puede crecer;</li>
+<li>un <strong>modelo de datos</strong> que protege la historia de cada cotización;</li>
+<li>un <strong>roadmap</strong> y una <strong>Definición de Hecho</strong>;</li>
+<li>un <strong>Sprint 0</strong> que corre, con reglas para que el agente trabaje como parte del equipo.</li>
+</ul>
+<h3>12.2 · La idea que se llevan</h3>
+<p>El agente escribe código rápido. <strong>Lo que lo vuelve profesional es lo que hiciste antes de pedirle algo:</strong> alcance, arquitectura, reglas y criterios para aprobar.</p>
+<h3>12.3 · Lo que viene: Clase 22</h3>
+<p>Sprint 1 completo con el agente: manejo global de errores (el 400 que hoy no dice nada), catálogo, solicitudes, el borrador de cotización con Gemini y su fallback, aprobación, tests y deploy en Render.</p>
+<article class="correo"><div class="correo-head"><span class="correo-avatar">PR</span><div><div class="correo-remitente">Patricia Restrepo</div><div class="correo-ruta"></div></div></div><div class="correo-asunto">Propuesta para Roble &amp; Pino</div><div class="correo-body"><p>Hola, Patricia:
+Proponemos empezar por lo que les está costando clientes: recibir la solicitud, que el sistema arme un borrador con sus precios, que usted lo apruebe y lo envíe el mismo día.
+Las métricas, el pago en línea y la integración con contabilidad quedan para una segunda etapa.
+Esta semana dejamos lista la base y el registro de clientes. La próxima semana tendrán los borradores con IA funcionando.
+Equipo de desarrollo</p>
+</div></article>
+<h3>12.4 · ¿Ya puedo…?</h3>
+<div class="autoevaluacion"><ul>
+<li><label><input type="checkbox"/> Decidir el alcance de un MVP con MoSCoW y justificar cada "no ahora".</label></li>
+<li><label><input type="checkbox"/> Diseñar la arquitectura por módulos y ubicar cualquier clase nueva en su paquete.</label></li>
+<li><label><input type="checkbox"/> Construir un Sprint 0 con el agente guiado por <code>AGENTS.md</code> y aprobarlo contra la Definición de Hecho.</label></li>
+</ul></div>
+</div></section>
+<section class="section view" data-accent="1" data-escena="consulta" data-layout="canvas" hidden="" id="mapa"><div class="sec-head"><span class="sec-n">Consultar · 13</span><h2 class="sec-t">Mapa de archivos</h2></div><div class="body"><div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Archivo</th>
+<th>Ruta</th>
+<th>Acción</th>
+<th>Quién lo escribe</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>pom.xml</code></td>
+<td><code>cotiza/</code></td>
+<td>Generado (ajustar versión)</td>
+<td>Spring Initializr</td>
+</tr>
+<tr>
+<td><code>application.properties</code></td>
+<td><code>src/main/resources/</code></td>
+<td>Reemplazar</td>
+<td>Nosotros</td>
+</tr>
+<tr>
+<td><code>EstadoController.java</code></td>
+<td><code>.../cotiza/comun/</code></td>
+<td>Crear</td>
+<td>Nosotros</td>
+</tr>
+<tr>
+<td><code>AGENTS.md</code></td>
+<td><code>cotiza/</code></td>
+<td>Crear</td>
+<td>Nosotros</td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td><code>cotiza/</code></td>
+<td>Crear</td>
+<td>Nosotros</td>
+</tr>
+<tr>
+<td><code>Cliente.java</code></td>
+<td><code>.../cotiza/cliente/</code></td>
+<td>Crear</td>
+<td>Agente</td>
+</tr>
+<tr>
+<td><code>ClienteRepository.java</code></td>
+<td><code>.../cotiza/cliente/</code></td>
+<td>Crear</td>
+<td>Agente</td>
+</tr>
+<tr>
+<td><code>ClienteService.java</code></td>
+<td><code>.../cotiza/cliente/</code></td>
+<td>Crear</td>
+<td>Agente</td>
+</tr>
+<tr>
+<td><code>ClienteController.java</code></td>
+<td><code>.../cotiza/cliente/</code></td>
+<td>Crear</td>
+<td>Agente</td>
+</tr>
+<tr>
+<td><code>ClienteRequest.java</code></td>
+<td><code>.../cotiza/cliente/dto/</code></td>
+<td>Crear</td>
+<td>Agente</td>
+</tr>
+<tr>
+<td><code>ClienteResponse.java</code></td>
+<td><code>.../cotiza/cliente/dto/</code></td>
+<td>Crear</td>
+<td>Agente</td>
+</tr>
+</tbody></table></div>
+</div></section>
+<section class="section view" data-accent="1" data-escena="consulta" data-layout="canvas" hidden="" id="glosario"><div class="sec-head"><span class="sec-n">Consultar · 14</span><h2 class="sec-t">Glosario de la clase</h2></div><div class="body"><dl class="glosario"><div class="glos-item" data-termino="mvp"><dt class="glos-termino">MVP</dt><dd class="glos-tecnica">la versión más pequeña del producto que resuelve el problema principal de un usuario real.</dd><dd class="glos-vida">un restaurante que abre con 8 platos que salen bien, no con 80.</dd><dd class="glos-donde">2 · Alcance realista</dd></div><div class="glos-item" data-termino="moscow"><dt class="glos-termino">MoSCoW</dt><dd class="glos-tecnica">clasificación de requisitos en Must, Should, Could y Won't.</dd><dd class="glos-vida">la lista de un trasteo: lo que va sí o sí, lo que ojalá quepa, lo que se regala.</dd><dd class="glos-donde">2 · Alcance realista</dd></div><div class="glos-item" data-termino="monolito-modular"><dt class="glos-termino">Monolito modular</dt><dd class="glos-tecnica">una sola aplicación desplegable, organizada por dentro en módulos de negocio con límites claros.</dd><dd class="glos-vida">un edificio con un solo contador de luz, pero cada empresa en su piso con su llave.</dd><dd class="glos-donde">3 · Arquitectura</dd></div><div class="glos-item" data-termino="paquete-por-funcionalidad"><dt class="glos-termino">Paquete por funcionalidad</dt><dd class="glos-tecnica">organizar el código por módulo de negocio (<code>cliente</code>, <code>cotizacion</code>) y no por capa técnica.</dd><dd class="glos-vida">un supermercado ordenado por secciones (lácteos, aseo), no por tipo de estante.</dd><dd class="glos-donde">3 · Arquitectura</dd></div><div class="glos-item" data-termino="roadmap"><dt class="glos-termino">Roadmap</dt><dd class="glos-tecnica">orden en el tiempo de los entregables, donde cada etapa entrega algo probable.</dd><dd class="glos-vida">construir una casa: cimientos, muros, acabados.</dd><dd class="glos-donde">5 · Roadmap</dd></div><div class="glos-item" data-termino="sprint"><dt class="glos-termino">Sprint</dt><dd class="glos-tecnica">periodo corto y fijo en el que el equipo se compromete a terminar un trabajo pequeño.</dd><dd class="glos-vida">la lista del mercado de esta semana.</dd><dd class="glos-donde">5 · Roadmap</dd></div><div class="glos-item" data-termino="sprint-0"><dt class="glos-termino">Sprint 0</dt><dd class="glos-tecnica">sprint de preparación que deja proyecto, reglas y estructura listos.</dd><dd class="glos-vida">alistar la cocina antes de abrir el restaurante.</dd><dd class="glos-donde">6 · Sprint 0</dd></div><div class="glos-item" data-termino="definici-n-de-hecho"><dt class="glos-termino">Definición de Hecho</dt><dd class="glos-tecnica">lista de condiciones que toda tarea cumple para considerarse terminada.</dd><dd class="glos-vida">el control de calidad antes de que un mueble salga del taller.</dd><dd class="glos-donde">5 · Criterios de calidad</dd></div><div class="glos-item" data-termino="agents-md"><dt class="glos-termino">AGENTS.md</dt><dd class="glos-tecnica">archivo Markdown en la raíz del proyecto con instrucciones que los agentes de IA leen automáticamente.</dd><dd class="glos-vida">el manual de bienvenida de un empleado nuevo.</dd><dd class="glos-donde">7 · Reglas para el agente</dd></div><div class="glos-item" data-termino="backlog"><dt class="glos-termino">Backlog</dt><dd class="glos-tecnica">lista ordenada de todo lo que el producto podría tener y aún no se ha hecho.</dd><dd class="glos-vida">la lista de "algún día" de la casa: pintar, cambiar la puerta, arreglar el jardín.</dd><dd class="glos-donde">5 · Roadmap</dd></div></dl></div></section>
+<section class="section view" data-accent="1" data-escena="consulta" data-layout="canvas" hidden="" id="documentacion"><div class="sec-head"><span class="sec-n">Consultar · 15</span><h2 class="sec-t">Documentación para el estudiante</h2></div><div class="body"><ul class="docs"><li><div class="doc-meta"><span class="doc-fuente">Cursor · Documentación oficial</span><span class="doc-idioma">Inglés</span></div><a class="doc-titulo" href="https://cursor.com/docs/rules" rel="noopener" target="_blank">Rules · Cursor</a><p class="doc-que-leer">las secciones de Project Rules y AGENTS.md; es lo que usamos para que el agente siga nuestras reglas.</p></li><li><div class="doc-meta"><span class="doc-fuente">Ken Schwaber y Jeff Sutherland · Guía oficial</span><span class="doc-idioma">Inglés (tiene versión en español en el mismo sitio)</span></div><a class="doc-titulo" href="https://scrumguides.org/scrum-guide.html" rel="noopener" target="_blank">La Guía de Scrum</a><p class="doc-que-leer">"Sprint", "Product Backlog" y "Definition of Done".</p></li><li><div class="doc-meta"><span class="doc-fuente">Spring · Herramienta oficial</span><span class="doc-idioma">Inglés</span></div><a class="doc-titulo" href="https://start.spring.io" rel="noopener" target="_blank">Spring Initializr</a><p class="doc-que-leer">generar tú mismo el proyecto <code>cotiza</code> con las mismas opciones del Paso 1.</p></li></ul><p class="doc-foot">© 2026 Ana Alvarado · Educadora Tech &amp; Desarrolladora Full Stack · Todos los derechos reservados · linkedin.com/in/ana-alvarado-instructora-full-stack</p></div></section></div>
+<nav aria-label="Navegación entre secciones" class="view-controls" id="viewControls">
+<button aria-label="Sección anterior" class="view-btn" id="prevView" type="button">←</button>
+<span aria-live="polite" class="view-position" id="viewPosition">Portada</span>
+<button aria-label="Sección siguiente" class="view-btn" id="nextView" type="button">→</button>
+</nav>
+</main>
+</div>
+<div aria-hidden="true" class="watermark">© 2026 ANA ALVARADO</div>
+<script src="vendor/prism.min.js"></script><script src="vendor/prism-java.min.js"></script><script src="vendor/prism-markdown.min.js"></script><script src="vendor/prism-properties.min.js"></script><script src="vendor/prism-line-numbers.min.js"></script><script src="anaclase-v12.js"></script>
+</body>
+</html>

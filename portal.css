@@ -646,3 +646,65 @@ body.en-visor .portal-brand-copy { display: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 }
+
+/* ============================================================
+   12 · SISTEMA UNIFICADO CON LAS SPA (v3.1)
+   Regla: la pizarra es el escritorio, la marca es la estructura
+   y el acento es la clase. El portal usa los mismos neutros de
+   anaestilos-v12 para que la barra del visor y la guía se vean
+   como una sola pieza. La marca queda en detalles: logo, número
+   de módulo, progreso y estados activos.
+   ============================================================ */
+:root, :root[data-tema="claro"] {
+  --bg: #E3E8EE;
+  --frame: #F4F6F9;
+  --surface: #FFFFFF;
+  --surface-2: #F4F6F9;
+  --ink: #17202B;
+  --ink-soft: #46525F;
+  --ink-muted: #5D6977;
+  --line: #CDD4DD;
+  --line-strong: #AEB8C4;
+  --accent-soft: color-mix(in srgb, var(--brand) 9%, #FFFFFF);
+  --glow: color-mix(in srgb, var(--brand-vivo) 9%, transparent);
+  --shadow-sm: 0 1px 2px rgba(20, 28, 40, .05);
+  --shadow-md: 0 1px 2px rgba(20, 28, 40, .05), 0 8px 24px rgba(20, 28, 40, .06);
+  --shadow-hover: 0 2px 4px rgba(20, 28, 40, .06), 0 14px 30px rgba(20, 28, 40, .10);
+}
+:root[data-tema="oscuro"] {
+  --bg: #20262F;
+  --frame: #191E26;
+  --surface: #2D3542;
+  --surface-2: #36404E;
+  --ink: #EEF1F5;
+  --ink-soft: #BEC7D2;
+  --ink-muted: #97A2B0;
+  --line: #434D5C;
+  --line-strong: #5A6576;
+  --accent: #A98BFF;
+  --accent-soft: color-mix(in srgb, var(--brand-vivo) 16%, #2D3542);
+  --glow: color-mix(in srgb, var(--brand-vivo) 13%, transparent);
+  --shadow-sm: 0 1px 0 rgba(255, 255, 255, .03) inset;
+  --shadow-md: 0 1px 0 rgba(255, 255, 255, .03) inset, 0 10px 28px rgba(8, 12, 18, .26);
+  --shadow-hover: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 16px 34px rgba(8, 12, 18, .34);
+}
+:root[data-empresa="generation"][data-tema="oscuro"] { --accent: #6CC0EE; }
+
+/* Barra del visor = marco de la SPA (mismo color que su menú lateral) */
+body.en-visor .portal-topbar { background: var(--frame); box-shadow: 0 1px 0 var(--line); }
+body.en-visor .portal-brand-mark { box-shadow: none; }
+.visor-inicio {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+.visor-inicio svg { color: var(--accent); }
+.visor-inicio:hover { background: var(--surface); border-color: var(--line-strong); }
+body.en-visor .ctrl-btn { background: transparent; box-shadow: none; }
+
+/* La marca en detalles, no en superficies grandes */
+.portal-brand-mark { box-shadow: 0 4px 12px color-mix(in srgb, var(--brand-vivo) 22%, transparent); }
+.mod-punto { box-shadow: 0 6px 14px color-mix(in srgb, var(--brand-vivo) 18%, transparent); }
+.hero-continuar { box-shadow: 0 16px 36px color-mix(in srgb, var(--brand-vivo) 20%, transparent); }
+.modulo[open] { border-color: color-mix(in srgb, var(--accent) 28%, var(--line)); }
+.eyebrow { background: transparent; }
